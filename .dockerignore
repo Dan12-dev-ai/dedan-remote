@@ -1,0 +1,37 @@
+# Keep the build context small and, critically, keep secrets out of the image.
+# `.env` is mounted read-only at runtime by docker-compose; baking it into a
+# layer would persist credentials in the image history forever.
+.env
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+
+node_modules/
+frontend/node_modules/
+frontend/dist/
+
+# Never needed inside the image — the frontend is built in Stage 1.
+.git/
+.github/
+tests/
+htmlcov/
+.coverage
+.pytest_cache/
+.hypothesis/
+.benchmarks/
+docs/
+*.md
+
+data/
+logs/
+*.db
+*.sqlite3
+
+# Local tooling / editor state
+.vscode/
+.idea/
+.docker/
+scripts/
+docker-compose*.yml
+prometheus.yml

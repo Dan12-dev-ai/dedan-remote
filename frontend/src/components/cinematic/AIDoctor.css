@@ -1,0 +1,467 @@
+/* AIDoctor — Cinematic AI Intelligence Figure */
+
+.ai-doctor {
+  position: relative;
+  width: 100%;
+  max-width: 520px;
+  aspect-ratio: 1;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  filter: drop-shadow(0 40px 80px rgba(0, 0, 0, 0.6));
+}
+
+/* ── Halo — atmospheric glow behind the figure ────────────────────── */
+.ai-doctor__halo {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 120%;
+  height: 120%;
+  max-width: 624px;
+  max-height: 624px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background:
+    radial-gradient(
+      ellipse at center,
+      rgba(33, 140, 247, 0.18) 0%,
+      rgba(123, 77, 255, 0.12) 35%,
+      rgba(33, 140, 247, 0.06) 60%,
+      transparent 80%
+    );
+  filter: blur(60px);
+  opacity: 0.7;
+  animation: ai-doctor-halo-breathe 8s var(--ease-in-out) infinite alternate;
+  will-change: transform, opacity;
+  pointer-events: none;
+}
+
+@keyframes ai-doctor-halo-breathe {
+  from {
+    transform: translate(-50%, -50%) scale(0.95);
+    opacity: 0.55;
+  }
+  to {
+    transform: translate(-50%, -50%) scale(1.08);
+    opacity: 0.75;
+  }
+}
+
+/* ── Figure container ─────────────────────────────────────────────── */
+.ai-doctor__figure {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── Core intelligence sphere ─────────────────────────────────────── */
+.ai-doctor__core {
+  position: relative;
+  width: 48%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background:
+    radial-gradient(
+      ellipse at 35% 35%,
+      rgba(255, 255, 255, 0.25) 0%,
+      rgba(33, 140, 247, 0.15) 40%,
+      rgba(123, 77, 255, 0.1) 70%,
+      rgba(7, 9, 15, 0.95) 100%
+    );
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow:
+    inset 0 2px 4px rgba(255, 255, 255, 0.08),
+    inset 0 -8px 24px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(33, 140, 247, 0.12),
+    0 20px 60px rgba(0, 0, 0, 0.7),
+    0 0 80px rgba(33, 140, 247, 0.08);
+  transition: transform 0.3s var(--ease-out);
+  will-change: transform;
+  overflow: hidden;
+}
+
+.ai-doctor__nucleus {
+  position: absolute;
+  inset: 8%;
+  border-radius: 50%;
+  background:
+    radial-gradient(
+      ellipse at 40% 40%,
+      rgba(33, 140, 247, 0.35) 0%,
+      rgba(123, 77, 255, 0.2) 45%,
+      transparent 75%
+    );
+  animation: ai-doctor-nucleus-pulse 6s var(--ease-in-out) infinite alternate;
+}
+
+@keyframes ai-doctor-nucleus-pulse {
+  from { opacity: 0.4; transform: scale(0.92); }
+  to { opacity: 0.7; transform: scale(1.04); }
+}
+
+.ai-doctor__iris {
+  position: absolute;
+  inset: 22%;
+  border-radius: 50%;
+  background:
+    conic-gradient(
+      from 0deg,
+      rgba(33, 140, 247, 0) 0deg,
+      rgba(33, 140, 247, 0.25) 90deg,
+      rgba(123, 77, 255, 0.35) 180deg,
+      rgba(33, 140, 247, 0.25) 270deg,
+      rgba(33, 140, 247, 0) 360deg
+    );
+  mask-image: radial-gradient(circle, black 65%, transparent 70%);
+  -webkit-mask-image: radial-gradient(circle, black 65%, transparent 70%);
+  animation: ai-doctor-iris-rotate 24s linear infinite;
+}
+
+@keyframes ai-doctor-iris-rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.ai-doctor__pupil {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 28%;
+  height: 28%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background:
+    radial-gradient(
+      ellipse at center,
+      rgba(7, 9, 15, 1) 0%,
+      rgba(7, 9, 15, 0.95) 55%,
+      rgba(33, 140, 247, 0.15) 100%
+    );
+  box-shadow:
+    inset 0 2px 8px rgba(0, 0, 0, 0.8),
+    0 0 20px rgba(33, 140, 247, 0.2);
+  animation: ai-doctor-pupil-breathe 4s var(--ease-in-out) infinite alternate;
+}
+
+@keyframes ai-doctor-pupil-breathe {
+  from { transform: translate(-50%, -50%) scale(0.95); box-shadow: inset 0 2px 8px rgba(0,0,0,0.8), 0 0 12px rgba(33,140,247,0.15); }
+  to { transform: translate(-50%, -50%) scale(1.05); box-shadow: inset 0 2px 8px rgba(0,0,0,0.8), 0 0 28px rgba(33,140,247,0.3); }
+}
+
+/* ── Orbiting data rings ──────────────────────────────────────────── */
+.ai-doctor__orbits {
+  position: absolute;
+  inset: -12%;
+  pointer-events: none;
+}
+
+.ai-doctor__orbit {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  /* A plain border: `border-image` ignores `border-radius`, so the previous
+     gradient-border version rendered as a square frame, not a ring. */
+  border: 1px solid rgba(33, 140, 247, 0.22);
+  animation: ai-doctor-orbit-rotate var(--duration, 20s) linear infinite;
+}
+
+.ai-doctor__orbit--1 { --duration: 18s; --node-step: 0.3s; }
+.ai-doctor__orbit--2 { --duration: 28s; --node-step: 0.25s; animation-direction: reverse; }
+.ai-doctor__orbit--3 { --duration: 42s; --node-step: 0.2s; }
+
+@keyframes ai-doctor-orbit-rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Each node is a full-ring-sized transparent wrapper, so the visible dot can
+   sit on the ring's edge at any angle while its pulse scales around the dot's
+   own centre (scaling the wrapper would drag the dot radially in and out). */
+.ai-doctor__orbit-node {
+  position: absolute;
+  inset: 0;
+  transform: rotate(var(--node-angle, 0deg));
+}
+
+.ai-doctor__orbit-node::before {
+  content: "";
+  position: absolute;
+  top: -3px;
+  left: 50%;
+  width: 6px;
+  height: 6px;
+  margin-left: -3px;
+  border-radius: 50%;
+  background: var(--gradient-brand);
+  box-shadow:
+    0 0 8px rgba(33, 140, 247, 0.8),
+    0 0 16px rgba(123, 77, 255, 0.4);
+  animation: ai-doctor-node-pulse 2s var(--ease-in-out) infinite alternate;
+  animation-delay: calc(var(--node-i, 0) * var(--node-step, 0.2s));
+}
+
+/* Spread the 8 nodes evenly, stagger their pulse into a travelling wave. */
+.ai-doctor__orbit-node:nth-child(1) { --node-angle: 0deg;   --node-i: 0; }
+.ai-doctor__orbit-node:nth-child(2) { --node-angle: 45deg;  --node-i: 1; }
+.ai-doctor__orbit-node:nth-child(3) { --node-angle: 90deg;  --node-i: 2; }
+.ai-doctor__orbit-node:nth-child(4) { --node-angle: 135deg; --node-i: 3; }
+.ai-doctor__orbit-node:nth-child(5) { --node-angle: 180deg; --node-i: 4; }
+.ai-doctor__orbit-node:nth-child(6) { --node-angle: 225deg; --node-i: 5; }
+.ai-doctor__orbit-node:nth-child(7) { --node-angle: 270deg; --node-i: 6; }
+.ai-doctor__orbit-node:nth-child(8) { --node-angle: 315deg; --node-i: 7; }
+
+@keyframes ai-doctor-node-pulse {
+  from { transform: scale(0.7); opacity: 0.6; }
+  to { transform: scale(1.2); opacity: 1; }
+}
+
+/* ── Floating geometric accents ───────────────────────────────────── */
+.ai-doctor__accent {
+  position: absolute;
+  border-radius: var(--radius-sm);
+  background: var(--gradient-surface);
+  border: 1px solid var(--hairline);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  opacity: 0.7;
+  transition: transform 0.3s var(--ease-out), opacity 0.3s var(--ease-out);
+  will-change: transform, opacity;
+  pointer-events: none;
+}
+
+.ai-doctor__accent--1 {
+  top: 8%;
+  right: 12%;
+  width: 32px;
+  height: 32px;
+  animation: ai-doctor-accent-float 5s var(--ease-in-out) infinite alternate;
+}
+
+.ai-doctor__accent--2 {
+  top: 18%;
+  right: -2%;
+  width: 20px;
+  height: 20px;
+  animation: ai-doctor-accent-float 4.2s var(--ease-in-out) infinite alternate-reverse;
+}
+
+.ai-doctor__accent--3 {
+  top: 38%;
+  right: -5%;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  animation: ai-doctor-accent-float 3.8s var(--ease-in-out) infinite alternate;
+}
+
+.ai-doctor__accent--4 {
+  bottom: 12%;
+  right: 8%;
+  width: 28px;
+  height: 18px;
+  animation: ai-doctor-accent-float 4.8s var(--ease-in-out) infinite alternate-reverse;
+}
+
+.ai-doctor__accent--5 {
+  bottom: 6%;
+  left: 10%;
+  width: 22px;
+  height: 22px;
+  animation: ai-doctor-accent-float 5.5s var(--ease-in-out) infinite alternate;
+}
+
+.ai-doctor__accent--6 {
+  top: 12%;
+  left: -3%;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  animation: ai-doctor-accent-float 3.5s var(--ease-in-out) infinite alternate-reverse;
+}
+
+.ai-doctor__accent--7 {
+  top: 32%;
+  left: -6%;
+  width: 18px;
+  height: 10px;
+  animation: ai-doctor-accent-float 4.3s var(--ease-in-out) infinite alternate;
+}
+
+.ai-doctor__accent--8 {
+  bottom: 22%;
+  left: 6%;
+  width: 24px;
+  height: 14px;
+  animation: ai-doctor-accent-float 5.2s var(--ease-in-out) infinite alternate-reverse;
+}
+
+@keyframes ai-doctor-accent-float {
+  from { transform: translateY(0) rotate(0deg); opacity: 0.5; }
+  to { transform: translateY(-12px) rotate(8deg); opacity: 0.85; }
+}
+
+/* ── Neural connection lines ──────────────────────────────────────── */
+.ai-doctor__neural {
+  position: absolute;
+  inset: -15%;
+  pointer-events: none;
+  opacity: 0.5;
+  animation: ai-doctor-neural-breathe 10s var(--ease-in-out) infinite alternate;
+}
+
+@keyframes ai-doctor-neural-breathe {
+  from { opacity: 0.3; }
+  to { opacity: 0.6; }
+}
+
+/* ── Scan line ────────────────────────────────────────────────────── */
+.ai-doctor__scanline {
+  position: absolute;
+  inset: -12%;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(33, 140, 247, 0.6),
+    rgba(123, 77, 255, 0.8),
+    rgba(33, 140, 247, 0.6),
+    transparent
+  );
+  border-radius: 50%;
+  filter: blur(1px);
+  opacity: 0;
+  animation: ai-doctor-scan 3.5s var(--ease-in-out) infinite;
+}
+
+@keyframes ai-doctor-scan {
+  0% { top: -12%; opacity: 0; transform: scaleX(0.3); }
+  15% { opacity: 0.8; transform: scaleX(1); }
+  50% { top: 112%; opacity: 0.8; transform: scaleX(1); }
+  65% { opacity: 0; transform: scaleX(0.3); }
+  100% { top: -12%; opacity: 0; transform: scaleX(0.3); }
+}
+
+/* ── Status indicator ─────────────────────────────────────────────── */
+.ai-doctor__status {
+  position: absolute;
+  bottom: -60px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 1rem;
+  background: var(--glass);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-pill);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  opacity: 0;
+  animation: ai-doctor-status-in 1.2s var(--ease-out) 2s forwards;
+}
+
+.ai-doctor__status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--success);
+  box-shadow: 0 0 8px rgba(74, 222, 128, 0.7);
+  animation: pulse-soft 1.8s var(--ease-in-out) infinite;
+}
+
+.ai-doctor__status-text {
+  text-transform: uppercase;
+}
+
+@keyframes ai-doctor-status-in {
+  from { opacity: 0; transform: translateX(-50%) translateY(10px); }
+  to { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+/* ── Ground reflection ────────────────────────────────────────────── */
+.ai-doctor__reflection {
+  position: absolute;
+  bottom: -70px;
+  left: 50%;
+  width: 60%;
+  height: 80px;
+  transform: translateX(-50%) scaleY(0.4);
+  border-radius: 50%;
+  background:
+    radial-gradient(
+      ellipse at center,
+      rgba(33, 140, 247, 0.06) 0%,
+      rgba(123, 77, 255, 0.04) 40%,
+      transparent 70%
+    );
+  filter: blur(20px);
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+/* ── Entrance animation ───────────────────────────────────────────── */
+.ai-doctor {
+  animation: ai-doctor-entrance 1.4s var(--ease-out) forwards;
+  opacity: 0;
+}
+
+@keyframes ai-doctor-entrance {
+  from {
+    opacity: 0;
+    transform: translateY(40px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ── Responsive sizing ────────────────────────────────────────────── */
+@media (max-width: 1024px) {
+  .ai-doctor { max-width: 420px; }
+  .ai-doctor__status { bottom: -50px; }
+}
+
+@media (max-width: 768px) {
+  .ai-doctor { max-width: 320px; }
+  .ai-doctor__status { bottom: -45px; font-size: 0.65rem; padding: 0.3rem 0.8rem; }
+  .ai-doctor__accent { opacity: 0.5; }
+}
+
+@media (max-width: 480px) {
+  .ai-doctor { max-width: 260px; }
+  .ai-doctor__status { display: none; }
+  .ai-doctor__halo { filter: blur(40px); }
+}
+
+/* ── Reduced motion ───────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .ai-doctor__halo,
+  .ai-doctor__nucleus,
+  .ai-doctor__iris,
+  .ai-doctor__pupil,
+  .ai-doctor__orbit,
+  .ai-doctor__orbit-node::before,
+  .ai-doctor__accent,
+  .ai-doctor__neural,
+  .ai-doctor__scanline,
+  .ai-doctor__status-dot {
+    animation: none !important;
+  }
+  .ai-doctor__halo { opacity: 0.5; transform: translate(-50%, -50%) scale(1); }
+  .ai-doctor__nucleus { opacity: 0.6; transform: scale(1); }
+  .ai-doctor__pupil { transform: translate(-50%, -50%) scale(1); }
+  .ai-doctor__accent { opacity: 0.5; transform: none !important; }
+  .ai-doctor__neural { opacity: 0.3; }
+  .ai-doctor__scanline { display: none; }
+  .ai-doctor__status { opacity: 1; }
+}

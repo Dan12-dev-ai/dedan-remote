@@ -1,0 +1,244 @@
+/* ============================================================================
+   DEDAN Remote — Design tokens
+   The single source of truth for the visual system.
+   Polished Enterprise Midnight Palette — Deep Slate Navy, Crisp Glass & Cyan/Blue Accents
+   ========================================================================= */
+
+:root {
+  /* ── Environment: Modern Corporate Midnight Navy Foundation ──────────────
+     Clean, professional slate-navy steps that avoid dull pitch-black,
+     delivering high-end SaaS feel (Stripe / Linear / Vercel style).           */
+  --env-void: #090e1a;
+  --env-abyss: #0b1324;
+  --env-base: #0d162d;
+  --env-raised: #121e3c;
+  --env-elevated: #18284e;
+  --env-floating: #203464;
+
+  /* Atmospheric light. Used at low opacity behind content. */
+  --atmo-azure: rgba(56, 189, 248, 0.18);
+  --atmo-indigo: rgba(99, 102, 241, 0.16);
+  --atmo-deep: rgba(30, 58, 138, 0.28);
+
+  /* ── Surfaces: crystalline glass layers over slate environment ────────── */
+  --surface-1: rgba(255, 255, 255, 0.038);
+  --surface-2: rgba(255, 255, 255, 0.065);
+  --surface-3: rgba(255, 255, 255, 0.095);
+  --surface-solid: var(--env-raised);
+  --surface-solid-2: var(--env-elevated);
+  --surface-invert: #f8fafc;
+
+  /* ── Hairlines: crisp, clean structural separators ─────────────────────── */
+  --line-faint: rgba(255, 255, 255, 0.07);
+  --line: rgba(255, 255, 255, 0.12);
+  --line-strong: rgba(255, 255, 255, 0.20);
+  --line-accent: rgba(56, 189, 248, 0.45);
+
+  /* ── Text: high-contrast executive readability ────────────────────────── */
+  --text-primary: #f8fafc;      /* Crisp white 18:1 */
+  --text-secondary: #cbd5e1;    /* Slate-200 11:1 */
+  --text-tertiary: #94a3b8;     /* Slate-400 7:1 */
+  --text-quaternary: #64748b;   /* Slate-500 4.5:1 */
+  --text-invert: #090e1a;
+
+  /* ── Accent: vibrant sky & royal azure ─────────────────────────────────── */
+  --accent: #0284c7;
+  --accent-bright: #38bdf8;
+  --accent-soft: #bae6fd;
+  --accent-deep: #0369a1;
+  --accent-tint: rgba(56, 189, 248, 0.14);
+  --accent-tint-strong: rgba(56, 189, 248, 0.24);
+  --violet: #818cf8;
+
+  --gradient-brand: linear-gradient(
+    115deg,
+    #38bdf8 0%,
+    #2563eb 52%,
+    #7c3aed 100%
+  );
+  --gradient-sheen: linear-gradient(
+    155deg,
+    rgba(255, 255, 255, 0.09) 0%,
+    rgba(255, 255, 255, 0.02) 45%,
+    transparent 100%
+  );
+  --gradient-fade-down: linear-gradient(
+    180deg,
+    transparent 0%,
+    var(--env-base) 100%
+  );
+
+  /* ── Semantic status ───────────────────────────────────────────────────── */
+  --success: #10b981;
+  --success-bright: #34d399;
+  --success-tint: rgba(16, 185, 129, 0.15);
+  --warning: #f59e0b;
+  --warning-bright: #fbbf24;
+  --warning-tint: rgba(245, 158, 11, 0.15);
+  --danger: #ef4444;
+  --danger-bright: #f87171;
+  --danger-tint: rgba(239, 68, 68, 0.15);
+  --info: var(--accent-bright);
+  --info-tint: rgba(56, 189, 248, 0.15);
+  --neutral: #94a3b8;
+  --neutral-tint: rgba(148, 163, 184, 0.15);
+
+  /* Focus ring — crisp sky blue */
+  --focus-ring: 0 0 0 2px var(--env-base), 0 0 0 4px var(--accent-bright);
+
+  /* ── Typography ───────────────────────────────────────────────────────── */
+  --font-display: "Space Grotesk", "Inter", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+  /* Editorial scale for hero/composition; UI scale for product surfaces. */
+  --fs-display: clamp(2.75rem, 6.6vw, 5.75rem);
+  --fs-display-sm: clamp(2rem, 4.4vw, 3.25rem);
+  --fs-h1: clamp(1.875rem, 3.6vw, 2.75rem);
+  --fs-h2: clamp(1.5rem, 2.6vw, 2rem);
+  --fs-h3: clamp(1.1875rem, 1.7vw, 1.375rem);
+  --fs-h4: 1.0625rem;
+  --fs-lead: clamp(1.0625rem, 1.4vw, 1.1875rem);
+  --fs-body: 1rem;
+  --fs-secondary: 0.9375rem;
+  --fs-meta: 0.875rem;
+  --fs-micro: 0.6875rem;
+
+  --lh-tight: 1.04;
+  --lh-heading: 1.22;
+  --lh-body: 1.55;
+  --lh-relaxed: 1.7;
+
+  --ls-display: -0.04em;
+  --ls-heading: -0.025em;
+  --ls-micro: 0.08em;
+
+  --fw-regular: 400;
+  --fw-medium: 500;
+  --fw-semibold: 600;
+  --fw-bold: 700;
+
+  /* ── Space: 4px base grid ──────────────────────────────────────────────── */
+  --sp-1: 0.25rem;
+  --sp-2: 0.5rem;
+  --sp-3: 0.75rem;
+  --sp-4: 1rem;
+  --sp-5: 1.25rem;
+  --sp-6: 1.5rem;
+  --sp-8: 2rem;
+  --sp-10: 2.5rem;
+  --sp-12: 3rem;
+  --sp-16: 4rem;
+  --sp-20: 5rem;
+  --sp-24: 6rem;
+  --sp-32: 8rem;
+
+  /* ── Radius ────────────────────────────────────────────────────────────── */
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-pill: 9999px;
+
+  /* ── Elevation: light cast down from the environment ───────────────────── */
+  --elev-edge: 0 0 0 1px var(--line);
+  --elev-1: 0 1px 2px rgba(0, 0, 0, 0.4), var(--elev-edge);
+  --elev-2: 0 4px 12px rgba(0, 0, 0, 0.5), var(--elev-edge);
+  --elev-3: 0 12px 32px rgba(0, 0, 0, 0.6), var(--elev-edge);
+  --elev-4: 0 24px 64px rgba(0, 0, 0, 0.7), var(--elev-edge);
+  --elev-accent: 0 0 28px rgba(56, 189, 248, 0.22);
+  --elev-accent-strong: 0 8px 32px rgba(56, 189, 248, 0.35);
+
+  /* ── Motion: physical springs for cards; quick transitions for controls ── */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+  --dur-fast: 120ms;
+  --dur-base: 220ms;
+  --dur-slow: 420ms;
+  --dur-ambient: 18s;
+
+  /* ── Layout measures ───────────────────────────────────────────────────── */
+  --page-max: 1320px;
+  --page-wide: 1540px;
+  --page-narrow: 840px;
+  --rail-w: 240px;
+  --nav-h: 68px;
+  --gutter: clamp(var(--sp-4), 3.2vw, var(--sp-8));
+
+  /* ── Master brand colors ─────────────────────────────────────────────────── */
+  --brand-navy: #090e1a;
+  --brand-cyan: #38bdf8;
+  --brand-mid: #2563eb;
+  --brand-blue: #1d4ed8;
+  --brand-violet: #7c3aed;
+  --brand-cyan-muted: #7dd3fc;
+
+  /* ── Z-index ladder ───────────────────────────────────────────────────── */
+  --z-environment: -10;
+  --z-base: 0;
+  --z-content: 1;
+  --z-overlay: 10;
+  --z-dropdown: 50;
+  --z-nav: 100;
+  --z-modal-backdrop: 200;
+  --z-modal: 210;
+  --z-toast: 300;
+  --z-command-palette: 400;
+}
+
+:root {
+  --mode-bleed-inset: clamp(var(--sp-4), 3vw, var(--sp-10));
+  --mode-wide-max: 1680px;
+  --mode-standard-max: 1240px;
+  --mode-compact-max: 760px;
+  --mode-float-max: 520px;
+
+  --zone-context-w: 244px;
+  --zone-intel-w: 320px;
+  --zone-gap: clamp(var(--sp-6), 2.2vw, var(--sp-10));
+  --rail-w-lg: 300px;
+  --gutter-fluid: clamp(var(--sp-4), 2.6vw, var(--sp-8));
+}
+
+:root {
+  --nav-height: var(--nav-h);
+  --sidebar-width: var(--rail-w);
+  --content-max: var(--mode-standard-max);
+  --content-wide: var(--mode-wide-max);
+
+  --glass-thin: var(--surface-1);
+  --glass: var(--surface-2);
+  --glass-strong: var(--surface-3);
+  --hairline: var(--line);
+  --hairline-strong: var(--line-strong);
+  --bg-base: var(--env-base);
+  --bg-elevated: var(--env-elevated);
+  --bg-overlay: rgba(9, 14, 26, 0.78);
+
+  --text-xs: 0.75rem;
+  --text-sm: 0.8125rem;
+  --text-base: var(--fs-secondary);
+  --text-md: var(--fs-h4);
+  --text-lg: 1.25rem;
+  --text-xl: 1.5rem;
+  --text-2xl: var(--fs-h2);
+  --text-display: var(--fs-display);
+  --text-inverse: var(--text-invert);
+
+  --accent-strong: var(--accent-bright);
+  --accent-dim: var(--accent-tint);
+  --gradient-surface: var(--gradient-sheen);
+  --shadow-sm: var(--elev-1);
+  --shadow-md: var(--elev-2);
+  --shadow-lg: var(--elev-4);
+  --glow-accent: var(--elev-accent);
+
+  --success-dim: var(--success-tint);
+  --warning-dim: var(--warning-tint);
+  --danger-dim: var(--danger-tint);
+
+  --z-bg: var(--z-environment);
+}

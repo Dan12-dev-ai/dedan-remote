@@ -1,0 +1,89 @@
+/* Ambient cinematic environment — Enterprise Business Grade */
+
+.cinematic {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-bg);
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.cinematic__gradient {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(1300px 850px at 75% -10%, rgba(56, 189, 248, 0.12), transparent 60%),
+    radial-gradient(1100px 750px at 15% 105%, rgba(99, 102, 241, 0.10), transparent 55%),
+    radial-gradient(800px 600px at 50% 40%, rgba(14, 165, 233, 0.05), transparent 70%),
+    var(--bg-base);
+}
+
+.cinematic__aurora {
+  position: absolute;
+  width: 60vw;
+  height: 60vw;
+  border-radius: 50%;
+  filter: blur(100px);
+  opacity: 0.6;
+  will-change: transform;
+}
+
+.cinematic__aurora--a {
+  top: -15%;
+  right: -10%;
+  background: radial-gradient(circle at center,
+    rgba(56, 189, 248, 0.18), rgba(37, 99, 235, 0.08), transparent 70%);
+  animation: cinematic-drift-a 42s var(--ease-in-out) infinite alternate;
+}
+
+.cinematic__aurora--b {
+  bottom: -20%;
+  left: -10%;
+  background: radial-gradient(circle at center,
+    rgba(129, 140, 248, 0.15), rgba(99, 102, 241, 0.06), transparent 70%);
+  animation: cinematic-drift-b 50s var(--ease-in-out) infinite alternate;
+}
+
+@keyframes cinematic-drift-a {
+  from { transform: translate3d(0, 0, 0) scale(1); }
+  to { transform: translate3d(-5vw, 6vh, 0) scale(1.1); }
+}
+@keyframes cinematic-drift-b {
+  from { transform: translate3d(0, 0, 0) scale(1.05); }
+  to { transform: translate3d(6vw, -5vh, 0) scale(1); }
+}
+
+/* Fine architectural data grid — Clean, sharp, executive feel */
+.cinematic__grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(ellipse 90% 75% at 50% 30%,
+    black 35%, transparent 85%);
+  -webkit-mask-image: radial-gradient(ellipse 90% 75% at 50% 30%,
+    black 35%, transparent 85%);
+}
+
+.cinematic__vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center,
+    transparent 60%, rgba(10, 15, 29, 0.5) 100%);
+}
+
+.cinematic__particles {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.8;
+}
+
+/* Reduced motion: freeze to a static, clean frame. */
+@media (prefers-reduced-motion: reduce) {
+  .cinematic__aurora { animation: none !important; }
+  .cinematic__particles { display: none; }
+}

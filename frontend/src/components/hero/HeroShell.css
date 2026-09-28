@@ -1,0 +1,261 @@
+/* ── Hero Shell - Enterprise Grade Business Presentation ─────────────── */
+
+.hero-shell {
+  position: relative;
+  overflow: hidden;
+  background: transparent;
+  min-height: calc(100dvh - var(--nav-h));
+  display: flex;
+  align-items: center;
+}
+
+.hero-shell-content {
+  width: 100%;
+  max-width: var(--mode-wide-max);
+  margin-inline: auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.95fr);
+  gap: clamp(var(--sp-8), 4vw, var(--sp-16));
+  padding-block: clamp(var(--sp-12), 6vw, var(--sp-24));
+  padding-inline: var(--gutter-fluid);
+  position: relative;
+  z-index: var(--z-content);
+  align-items: center;
+}
+
+.hero-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+}
+
+.hero-content > *:not(:last-child) {
+  margin-bottom: var(--sp-6);
+}
+
+.hero-visual {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+}
+
+.hero-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(2.5rem, 5.2vw, 4.4rem);
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+  color: var(--text-primary);
+}
+
+.hero-title-gradient {
+  background: linear-gradient(135deg, #38bdf8 0%, #60a5fa 50%, #c084fc 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  display: inline-block;
+}
+
+.hero-subtitle {
+  font-size: clamp(1rem, 1.25vw, 1.15rem);
+  line-height: 1.65;
+  color: var(--text-secondary);
+  max-width: 48ch;
+}
+
+/* ── Eyebrow Pill ──────────────────────────────────────────────────────── */
+
+.hero-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.4rem 0.95rem;
+  border-radius: var(--radius-pill);
+  background: rgba(30, 41, 59, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  width: fit-content;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+}
+
+.hero-eyebrow-text {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.hero-eyebrow-separator {
+  color: var(--text-quaternary);
+}
+
+.hero-eyebrow-status {
+  color: #38bdf8;
+  font-weight: 600;
+}
+
+.hero-eyebrow-dim {
+  color: var(--text-tertiary);
+  font-size: 0.75rem;
+}
+
+.hero-pulse {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.hero-pulse--ok {
+  background: var(--success);
+  box-shadow: 0 0 10px rgba(74, 222, 128, 0.8);
+  animation: pulse-soft 2.4s var(--ease-in-out) infinite;
+}
+
+.hero-pulse--warn {
+  background: var(--warning);
+  box-shadow: 0 0 8px rgba(251, 191, 36, 0.6);
+}
+
+@keyframes pulse-soft {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.85); }
+}
+
+/* ── Social Proof & Customer Rating Bar ───────────────────────────────── */
+
+.hero-social-proof {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  margin-top: var(--sp-2);
+  padding: 0.65rem 1rem;
+  background: rgba(15, 23, 42, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-md);
+  width: fit-content;
+  backdrop-filter: blur(10px);
+}
+
+.hero-rating-stars {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.hero-rating-stars .stars {
+  color: #fbbf24;
+  font-size: 0.95rem;
+  letter-spacing: 1px;
+}
+
+.hero-rating-stars .rating-num {
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.hero-rating-divider {
+  width: 1px;
+  height: 16px;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.hero-rating-text {
+  font-size: 0.8125rem;
+  color: var(--text-secondary);
+}
+
+.hero-rating-text strong {
+  color: #38bdf8;
+  font-weight: 600;
+}
+
+/* ── Hero Search Form ─────────────────────────────────────────────────── */
+
+.hero-search-form {
+  display: flex;
+  gap: var(--sp-3);
+  max-width: 580px;
+  background: rgba(15, 23, 42, 0.7);
+  padding: 0.35rem;
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25), 0 0 15px rgba(56, 189, 248, 0.08);
+  backdrop-filter: blur(14px);
+}
+
+.hero-search-input {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-md);
+  border: none;
+  background: transparent;
+  color: var(--text-primary);
+  font-size: 1rem;
+}
+
+.hero-search-input:focus {
+  outline: none;
+}
+
+.hero-search-input::placeholder {
+  color: var(--text-tertiary);
+}
+
+.hero-search-button {
+  padding: 0 1.5rem;
+  border-radius: var(--radius-md);
+  background: linear-gradient(135deg, #0284c7 0%, #2563eb 100%);
+  color: #ffffff;
+  border: none;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--dur-fast) var(--ease-out);
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+}
+
+.hero-search-button:hover {
+  background: linear-gradient(135deg, #0369a1 0%, #1d4ed8 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(37, 99, 235, 0.5);
+}
+
+/* ── Responsive rules ─────────────────────────────────────────────────── */
+
+@media (max-width: 1080px) {
+  .hero-shell-content {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--sp-8);
+    padding-block: var(--sp-12);
+  }
+
+  .hero-title {
+    font-size: clamp(2.2rem, 6vw, 3.4rem);
+  }
+
+  .hero-subtitle {
+    max-width: 100%;
+  }
+
+  .hero-social-proof {
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 640px) {
+  .hero-search-form {
+    flex-direction: column;
+    padding: 0.5rem;
+  }
+  .hero-search-button {
+    padding: 0.75rem 1rem;
+  }
+}

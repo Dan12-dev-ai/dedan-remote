@@ -1,0 +1,39 @@
+.save-btn {
+  position: relative;
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  color: var(--text-tertiary);
+  background: var(--glass-thin);
+  border: 1px solid var(--hairline);
+  transition: color var(--dur-base) var(--ease-out),
+    background var(--dur-base) var(--ease-out),
+    border-color var(--dur-base) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
+  flex-shrink: 0;
+}
+.save-btn:hover {
+  color: var(--accent-strong);
+  border-color: rgba(33, 140, 247, 0.4);
+  background: var(--accent-dim);
+}
+.save-btn:active { transform: scale(0.9); }
+.save-btn--on {
+  color: var(--accent);
+  background: var(--accent-dim);
+  border-color: rgba(33, 140, 247, 0.4);
+}
+.save-btn--burst::after {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 2px solid rgba(33, 140, 247, 0.55);
+  animation: save-burst 460ms var(--ease-out) forwards;
+}
+@keyframes save-burst {
+  from { transform: scale(0.7); opacity: 1; }
+  to { transform: scale(1.6); opacity: 0; }
+}

@@ -1,0 +1,63 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+*.egg
+.venv/
+venv/
+
+# Node / frontend
+node_modules/
+npm-debug.log*
+.vite/
+
+# Environment
+.env
+credentials.json
+
+# Data
+data/*.db
+data/*.db-journal
+data/*.db-wal
+
+# Logs
+logs/*.log
+logs/*.log.*
+*.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Coverage
+htmlcov/
+.coverage
+.coverage.*
+coverage.xml
+.pytest_cache/
+.hypothesis/
+tests/pytest.log
+
+# Docker
+.docker/
+
+# mypy
+.mypy_cache/
+
+# Misc
+*.sqlite3
+
+# PID files
+*.pid
+
+# Build artifacts
+.benchmarks/

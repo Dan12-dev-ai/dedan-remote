@@ -1,0 +1,165 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# AI Opportunity Discovery System — Docker Compose
+# With AE-OS Enterprise Multi-Agent Backbone Infrastructure
+# ─────────────────────────────────────────────────────────────────────────────
+
+services:
+  ai-opportunity-finder:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ai-opportunity-finder
+    restart: unless-stopped
+    depends_on:
+      redis:
+        condition: service_started
+      postgres:
+        condition: service_healthy
+      neo4j:
+        condition: service_started
+      qdrant:
+        condition: service_started
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+      - ./.env:/app/.env:ro
+    environment:
+      - PYTHONUNBUFFERED=1
+      - TZ=UTC
+      # AE-OS Backend Connections (optional - set AEOS_ENABLED=true in .env to enable)
+      - AEOS_ENABLED=${AEOS_ENABLED:-false}
+      - AEOS_REDIS_URL=redis://redis:6379/0
+      - AEOS_POSTGRES_HOST=postgres
+      - AEOS_POSTGRES_PORT=5432
+      - AEOS_POSTGRES_USER=aeos
+      # Single source of truth: the same value seeds the `postgres` service
+      # below. Never hardcode it here or the two will silently diverge.
+      - AEOS_POSTGRES_PASSWORD=${AEOS_POSTGRES_PASSWORD:-aeos_password}
+      - AEOS_POSTGRES_DATABASE=aeos_episodic
+      - AEOS_NEO4J_URI=bolt://neo4j:7687
+      - AEOS_NEO4J_USER=neo4j
+      - AEOS_NEO4J_PASSWORD=aeos_neo4j
+      - AEOS_QDRANT_HOST=qdrant
+      - AEOS_QDRANT_PORT=6333
+      - AEOS_METRICS_PORT=9090
+    ports:
+      # The API / SPA. 0.0.0.0 inside the container so the published port is
+      # actually reachable from outside (uvicorn binding 127.0.0.1 would make
+      # the published port refuse connections).
+      - "8000:8000"
+      # Prometheus metrics.
+      - "9090:9090"  # Prometheus metrics
+    # Run both long-lived processes: the discovery scheduler and the HTTP API.
+    # The image's default CMD only starts the scheduler, so the API would never
+    # come up under plain `docker compose up`.
+    command: >
+      sh -c "python main.py &
+             exec uvicorn api.main:app --host 0.0.0.0 --port 8000 --proxy-headers"
+    healthcheck:
+      test: ["CMD", "python", "-c", "from database.database import Database; db=Database(); db.connect(); db.close()"]
+      interval: 60s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    # Uncomment to run a single cycle instead of scheduler
+    # command: python main.py --once --aeos
+
+  # ── Redis — Tier 1 Working Memory / Keyspace Events ────────────────────
+  redis:
+    image: redis:7-alpine
+    container_name: aeos-redis
+    restart: unless-stopped
+    # Deliberately NOT published to the host. Redis ships with no
+    # authentication, so exposing 6379 publicly is an open relay.
+    # Reach it with: docker compose exec redis redis-cli
+    expose:
+      - "6379"
+    volumes:
+      - redis-data:/data
+    command: redis-server --appendonly yes --notify-keyspace-events Ex
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── PostgreSQL — Tier 2 Episodic Memory ─────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    container_name: aeos-postgres
+    restart: unless-stopped
+    # Not published: credentials live in .env, and this DB is only reachable
+    # from the app container on the compose network.
+    expose:
+      - "5432"
+    environment:
+      POSTGRES_USER: aeos
+      # Single source of truth for the database password. The app container
+      # receives this exact value (see AEOS_POSTGRES_PASSWORD above), so the
+      # two can never drift. Set it once in .env.
+      POSTGRES_PASSWORD: ${AEOS_POSTGRES_PASSWORD:-aeos_password}
+      POSTGRES_DB: aeos_episodic
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U aeos -d aeos_episodic"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  # ── Neo4j — Tiers 4-7 Epistemic Graph ──────────────────────────────────
+  neo4j:
+    image: neo4j:5-community
+    container_name: aeos-neo4j
+    restart: unless-stopped
+    # Not published by default — the Neo4j browser is unauthenticated at the
+    # HTTP layer. To inspect the graph from your laptop, forward it instead:
+    #   ssh -L 7474:localhost:7474 <server>
+    expose:
+      - "7474"  # HTTP browser
+      - "7687"  # Bolt protocol
+    environment:
+      NEO4J_AUTH: neo4j/aeos_neo4j
+      NEO4J_PLUGINS: '["apoc"]'
+      NEO4J_dbms_security_procedures_unrestricted: apoc.*
+    volumes:
+      - neo4j-data:/data
+      - neo4j-logs:/logs
+
+  # ── Qdrant — Tier 3 Vector Store ────────────────────────────────────────
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: aeos-qdrant
+    restart: unless-stopped
+    # Unauthenticated vector DB — internal only by default.
+    expose:
+      - "6333"  # REST API
+      - "6334"  # gRPC
+    volumes:
+      - qdrant-data:/qdrant/storage
+
+  # ── Prometheus — Metrics Scraper (optional) ────────────────────────────
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: aeos-prometheus
+    restart: unless-stopped
+    ports:
+      - "9091:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--web.enable-lifecycle'
+
+volumes:
+  redis-data:
+  postgres-data:
+  neo4j-data:
+  neo4j-logs:
+  qdrant-data:
+  prometheus-data:

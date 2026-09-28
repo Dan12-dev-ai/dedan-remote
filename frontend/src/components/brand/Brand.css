@@ -1,0 +1,127 @@
+/* ============================================================================
+   Brand — logo lockups
+   Sized entirely from `--brand-h`, which `Brand.tsx` sets per size step, so a
+   new size never needs new CSS.
+   ========================================================================= */
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55em;
+  flex-shrink: 0;
+  line-height: 1;
+  color: var(--text-primary);
+}
+
+.brand__art,
+.brand .logo-mark {
+  display: block;
+  height: var(--brand-h, 32px);
+  width: auto;
+  flex-shrink: 0;
+  object-fit: contain;
+}
+
+/* Raster lockups already contain spacing, so no gap is added around them. */
+.brand--lockup,
+.brand--lockup-tagline {
+  gap: 0;
+}
+
+.brand--link {
+  transition: opacity var(--dur-fast) var(--ease-out),
+    filter var(--dur-fast) var(--ease-out);
+}
+
+.brand--link:hover {
+  opacity: 0.88;
+}
+
+.brand--link:active {
+  opacity: 0.76;
+}
+
+/* ── Wordmark ─────────────────────────────────────────────────────────── */
+
+.wordmark {
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.28em;
+  min-width: 0;
+}
+
+.wordmark__primary {
+  font-family: var(--font-display);
+  font-weight: var(--fw-bold);
+  /* Optical size, not an arbitrary number: the cap height of the master logo's
+     wordmark is ~5/8 of the mark's height. */
+  font-size: calc(var(--brand-h, 32px) * 0.6);
+  letter-spacing: 0.055em;
+  line-height: 1;
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+
+/* The gradient "A" is the logo's one signature detail inside the word. */
+.wordmark__accent {
+  background: var(--gradient-brand);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.wordmark__sub {
+  display: flex;
+  align-items: center;
+  gap: 0.7em;
+  font-family: var(--font-mono);
+  font-size: calc(var(--brand-h, 32px) * 0.2);
+  font-weight: var(--fw-medium);
+  letter-spacing: 0.4em;
+  /* Compensate for the trailing letter-space so the rules stay optically even. */
+  text-indent: 0.4em;
+  color: var(--brand-cyan-muted);
+  white-space: nowrap;
+}
+
+/* Flanking rules — the dashes either side of REMOTE in the master logo. */
+.wordmark__sub::before,
+.wordmark__sub::after {
+  content: "";
+  flex: 1 1 auto;
+  min-width: 1.4em;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--brand-cyan-muted),
+    var(--brand-violet)
+  );
+}
+
+.wordmark__sub::after {
+  background: linear-gradient(
+    90deg,
+    var(--brand-violet),
+    var(--brand-cyan-muted),
+    transparent
+  );
+}
+
+/* ── Compact contexts ─────────────────────────────────────────────────── */
+
+/* Below md the sub-word is dropped by the component, but if a caller forces it
+   on at a tiny size we hide it rather than render illegible micro-type. */
+.brand--xs .wordmark__sub,
+.brand--sm .wordmark__sub {
+  font-size: max(7px, calc(var(--brand-h, 32px) * 0.2));
+}
+
+@media (max-width: 400px) {
+  /* Extra-small viewports: the wordmark is the first thing to go so the
+     navigation actions keep their breathing room. */
+  .brand--composite .wordmark {
+    display: none;
+  }
+}

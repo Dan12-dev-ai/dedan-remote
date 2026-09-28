@@ -1,0 +1,20 @@
+# ── Prometheus Scrape Configuration for AE-OS ───────────────────────────────
+# Auto-discovers the ai-opportunity-finder metrics endpoint.
+# ─────────────────────────────────────────────────────────────────────────────
+
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  scrape_timeout: 10s
+
+scrape_configs:
+  - job_name: "aeos-core"
+    static_configs:
+      - targets: ["ai-opportunity-finder:9090"]
+        labels:
+          service: "aeos-orchestrator"
+          tier: "core"
+
+  - job_name: "prometheus"
+    static_configs:
+      - targets: ["localhost:9090"]
