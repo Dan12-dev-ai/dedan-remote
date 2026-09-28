@@ -47,7 +47,7 @@ numpy>=1.26.0
 # Testing — Production-Grade Verification Suite
 pytest>=8.0.0
 pytest-asyncio>=0.23.0
-pytest-cov>=5.0.0
+pytest-cov>=7.1.0
 pytest-mock>=3.14.0
 pytest-xdist>=3.5.0
 pytest-timeout>=2.2.0
