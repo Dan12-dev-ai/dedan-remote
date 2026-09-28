@@ -69,7 +69,7 @@ pycryptodome>=3.19.0
 requests>=2.31.0
 
 # Code Quality
-mypy>=1.10.0
+mypy>=2.3.1
 black>=24.0.0
 flake8>=7.0.0
 isort>=5.13.0
