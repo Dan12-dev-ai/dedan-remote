@@ -36,6 +36,76 @@ from core.api_sentinel import APISentinel, IdempotencyKeyManager
 from core.database_async import AsyncPostgresDB
 from models.job import Job, job_from_scraper_result
 
+# ── Hermetic discovery database ──────────────────────────────────────────────
+#
+# The API layer reads the engine's SQLite database through
+# ``settings.DATABASE_PATH`` (default ``data/opportunities.db``). Point it at a
+# throwaway file created with the engine's own schema so the suite never depends
+# on a developer machine's ``data/`` directory — CI has no such directory, which
+# produced "unable to open database file" and an HTTP 500 on every /api/jobs
+# call.
+#
+# This must run before the first ``get_settings()`` call, i.e. before the API
+# modules are imported during test collection.
+TEST_JOBS_DB = Path(tempfile.gettempdir()) / "dedan_test_opportunities.db"
+os.environ["DATABASE_PATH"] = str(TEST_JOBS_DB)
+
+# Start each session from a clean file so the dataset is deterministic. Only the
+# xdist controller (which collects before forking workers) removes it, so parallel
+# workers can never pull the database out from under each other.
+if not os.environ.get("PYTEST_XDIST_WORKER"):
+    TEST_JOBS_DB.unlink(missing_ok=True)
+
+# Representative discovery rows. API tests assert on real records — card fields,
+# detail lookup, save/apply by job id — so the throwaway DB must contain jobs.
+TEST_JOBS: list[tuple[Job, float]] = [
+    (
+        Job(
+            title="AI Data Annotator — Amharic",
+            company="OneForma",
+            url="https://www.oneforma.com/jobs/ai-data-annotator-amharic",
+            source="oneforma",
+            salary="$18/hr",
+            country="Ethiopia",
+            remote=True,
+            posted_date="2026-09-01",
+            description="Annotate Amharic text and audio for AI training datasets.",
+            tags=["ai", "annotation", "amharic", "remote"],
+        ),
+        78.0,
+    ),
+    (
+        Job(
+            title="LLM Evaluation Specialist",
+            company="Outlier",
+            url="https://outlier.ai/expert-jobs/llm-evaluation-specialist",
+            source="outlier",
+            salary=None,
+            country="Ethiopia",
+            remote=True,
+            posted_date="2026-09-10",
+            description="Review and rank model responses for instruction-following quality.",
+            tags=["ai", "llm", "evaluation"],
+        ),
+        71.5,
+    ),
+    (
+        Job(
+            title="AI Trainer — Amharic (Part-Time)",
+            company="TELUS Digital",
+            url="https://jobs.telusdigital.com/ai-trainer-amharic",
+            source="telus",
+            salary="$12/hr",
+            country="Ethiopia",
+            remote=False,
+            posted_date="2026-09-15",
+            description="Contribute Amharic language data for model improvement.",
+            tags=["ai", "training", "amharic"],
+        ),
+        66.0,
+    ),
+]
+
 # ── Scope & Markers ──────────────────────────────────────────────────────────
 
 
@@ -70,9 +140,21 @@ def setup_test_session() -> Generator[None, None, None]:
     Initializes:
       - Faker seed for reproducibility
       - Test environment variables
+      - The throwaway discovery SQLite schema used by the read-only API layer
     """
     # Seed Faker for reproducible test data
     Faker.seed(42)
+
+    # Create the engine's schema and seed representative jobs in the throwaway
+    # DB. Both steps are idempotent, so parallel xdist workers can run this
+    # safely.
+    from database.database import Database
+
+    db = Database(str(TEST_JOBS_DB))
+    db.create_tables()
+    for job, score in TEST_JOBS:
+        db.insert_job(job, score)
+    db.close()
 
     yield
 

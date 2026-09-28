@@ -6,23 +6,29 @@ This document details the complete testing strategy, test layers, and verificati
 
 ## 1. Test Suite Summary
 
-The repository contains **350 tests** organized across four primary verification layers:
+The repository contains **357 tests** organized across four primary verification layers:
 
 ```
 tests/
-├── test_api.py                           # 48 tests: FastAPI REST endpoints, auth, security headers
-├── test_database.py                      # 30 tests: SQLite ledger, migrations, deduplication, edge cases
-├── test_email.py                         # 12 tests: SMTP email formatting & error handling
-├── test_notifications.py                 # 24 tests: Telegram, Discord, and multi-channel dispatch
-├── test_ranking.py                       # 14 tests: Deterministic scoring rules & threshold weights
-├── test_scheduler.py                     # 8 tests: Discovery cycle scheduler & event loop
-├── test_scrapers.py                      # 44 tests: 9 platform parsers, contracts, fallback URLs
-├── test_intelligence.py                  # 22 tests: Eligibility, skill matching, difficulty, predictor
-├── test_postgres_database.py             # 35 tests: Async PostgreSQL methods & model conversion
-├── test_security_penetration.py          # 36 tests: Sentinel HMAC idempotency, DLQ, and input checks
-├── test_financial_ledger_property_based.py # 7 tests: Hypothesis property-based invariants
-└── test_integration_docker.py            # Docker container integration tests (TestContainers)
+├── test_api.py                           # 83 tests: FastAPI REST endpoints, auth, jobs, saved/applications
+├── test_cache_redis_layer.py             # 17 tests: Redis cache layer behaviour (container-gated)
+├── test_database.py                      # 22 tests: SQLite ledger, deduplication, property invariants
+├── test_email.py                         # 7 tests: SMTP email formatting & error handling
+├── test_financial_ledger_property_based.py # 5 tests: Hypothesis ledger conservation laws
+├── test_integration_docker.py            # 22 tests: Docker container integration (PostgreSQL, Redis)
+├── test_intelligence.py                  # 45 tests: Eligibility, skill matching, difficulty, predictor
+├── test_models.py                        # 8 tests: Job dataclass creation and behaviour
+├── test_notifications.py                 # 22 tests: Telegram, Discord, multi-channel dispatch
+├── test_postgres_database.py             # 30 tests: Async PostgreSQL methods & model conversion
+├── test_ranking.py                       # 8 tests: Deterministic scoring rules & threshold weights
+├── test_redis_keyspace_listener.py       # 3 tests: Tier-1 key expiry → distillation, vector sync
+├── test_scheduler.py                     # 4 tests: Discovery cycle scheduler & event loop
+├── test_scrapers.py                      # 43 tests: 9 platform parsers, contracts, fallback URLs
+└── test_security_penetration.py          # 38 tests: Sentinel HMAC idempotency, DLQ, input checks
 ```
+
+Counts are collected-test counts (`pytest --collect-only`, 2026-09-28); parametrised
+tests expand, so a file's count exceeds its number of `def test_` functions.
 
 ---
 
@@ -33,14 +39,21 @@ Executes all functional tests, API route validation, scraper parsers, and determ
 ```bash
 python3 -m pytest tests/ -v -m "not integration and not property_based"
 ```
-*Current status: 269 passed, 27 skipped (container/sentinel integration mocks), 54 deselected in ~33 seconds.*
+*Current status: 276 passed, 27 skipped (container-gated integration tests), 54 deselected in ~21 seconds.*
+
+**The discovery database is provisioned by the suite.** `tests/conftest.py` points
+`DATABASE_PATH` at a throwaway SQLite file (`$TMPDIR/dedan_test_opportunities.db`),
+creates the engine's schema through the engine's own `Database.create_tables()`, and
+seeds three representative jobs before the first test runs. The API tests therefore
+need no developer `data/opportunities.db`; without this provisioning their absence
+in CI made every `/api/jobs` call return HTTP 500.
 
 ### Property-Based Invariant Tests (Hypothesis)
 Validates financial ledger conservation laws and database state invariants across 1,000+ pseudo-random permutations:
 ```bash
 python3 -m pytest tests/ -v -m "property_based"
 ```
-*Current status: 7 passed in ~63 seconds.*
+*Current status: 7 passed in ~42 seconds.*
 
 ### Run Specific Test Modules
 ```bash

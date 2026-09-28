@@ -213,7 +213,7 @@ cd frontend && npx vitest run         # frontend unit tests
 
 Last verified on `master` (2026-09-28):
 
-- Full pytest suite: **304 passed, 46 skipped, 0 failed** (350 collected). Skips are Docker- and credential-gated tests (integration containers, optional service credentials).
+- Full pytest suite: **311 passed, 46 skipped, 0 failed** (357 collected). Skips are Docker- and credential-gated tests (integration containers, optional service credentials).
 - Frontend Vitest: **17 passed, 0 failed** (4 test files).
 - CI (`.github/workflows/ci.yml`) additionally enforces Ruff lint/format, mypy, coverage report generation, the frontend production build, and a Docker image build (no push) on every push and pull request to `master`.
 

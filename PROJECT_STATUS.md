@@ -3,7 +3,7 @@
 **Current Release**: v1.0.0  
 **Default Branch**: master  
 **Repository**: [Dan12-dev-ai/dedan-remote](https://github.com/Dan12-dev-ai/dedan-remote)  
-**Verification State**: 350 automated tests in suite — full run on 2026-09-28: 304 passed, 46 skipped (Docker/credential-gated), 0 failed. Frontend: 17 Vitest tests passing.
+**Verification State**: 357 automated tests in suite — full run on 2026-09-28: 311 passed, 46 skipped (Docker/credential-gated), 0 failed. Frontend: 17 Vitest tests passing.
 
 ---
 
