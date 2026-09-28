@@ -56,7 +56,7 @@ aioresponses>=0.7.0
 
 # Property-Based Testing & Data Generation
 hypothesis>=6.98.0
-hypothesis-jsonschema>=0.23.0
+hypothesis-jsonschema>=0.23.1
 faker>=25.0.0
 
 # Docker Test Containers
