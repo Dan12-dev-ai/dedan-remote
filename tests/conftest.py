@@ -47,14 +47,20 @@ from models.job import Job, job_from_scraper_result
 #
 # This must run before the first ``get_settings()`` call, i.e. before the API
 # modules are imported during test collection.
-TEST_JOBS_DB = Path(tempfile.gettempdir()) / "dedan_test_opportunities.db"
+# Each xdist worker gets a private file. A single shared database made every
+# worker seed the same file at the same moment, so concurrent ``create_tables``
+# and ``insert_job`` transactions collided and pytest reported
+# "sqlite3.OperationalError: database is locked". Separate files remove the
+# contention entirely; the serial (no-xdist) run keeps the original name.
+_XDIST_WORKER = os.environ.get("PYTEST_XDIST_WORKER", "")
+TEST_JOBS_DB = Path(tempfile.gettempdir()) / (
+    f"dedan_test_opportunities{_XDIST_WORKER or ''}.db"
+)
 os.environ["DATABASE_PATH"] = str(TEST_JOBS_DB)
 
-# Start each session from a clean file so the dataset is deterministic. Only the
-# xdist controller (which collects before forking workers) removes it, so parallel
-# workers can never pull the database out from under each other.
-if not os.environ.get("PYTEST_XDIST_WORKER"):
-    TEST_JOBS_DB.unlink(missing_ok=True)
+# Every process now owns its file outright, so a stale database from a previous
+# run can be dropped at import time without pulling it from under a peer.
+TEST_JOBS_DB.unlink(missing_ok=True)
 
 # Representative discovery rows. API tests assert on real records — card fields,
 # detail lookup, save/apply by job id — so the throwaway DB must contain jobs.
@@ -145,9 +151,9 @@ def setup_test_session() -> Generator[None, None, None]:
     # Seed Faker for reproducible test data
     Faker.seed(42)
 
-    # Create the engine's schema and seed representative jobs in the throwaway
-    # DB. Both steps are idempotent, so parallel xdist workers can run this
-    # safely.
+    # Create the engine's schema and seed representative jobs in this worker's
+    # throwaway DB. Each worker owns its own file, so no two processes write
+    # the same database at once.
     from database.database import Database
 
     db = Database(str(TEST_JOBS_DB))

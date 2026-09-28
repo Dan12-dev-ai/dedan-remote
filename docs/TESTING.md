@@ -48,6 +48,12 @@ seeds three representative jobs before the first test runs. The API tests theref
 need no developer `data/opportunities.db`; without this provisioning their absence
 in CI made every `/api/jobs` call return HTTP 500.
 
+Under `pytest-xdist` each worker seeds a **private** copy
+(`$TMPDIR/dedan_test_opportunities<worker_id>.db`, e.g. `..._gw0.db`). Sharing one
+file made the workers' concurrent schema creation and inserts collide, which
+surfaced as a nondeterministic `sqlite3.OperationalError: database is locked` on
+Python 3.12 but not 3.11.
+
 ### Property-Based Invariant Tests (Hypothesis)
 Validates financial ledger conservation laws and database state invariants across 1,000+ pseudo-random permutations:
 ```bash
