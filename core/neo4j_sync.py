@@ -15,7 +15,7 @@ from __future__ import annotations
 import json
 import time
 from datetime import datetime, timezone
-from typing import Any, Optional
+from typing import Any, Optional, Self
 
 from core.database_async import AsyncPostgresDB
 from core.metrics import (
@@ -116,7 +116,7 @@ class _MockNeo4jDriver:
     """Mock driver for environments where neo4j is not installed."""
 
     class MockSession:
-        async def __aenter__(self) -> "_MockNeo4jDriver":
+        async def __aenter__(self) -> Self:
             return self
 
         async def __aexit__(self, *args: Any) -> None:

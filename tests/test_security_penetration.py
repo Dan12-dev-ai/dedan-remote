@@ -25,9 +25,12 @@ from __future__ import annotations
 import pytest
 
 from core.api_sentinel import (
+    APISentinel,
     Platform,
+    SentinelBlockedError,
     SentinelCheckResult,
     SentinelContext,
+    sentinel_wrapper,
 )
 
 # ── Security Layer 1: HMAC/Idempotency Key Validation ───────────────────────
@@ -595,3 +598,72 @@ class TestSecurityLayer10_RequestResponseIntegrity:
 
         # Invalid content type
         assert not api_sentinel.validate_content_type("application/x-malicious")
+
+
+# ── Outbound Connector Wrapper ─────────────────────────────────────────────
+
+
+class _FakeDlqWriter:
+    """Duck-typed stand-in for ``AsyncPostgresDB`` (no container required)."""
+
+    def __init__(self) -> None:
+        self.entries: list[dict[str, object]] = []
+
+    async def insert_dead_letter(self, **kwargs: object) -> None:
+        self.entries.append(kwargs)
+
+
+class TestSentinelConnectorWrapper:
+    """The connector wrapper must verify through the real sentinel API."""
+
+    @staticmethod
+    def _sentinel(dlq: _FakeDlqWriter) -> APISentinel:
+        """Sentinel wired to an in-memory DLQ writer."""
+        return APISentinel(
+            postgres_db=dlq,  # type: ignore[arg-type]
+            idempotency_secret="test-secret-key-for-testing",
+        )
+
+    @pytest.mark.security
+    async def test_wrapper_injects_verification_result(self):
+        """A decorated connector receives the sentinel_result kwarg."""
+        seen: list[object] = []
+
+        @sentinel_wrapper(self._sentinel(_FakeDlqWriter()))
+        async def create_order(platform, task_id, payload, *args, **kwargs):
+            seen.append(kwargs["sentinel_result"])
+            return "created"
+
+        result = await create_order(
+            Platform.SHOPIFY,
+            "task-wrapper-1",
+            {"order_id": 42},
+            estimated_cost=10.0,
+        )
+
+        assert result == "created"
+        assert len(seen) == 1
+        assert seen[0].passed is True  # type: ignore[attr-defined]
+
+    @pytest.mark.security
+    async def test_wrapper_blocked_when_key_invalid(self):
+        """An invalid idempotency key blocks the call and routes it to the DLQ."""
+        dlq = _FakeDlqWriter()
+        ran = False
+
+        @sentinel_wrapper(self._sentinel(dlq))
+        async def create_order(platform, task_id, payload, *args, **kwargs):
+            nonlocal ran
+            ran = True
+            return "created"
+
+        with pytest.raises(SentinelBlockedError):
+            await create_order(
+                Platform.STRIPE,
+                "task-wrapper-2",
+                {"order_id": 7},
+                idempotency_key="not-a-valid-key",
+            )
+
+        assert ran is False
+        assert len(dlq.entries) == 1

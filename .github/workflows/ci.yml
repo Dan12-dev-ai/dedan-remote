@@ -45,6 +45,7 @@ jobs:
       - name: Type check with mypy
         run: |
           mypy api agents config database models notifications scrapers utils \
+            core intelligence main.py \
             --ignore-missing-imports --no-strict-optional
 
       - name: Run unit & regression test suite

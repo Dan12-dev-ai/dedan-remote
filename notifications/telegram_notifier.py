@@ -5,11 +5,34 @@ Uses python-telegram-bot to send messages.
 
 from __future__ import annotations
 
+import asyncio
+from collections.abc import Coroutine
+from concurrent.futures import ThreadPoolExecutor
+from typing import Any
+
 from config.settings import get_settings
 from models.job import Job
 from utils.logger import get_logger
 
 logger = get_logger(__name__)
+
+
+def _run_coroutine(coro: Coroutine[Any, Any, Any]) -> Any:
+    """
+    Run a coroutine returned by an async client from synchronous code.
+
+    python-telegram-bot v20+ only exposes coroutines, while the discovery
+    pipeline calls notifiers from a synchronous worker thread. When a loop is
+    already running on the calling thread the coroutine is executed in a
+    dedicated thread, so the message is delivered in either context.
+    """
+    try:
+        asyncio.get_running_loop()
+    except RuntimeError:
+        return asyncio.run(coro)
+
+    with ThreadPoolExecutor(max_workers=1) as pool:
+        return pool.submit(asyncio.run, coro).result()
 
 
 class TelegramNotifier:
@@ -63,12 +86,16 @@ class TelegramNotifier:
 
             bot = Bot(token=self._bot_token)
             message = self._format_message(job, score)
-            bot.send_message(
+            result: Any = bot.send_message(
                 chat_id=self._chat_id,
                 text=message,
                 parse_mode="Markdown",
                 disable_web_page_preview=True,
             )
+            # python-telegram-bot v20+ returns a coroutine that must be awaited;
+            # legacy clients and test doubles return a plain value.
+            if asyncio.iscoroutine(result):
+                _run_coroutine(result)
             logger.info("Telegram sent for %s @ %s", job.title, job.company)
             return True
         except ImportError:

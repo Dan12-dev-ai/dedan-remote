@@ -10,6 +10,7 @@ from api.schemas import (
     ApplicationCreate,
     ApplicationOut,
     ApplicationPatch,
+    JobSummary,
     PreferencesOut,
     ProfileOut,
     ProfilePatch,
@@ -30,7 +31,7 @@ def _app_out(entry: dict, registry: dict) -> ApplicationOut:
         raise ApiError(404, "job_missing", "The underlying opportunity no longer exists.")
     return ApplicationOut(
         id=entry["id"],
-        job=services.serialize_job(row, registry=registry),
+        job=JobSummary.model_validate(services.serialize_job(row, registry=registry)),
         status=entry["status"],
         note=entry["note"],
         created_at=entry["created_at"],
@@ -171,7 +172,10 @@ def recommendations(
 
     if not (prefs["categories"] or prefs["regions"] or prefs["experience"]):
         result = services.query_jobs(sort="score", page=1, page_size=limit)
-        items = [services.serialize_job(r, registry=registry) for r in result["items"]]
+        items = [
+            JobSummary.model_validate(services.serialize_job(r, registry=registry))
+            for r in result["items"]
+        ]
         return RecommendationPage(
             items=items,
             basis="top_ranked",
@@ -204,7 +208,10 @@ def recommendations(
 
     pool.sort(key=_rank, reverse=True)
 
-    items = [services.serialize_job(r, registry=registry, prefs=prefs) for r in pool[:limit]]
+    items = [
+        JobSummary.model_validate(services.serialize_job(r, registry=registry, prefs=prefs))
+        for r in pool[:limit]
+    ]
     return RecommendationPage(
         items=items,
         basis="user_preferences",

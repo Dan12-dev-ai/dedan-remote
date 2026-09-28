@@ -83,3 +83,30 @@ Every pull request and push to `master` runs GitHub Actions CI (`.github/workflo
 4. Automated pytest test execution with coverage reporting
 5. Frontend TypeScript compile, Vite asset generation, and Vitest unit tests
 6. Docker Compose syntax and multi-stage container build
+
+### Reproducing the quality gates locally
+
+Both gates are pinned by config files so a local run matches CI byte for byte:
+
+```bash
+# Lint + format (ruff.toml pins the rule set and line length)
+ruff check . --exclude frontend,venv,.venv
+ruff format --check . --exclude frontend,venv,.venv
+
+# Types (mypy.ini pins the scope and flags)
+mypy
+```
+
+`mypy` with no arguments reads `mypy.ini`, which covers all application code:
+`api`, `agents`, `config`, `core`, `database`, `intelligence`, `main.py`,
+`models`, `notifications`, `scrapers`, `utils` (62 source files are checked when
+dependencies are installed). `tests/` is deliberately outside the type-checked
+scope and is validated by pytest instead.
+
+> **Important:** mypy only detects real errors when the project dependencies are
+> installed (`pip install -r requirements.txt`). In a bare environment
+> `fastapi`/`pydantic`/`python-telegram-bot` resolve to `Any`, third-party call
+> signatures are unchecked, and errors such as an un-awaited coroutine or a
+> `dict` passed where a model is declared are silently missed — the run reports
+> "Success" even though CI fails. Always type-check inside the project
+> environment.

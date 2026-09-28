@@ -83,11 +83,12 @@ def _versioned_alias(router: APIRouter) -> APIRouter:
     for route in router.routes:
         path = getattr(route, "path", None)
         methods = getattr(route, "methods", None)
-        if not path or not methods or not path.startswith("/api"):
+        endpoint = getattr(route, "endpoint", None)
+        if not path or not methods or endpoint is None or not path.startswith("/api"):
             continue
         alias.add_api_route(
             "/api/v1" + path[len("/api") :],
-            route.endpoint,
+            endpoint,
             methods=sorted(methods),
             response_model=getattr(route, "response_model", None),
             status_code=getattr(route, "status_code", None),
@@ -95,7 +96,7 @@ def _versioned_alias(router: APIRouter) -> APIRouter:
             summary=getattr(route, "summary", None),
             description=getattr(route, "description", None),
             response_class=getattr(route, "response_class", None),
-            name=route.name,
+            name=getattr(route, "name", None),
             include_in_schema=False,
         )
     return alias

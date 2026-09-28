@@ -7,6 +7,7 @@ All outbound network calls are mocked.
 
 from __future__ import annotations
 
+import asyncio
 import sys
 import types
 
@@ -94,6 +95,64 @@ class TestTelegramNotifier:
         assert len(sent) == 1
         assert sent[0]["chat_id"] == "42"
         assert "AI Trainer" in str(sent[0]["text"])
+
+    def test_send_awaits_coroutine_from_async_bot(self, monkeypatch) -> None:
+        """python-telegram-bot v20+ returns a coroutine that must be awaited."""
+        sent: list[dict] = []
+
+        class AsyncFakeBot:
+            def __init__(self, token: str) -> None:
+                self.token = token
+
+            async def send_message(self, **kwargs: object) -> None:
+                sent.append(kwargs)
+
+        fake_telegram = types.ModuleType("telegram")
+        fake_telegram.Bot = AsyncFakeBot  # type: ignore[attr-defined]
+        fake_error = types.ModuleType("telegram.error")
+        fake_error.TelegramError = Exception  # type: ignore[attr-defined]
+        fake_telegram.error = fake_error  # type: ignore[attr-defined]
+        monkeypatch.setitem(sys.modules, "telegram", fake_telegram)
+        monkeypatch.setitem(sys.modules, "telegram.error", fake_error)
+
+        self.notifier._enabled = True
+        self.notifier._bot_token = "123:abc"
+        self.notifier._chat_id = "42"
+
+        assert self.notifier.send(self.job, 85.0) is True
+        # The coroutine body only runs when it is actually awaited.
+        assert len(sent) == 1
+        assert sent[0]["chat_id"] == "42"
+        assert "AI Trainer" in str(sent[0]["text"])
+
+    def test_send_inside_running_loop_still_delivers(self, monkeypatch) -> None:
+        """A send triggered from async code must deliver, not deadlock."""
+        sent: list[dict] = []
+
+        class AsyncFakeBot:
+            def __init__(self, token: str) -> None:
+                self.token = token
+
+            async def send_message(self, **kwargs: object) -> None:
+                sent.append(kwargs)
+
+        fake_telegram = types.ModuleType("telegram")
+        fake_telegram.Bot = AsyncFakeBot  # type: ignore[attr-defined]
+        fake_error = types.ModuleType("telegram.error")
+        fake_error.TelegramError = Exception  # type: ignore[attr-defined]
+        fake_telegram.error = fake_error  # type: ignore[attr-defined]
+        monkeypatch.setitem(sys.modules, "telegram", fake_telegram)
+        monkeypatch.setitem(sys.modules, "telegram.error", fake_error)
+
+        self.notifier._enabled = True
+        self.notifier._bot_token = "123:abc"
+        self.notifier._chat_id = "42"
+
+        async def call_from_loop() -> bool:
+            return self.notifier.send(self.job, 85.0)
+
+        assert asyncio.run(call_from_loop()) is True
+        assert len(sent) == 1
 
     def test_send_handles_bot_exception(self, monkeypatch) -> None:
         class ExplodingBot:

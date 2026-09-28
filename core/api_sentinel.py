@@ -440,7 +440,13 @@ class APISentinel:
 
     Usage:
         sentinel = APISentinel()
-        result = await sentinel.verify(platform, task_id, payload)
+        context = SentinelContext(
+            platform=Platform.SHOPIFY,
+            task_id="task-1",
+            idempotency_key=sentinel.generate_idempotency_key("task-1", "shopify"),
+            payload={"order_id": 42},
+        )
+        result = await sentinel.verify_request(context)
         if result.passed:
             # Proceed with API call
             ...
@@ -474,6 +480,19 @@ class APISentinel:
         self._treasury_alerts: list[dict[str, Any]] = []
         self._treasury_brake_count = 0
         self._dlq_writes = 0
+
+    def generate_idempotency_key(self, task_id: str, platform: str) -> str:
+        """
+        Mint a signed idempotency key for an outbound call.
+
+        Args:
+            task_id: Task the key is bound to.
+            platform: Platform value (e.g. ``"shopify"``) the key is bound to.
+
+        Returns:
+            A ``v1`` key signed with the sentinel's server-side secret.
+        """
+        return self._idempotency.generate_idempotency_key(task_id=task_id, platform=platform)
 
     def _normalize_text(self, value: Any) -> str:
         """Convert payload values into a searchable string."""
@@ -751,15 +770,21 @@ def sentinel_wrapper(sentinel: APISentinel):
             task_id: str,
             payload: dict[str, Any],
             *args: Any,
+            idempotency_key: Optional[str] = None,
             estimated_cost: float = 0.0,
             **kwargs: Any,
         ) -> Any:
-            result = await sentinel.verify(
+            # Outbound calls carry a signed idempotency key, minted here unless
+            # the caller supplied one of its own.
+            context = SentinelContext(
                 platform=platform,
                 task_id=task_id,
+                idempotency_key=idempotency_key
+                or sentinel.generate_idempotency_key(task_id, platform.value),
                 payload=payload,
                 estimated_cost=estimated_cost,
             )
+            result = await sentinel.verify_request(context)
 
             if not result.passed:
                 raise SentinelBlockedError(

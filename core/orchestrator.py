@@ -117,9 +117,9 @@ class AEOSOrchestrator:
         await self._neo4j_sync.start()
         logger.info("[3/5] Neo4j Epistemic Graph Sync Worker started")
 
-        # Start API Sentinel
-        await self._api_sentinel.start()
-        logger.info("[4/5] Platform API Sentinel started")
+        # API Sentinel is an inline interceptor: it owns no background task, so
+        # outbound calls are verified on use instead of via a start() hook.
+        logger.info("[4/5] Platform API Sentinel ready (inline interceptor)")
 
         # Start PPO Engine
         await self._ppo_engine.start()
@@ -130,12 +130,14 @@ class AEOSOrchestrator:
 
         # Register signal handlers
         loop = asyncio.get_event_loop()
+
+        def _signal_handler(signum: int) -> None:
+            """Request a graceful shutdown from a POSIX signal."""
+            asyncio.create_task(self.shutdown(signum))
+
         for sig in (signal.SIGINT, signal.SIGTERM):
             try:
-                loop.add_signal_handler(
-                    sig,
-                    lambda s=sig: asyncio.create_task(self.shutdown(s)),
-                )
+                loop.add_signal_handler(sig, _signal_handler, sig)
             except (NotImplementedError, ValueError):
                 pass
 
@@ -270,8 +272,8 @@ class AEOSOrchestrator:
         logger.info("Shutting down PPO Engine...")
         await self._ppo_engine.stop()
 
-        logger.info("Shutting down API Sentinel...")
-        await self._api_sentinel.stop()
+        # API Sentinel owns no background task, so it needs no stop hook.
+        logger.info("API Sentinel holds no background task (nothing to stop)")
 
         logger.info("Shutting down Neo4j Sync Worker...")
         await self._neo4j_sync.stop()

@@ -418,7 +418,9 @@ class PPOOptimizer:
         entropy_coef = self._config["entropy_coef"]
         value_coef = self._config["value_coef"]
         lr = self._config["learning_rate"]
-        update_epochs = self._config["update_epochs"]
+        # PPO_CONFIG mixes int and float literals, so the dict is typed as
+        # float; range() requires a real int.
+        update_epochs = int(self._config["update_epochs"])
         target_kl = self._config["target_kl"]
 
         total_policy_loss = 0.0
@@ -429,7 +431,7 @@ class PPOOptimizer:
         for _ in range(update_epochs):
             # Shuffle indices
             indices = np.random.permutation(n)
-            batch_size = min(self._config["batch_size"], n)
+            batch_size = min(int(self._config["batch_size"]), n)
 
             for start in range(0, n, batch_size):
                 end = start + batch_size

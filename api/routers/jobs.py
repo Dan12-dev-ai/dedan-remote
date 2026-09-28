@@ -15,6 +15,7 @@ from api.deps import (
 )
 from api.schemas import (
     JobDetail,
+    JobSummary,
     Page,
     SavedItem,
     SaveRequest,
@@ -77,15 +78,12 @@ def list_jobs(
         store = get_user_store()
         prefs = store.get_preferences(user["id"])
 
-    items = []
-    for row in result["items"]:
-        items.append(
-            services.serialize_job(
-                row,
-                registry=registry,
-                prefs=prefs,
-            )
-        )
+    # serialize_job returns a JobSummary-shaped dict; validate it into the
+    # declared model so the response payload and the type contract agree.
+    items = [
+        JobSummary.model_validate(services.serialize_job(row, registry=registry, prefs=prefs))
+        for row in result["items"]
+    ]
     return Page(
         items=items,
         page=result["page"],
@@ -203,7 +201,9 @@ def list_saved(
             continue  # job removed from discovery DB — skip honestly
         items.append(
             SavedItem(
-                job=services.serialize_job(row, registry=registry, prefs=prefs),
+                job=JobSummary.model_validate(
+                    services.serialize_job(row, registry=registry, prefs=prefs)
+                ),
                 note=entry["note"],
                 saved_at=entry["saved_at"],
             )
