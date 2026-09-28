@@ -53,9 +53,7 @@ from models.job import Job, job_from_scraper_result
 # "sqlite3.OperationalError: database is locked". Separate files remove the
 # contention entirely; the serial (no-xdist) run keeps the original name.
 _XDIST_WORKER = os.environ.get("PYTEST_XDIST_WORKER", "")
-TEST_JOBS_DB = Path(tempfile.gettempdir()) / (
-    f"dedan_test_opportunities{_XDIST_WORKER or ''}.db"
-)
+TEST_JOBS_DB = Path(tempfile.gettempdir()) / (f"dedan_test_opportunities{_XDIST_WORKER or ''}.db")
 os.environ["DATABASE_PATH"] = str(TEST_JOBS_DB)
 
 # Every process now owns its file outright, so a stale database from a previous
