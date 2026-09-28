@@ -64,7 +64,11 @@ class SchedulerAgent:
         loop = asyncio.get_event_loop()
         for sig in (signal.SIGINT, signal.SIGTERM):
             try:
-                loop.add_signal_handler(sig, lambda s=sig: asyncio.create_task(self.shutdown(s)))
+
+                def _signal_handler(s: int = sig) -> None:
+                    asyncio.create_task(self.shutdown(s))
+
+                loop.add_signal_handler(sig, _signal_handler)
             except (NotImplementedError, ValueError):
                 # Windows may not support add_signal_handler
                 pass
@@ -91,7 +95,8 @@ class SchedulerAgent:
             except Exception as exc:
                 logger.warning(
                     "Invalid cron '%s', falling back to interval: %s",
-                    cron, exc,
+                    cron,
+                    exc,
                 )
                 trigger = IntervalTrigger(minutes=interval)
         else:
@@ -119,7 +124,7 @@ class SchedulerAgent:
         self._running = True
         logger.info("Scheduler started — next runs will follow schedule")
 
-    async def run_once(self) -> dict[str, object]:
+    async def run_once(self) -> dict[str, int]:
         """Run a single discovery cycle immediately (for testing/CLI)."""
         return await self._discovery.run_once()
 
@@ -139,6 +144,7 @@ class SchedulerAgent:
                 self._current_task.cancel()
 
         from utils.http_client import close_http_client
+
         await close_http_client()
 
         self._running = False

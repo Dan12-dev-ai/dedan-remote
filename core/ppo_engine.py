@@ -13,13 +13,11 @@ Defines:
 
 from __future__ import annotations
 
-import json
 import math
 import time
-import uuid
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
-from typing import Any, Optional
+from typing import Optional
 
 import numpy as np
 
@@ -43,50 +41,51 @@ STATE_DIM = 12  # Total features in the observation space
 
 # State feature indices (explicit mapping)
 STATE_IDX = {
-    "jobs_found_rate": 0,        # Jobs discovered per hour
-    "jobs_new_rate": 1,          # New unique jobs per hour
-    "notification_rate": 2,      # Notifications sent per hour
-    "avg_score": 3,              # Average job score
-    "error_rate": 4,             # Error rate (0.0–1.0)
+    "jobs_found_rate": 0,  # Jobs discovered per hour
+    "jobs_new_rate": 1,  # New unique jobs per hour
+    "notification_rate": 2,  # Notifications sent per hour
+    "avg_score": 3,  # Average job score
+    "error_rate": 4,  # Error rate (0.0–1.0)
     "circuit_breaker_count": 5,  # Number of open circuits
-    "execution_duration": 6,     # Average execution duration (seconds)
-    "concurrent_scrapers": 7,    # Number of concurrent scrapers
-    "rate_limit_hits": 8,        # Rate limit hits per hour
-    "treasury_remaining": 9,     # Remaining treasury balance ratio
-    "memory_utilization": 10,    # Context memory utilization (0.0–1.0)
-    "time_of_day": 11,           # Hour of day (0–23, normalized to 0.0–1.0)
+    "execution_duration": 6,  # Average execution duration (seconds)
+    "concurrent_scrapers": 7,  # Number of concurrent scrapers
+    "rate_limit_hits": 8,  # Rate limit hits per hour
+    "treasury_remaining": 9,  # Remaining treasury balance ratio
+    "memory_utilization": 10,  # Context memory utilization (0.0–1.0)
+    "time_of_day": 11,  # Hour of day (0–23, normalized to 0.0–1.0)
 }
 
 # Action space (discrete)
 NUM_ACTIONS = 8
 
 ACTION_MAP = {
-    0: "increase_concurrency",     # Increase concurrent scrapers
-    1: "decrease_concurrency",     # Decrease concurrent scrapers
-    2: "increase_rate_limit",      # Increase rate limit delay
-    3: "decrease_rate_limit",      # Decrease rate limit delay
-    4: "increase_min_score",       # Raise minimum notification score
-    5: "decrease_min_score",       # Lower minimum notification score
-    6: "reset_circuits",           # Reset all circuit breakers
-    7: "noop",                     # No operation
+    0: "increase_concurrency",  # Increase concurrent scrapers
+    1: "decrease_concurrency",  # Decrease concurrent scrapers
+    2: "increase_rate_limit",  # Increase rate limit delay
+    3: "decrease_rate_limit",  # Decrease rate limit delay
+    4: "increase_min_score",  # Raise minimum notification score
+    5: "decrease_min_score",  # Lower minimum notification score
+    6: "reset_circuits",  # Reset all circuit breakers
+    7: "noop",  # No operation
 }
 
 # PPO hyperparameters
 PPO_CONFIG = {
     "learning_rate": 3e-4,
-    "gamma": 0.99,          # Discount factor
-    "gae_lambda": 0.95,     # GAE lambda
-    "clip_epsilon": 0.2,    # PPO clip range
-    "entropy_coef": 0.01,   # Entropy bonus coefficient
-    "value_coef": 0.5,      # Value loss coefficient
-    "max_grad_norm": 0.5,   # Gradient clipping
-    "update_epochs": 4,     # Number of epochs per update
-    "batch_size": 64,       # Minibatch size
-    "target_kl": 0.02,      # Target KL divergence
+    "gamma": 0.99,  # Discount factor
+    "gae_lambda": 0.95,  # GAE lambda
+    "clip_epsilon": 0.2,  # PPO clip range
+    "entropy_coef": 0.01,  # Entropy bonus coefficient
+    "value_coef": 0.5,  # Value loss coefficient
+    "max_grad_norm": 0.5,  # Gradient clipping
+    "update_epochs": 4,  # Number of epochs per update
+    "batch_size": 64,  # Minibatch size
+    "target_kl": 0.02,  # Target KL divergence
 }
 
 
 # ── Data Structures ───────────────────────────────────────────────────────────
+
 
 @dataclass
 class PPORollout:
@@ -121,20 +120,23 @@ class PPOState:
 
     def to_array(self) -> np.ndarray:
         """Convert state to numpy array."""
-        return np.array([
-            self.jobs_found_rate,
-            self.jobs_new_rate,
-            self.notification_rate,
-            self.avg_score,
-            self.error_rate,
-            self.circuit_breaker_count,
-            self.execution_duration,
-            self.concurrent_scrapers,
-            self.rate_limit_hits,
-            self.treasury_remaining,
-            self.memory_utilization,
-            self.time_of_day,
-        ], dtype=np.float32)
+        return np.array(
+            [
+                self.jobs_found_rate,
+                self.jobs_new_rate,
+                self.notification_rate,
+                self.avg_score,
+                self.error_rate,
+                self.circuit_breaker_count,
+                self.execution_duration,
+                self.concurrent_scrapers,
+                self.rate_limit_hits,
+                self.treasury_remaining,
+                self.memory_utilization,
+                self.time_of_day,
+            ],
+            dtype=np.float32,
+        )
 
     @classmethod
     def from_array(cls, arr: np.ndarray) -> "PPOState":
@@ -156,6 +158,7 @@ class PPOState:
 
 
 # ── Neural Network Components ─────────────────────────────────────────────────
+
 
 class PolicyNetwork:
     """
@@ -272,6 +275,7 @@ class ValueNetwork:
 
 # ── Reward Function ───────────────────────────────────────────────────────────
 
+
 class RewardFunction:
     """
     Algebraic reward function for PPO.
@@ -312,24 +316,21 @@ class RewardFunction:
             jobs_improvement = (
                 current_state.jobs_found_rate - previous_state.jobs_found_rate
             ) * 0.3
-            score_improvement = (
-                current_state.avg_score - previous_state.avg_score
-            ) * 0.2
+            score_improvement = (current_state.avg_score - previous_state.avg_score) * 0.2
             net_profit_change = jobs_improvement + score_improvement
 
         if risk_index == 0.0:
             # Risk derived from error rate and circuit breakers
             risk_index = min(
-                current_state.error_rate * 0.6 +
-                (current_state.circuit_breaker_count / 10.0) * 0.4,
+                current_state.error_rate * 0.6 + (current_state.circuit_breaker_count / 10.0) * 0.4,
                 1.0,
             )
 
         if token_overhead == 0.0:
             # Token overhead derived from execution duration and concurrency
             token_overhead = min(
-                (current_state.execution_duration / 100.0) * 0.5 +
-                (current_state.concurrent_scrapers / 20.0) * 0.5,
+                (current_state.execution_duration / 100.0) * 0.5
+                + (current_state.concurrent_scrapers / 20.0) * 0.5,
                 1.0,
             )
 
@@ -343,6 +344,7 @@ class RewardFunction:
 
 
 # ── PPO Optimizer ─────────────────────────────────────────────────────────────
+
 
 class PPOOptimizer:
     """
@@ -386,9 +388,7 @@ class PPOOptimizer:
         dones = np.array([r.done for r in rollouts], dtype=np.float32)
 
         # Compute advantages using GAE
-        values = np.array([
-            self._value_net.forward(s) for s in states
-        ], dtype=np.float32)
+        values = np.array([self._value_net.forward(s) for s in states], dtype=np.float32)
 
         advantages = np.zeros(n, dtype=np.float32)
         last_gae = 0.0
@@ -442,16 +442,19 @@ class PPOOptimizer:
                 batch_old_log_probs = old_log_probs[batch_idx]
 
                 # Current policy log probs
-                current_log_probs = np.array([
-                    self._policy.get_log_prob(batch_states[i], int(batch_actions[i]))
-                    for i in range(len(batch_idx))
-                ], dtype=np.float32)
+                current_log_probs = np.array(
+                    [
+                        self._policy.get_log_prob(batch_states[i], int(batch_actions[i]))
+                        for i in range(len(batch_idx))
+                    ],
+                    dtype=np.float32,
+                )
 
                 # Current values
-                current_values = np.array([
-                    self._value_net.forward(batch_states[i])
-                    for i in range(len(batch_idx))
-                ], dtype=np.float32)
+                current_values = np.array(
+                    [self._value_net.forward(batch_states[i]) for i in range(len(batch_idx))],
+                    dtype=np.float32,
+                )
 
                 # Ratio
                 ratio = np.exp(current_log_probs - batch_old_log_probs)
@@ -465,10 +468,9 @@ class PPOOptimizer:
                 value_loss = np.mean((current_values - batch_returns) ** 2)
 
                 # Entropy bonus
-                entropy = np.mean([
-                    self._policy.get_entropy(batch_states[i])
-                    for i in range(len(batch_idx))
-                ])
+                entropy = np.mean(
+                    [self._policy.get_entropy(batch_states[i]) for i in range(len(batch_idx))]
+                )
 
                 # Total loss
                 loss = policy_loss + value_coef * value_loss - entropy_coef * entropy
@@ -559,6 +561,7 @@ class PPOOptimizer:
 
 # ── Main PPO Engine ───────────────────────────────────────────────────────────
 
+
 class PPOEngine:
     """
     In-memory PPO reinforcement learning engine.
@@ -603,15 +606,20 @@ class PPOEngine:
         PPO_TRAINING_EPOCH.set(float(self._epoch))
 
         self._running = True
-        logger.info("PPOEngine started (epoch=%d, state_dim=%d, actions=%d)",
-                     self._epoch, self._state_dim, self._num_actions)
+        logger.info(
+            "PPOEngine started (epoch=%d, state_dim=%d, actions=%d)",
+            self._epoch,
+            self._state_dim,
+            self._num_actions,
+        )
 
     async def stop(self) -> None:
         """Shutdown the PPO engine."""
         self._running = False
         await self._postgres.close()
-        logger.info("PPOEngine stopped (epoch=%d, total_reward=%.4f)",
-                     self._epoch, self._total_reward)
+        logger.info(
+            "PPOEngine stopped (epoch=%d, total_reward=%.4f)", self._epoch, self._total_reward
+        )
 
     def observe_state(self, state: PPOState) -> None:
         """
@@ -648,8 +656,13 @@ class PPOEngine:
         )
         self._rollouts.append(rollout)
 
-        logger.debug("PPO action=%d (%s) prob=%.4f value=%.4f",
-                     action, ACTION_MAP.get(action, "unknown"), prob, value)
+        logger.debug(
+            "PPO action=%d (%s) prob=%.4f value=%.4f",
+            action,
+            ACTION_MAP.get(action, "unknown"),
+            prob,
+            value,
+        )
 
         return action
 
@@ -693,8 +706,13 @@ class PPOEngine:
         PPO_REWARD_SCORE.labels(metric="token_overhead").set(token_overhead)
         PPO_REWARD_SCORE.labels(metric="total").set(reward)
 
-        logger.debug("PPO reward=%.4f (profit=%.4f risk=%.4f token=%.4f)",
-                     reward, net_profit_change, risk_index, token_overhead)
+        logger.debug(
+            "PPO reward=%.4f (profit=%.4f risk=%.4f token=%.4f)",
+            reward,
+            net_profit_change,
+            risk_index,
+            token_overhead,
+        )
 
         return reward
 
@@ -731,17 +749,16 @@ class PPOEngine:
             last_token_overhead = 0.0
             if self._current_state and self._previous_state:
                 last_net_profit = (
-                    (self._current_state.jobs_found_rate - self._previous_state.jobs_found_rate) * 0.3 +
-                    (self._current_state.avg_score - self._previous_state.avg_score) * 0.2
-                )
+                    self._current_state.jobs_found_rate - self._previous_state.jobs_found_rate
+                ) * 0.3 + (self._current_state.avg_score - self._previous_state.avg_score) * 0.2
                 last_risk_index = min(
-                    self._current_state.error_rate * 0.6 +
-                    (self._current_state.circuit_breaker_count / 10.0) * 0.4,
+                    self._current_state.error_rate * 0.6
+                    + (self._current_state.circuit_breaker_count / 10.0) * 0.4,
                     1.0,
                 )
                 last_token_overhead = min(
-                    (self._current_state.execution_duration / 100.0) * 0.5 +
-                    (self._current_state.concurrent_scrapers / 20.0) * 0.5,
+                    (self._current_state.execution_duration / 100.0) * 0.5
+                    + (self._current_state.concurrent_scrapers / 20.0) * 0.5,
                     1.0,
                 )
 
@@ -778,7 +795,8 @@ class PPOEngine:
 
         logger.info(
             "PPO training epoch=%d reward=%.4f policy_loss=%.6f value_loss=%.6f (%.3fs)",
-            self._epoch, self._total_reward,
+            self._epoch,
+            self._total_reward,
             metrics.get("policy_loss", 0.0),
             metrics.get("value_loss", 0.0),
             elapsed,

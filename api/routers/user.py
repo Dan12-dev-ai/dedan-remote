@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-from typing import Optional
-
 from fastapi import APIRouter, Depends, Query, Request, status
 
 from api import services
@@ -29,8 +27,7 @@ BOARD_COLUMNS = ["saved", "applied", "interview", "offer"]
 def _app_out(entry: dict, registry: dict) -> ApplicationOut:
     row = services.get_row(entry["job_id"])
     if not row:
-        raise ApiError(404, "job_missing",
-                       "The underlying opportunity no longer exists.")
+        raise ApiError(404, "job_missing", "The underlying opportunity no longer exists.")
     return ApplicationOut(
         id=entry["id"],
         job=services.serialize_job(row, registry=registry),
@@ -42,6 +39,7 @@ def _app_out(entry: dict, registry: dict) -> ApplicationOut:
 
 
 # ── Applications ─────────────────────────────────────────────────────────────
+
 
 @router.get("/applications", response_model=list[ApplicationOut])
 def list_applications(
@@ -58,8 +56,7 @@ def list_applications(
     return out
 
 
-@router.post("/applications", response_model=ApplicationOut,
-             status_code=status.HTTP_201_CREATED)
+@router.post("/applications", response_model=ApplicationOut, status_code=status.HTTP_201_CREATED)
 def create_application(
     request: Request,
     payload: ApplicationCreate,
@@ -71,7 +68,10 @@ def create_application(
         raise ApiError(404, "not_found", "Opportunity not found.")
     store = get_user_store()
     entry = store.create_application(
-        user["id"], payload.job_id, payload.status, payload.note,
+        user["id"],
+        payload.job_id,
+        payload.status,
+        payload.note,
     )
     return _app_out(entry, services.source_registry())
 
@@ -87,7 +87,10 @@ def patch_application(
     enforce_rate_limit(request, "applications", limit=120, window=60)
     store = get_user_store()
     entry = store.patch_application(
-        user["id"], app_id, payload.status, payload.note,
+        user["id"],
+        app_id,
+        payload.status,
+        payload.note,
     )
     if entry is None:
         raise ApiError(404, "not_found", "Application not found.")
@@ -96,14 +99,18 @@ def patch_application(
 
 # ── Profile & preferences ───────────────────────────────────────────────────
 
+
 @router.get("/profile", response_model=ProfileOut)
 def get_profile(user: dict = Depends(get_current_user)) -> ProfileOut:
     store = get_user_store()
     prefs = store.get_preferences(user["id"])
     return ProfileOut(
-        user=UserOut(id=user["id"], email=user["email"],
-                     display_name=user.get("display_name"),
-                     created_at=user["created_at"]),
+        user=UserOut(
+            id=user["id"],
+            email=user["email"],
+            display_name=user.get("display_name"),
+            created_at=user["created_at"],
+        ),
         preferences=PreferencesOut(**prefs),
     )
 
@@ -118,22 +125,31 @@ def patch_profile(
     if payload.display_name is not None:
         store.update_display_name(user["id"], payload.display_name)
         user["display_name"] = payload.display_name
-    if (payload.categories is not None or payload.experience is not None
-            or payload.regions is not None):
+    if (
+        payload.categories is not None
+        or payload.experience is not None
+        or payload.regions is not None
+    ):
         store.update_preferences(
-            user["id"], payload.categories, payload.experience,
+            user["id"],
+            payload.categories,
+            payload.experience,
             payload.regions,
         )
     prefs = store.get_preferences(user["id"])
     return ProfileOut(
-        user=UserOut(id=user["id"], email=user["email"],
-                     display_name=user.get("display_name"),
-                     created_at=user["created_at"]),
+        user=UserOut(
+            id=user["id"],
+            email=user["email"],
+            display_name=user.get("display_name"),
+            created_at=user["created_at"],
+        ),
         preferences=PreferencesOut(**prefs),
     )
 
 
 # ── Recommendations ─────────────────────────────────────────────────────────
+
 
 @router.get("/recommendations", response_model=RecommendationPage)
 def recommendations(
@@ -155,8 +171,7 @@ def recommendations(
 
     if not (prefs["categories"] or prefs["regions"] or prefs["experience"]):
         result = services.query_jobs(sort="score", page=1, page_size=limit)
-        items = [services.serialize_job(r, registry=registry)
-                 for r in result["items"]]
+        items = [services.serialize_job(r, registry=registry) for r in result["items"]]
         return RecommendationPage(
             items=items,
             basis="top_ranked",
@@ -173,9 +188,9 @@ def recommendations(
     result = services.query_jobs(sort="score", page=1, page_size=100)
     pool = result["items"]
     if prefs["categories"]:
-        pool = [r for r in pool if any(
-            services._matches_category(r, c) for c in prefs["categories"]
-        )]
+        pool = [
+            r for r in pool if any(services._matches_category(r, c) for c in prefs["categories"])
+        ]
     if prefs["regions"]:
         pool = [r for r in pool if services.matches_region(r, prefs["regions"])]
 
@@ -189,10 +204,7 @@ def recommendations(
 
     pool.sort(key=_rank, reverse=True)
 
-    items = [
-        services.serialize_job(r, registry=registry, prefs=prefs)
-        for r in pool[:limit]
-    ]
+    items = [services.serialize_job(r, registry=registry, prefs=prefs) for r in pool[:limit]]
     return RecommendationPage(
         items=items,
         basis="user_preferences",

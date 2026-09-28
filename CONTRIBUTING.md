@@ -12,7 +12,7 @@ All contributors and maintainers are expected to follow our [Code of Conduct](CO
 
 ## 2. Branching & Git Strategy
 
-- **Default Branch**: `master`. All production-ready code is merged into `master`.
+- **Default Branch**: `master`. All changes are merged into `master`.
 - **Feature Branches**: Branch from `master` using descriptive prefixes:
   - `feature/<name>` for new capabilities
   - `fix/<name>` for bug fixes

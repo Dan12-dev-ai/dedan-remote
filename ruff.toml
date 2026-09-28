@@ -1,0 +1,22 @@
+# Ruff configuration — the lint contract enforced by CI (.github/workflows/ci.yml).
+#
+# Rule selection is pinned explicitly so local runs and CI agree regardless of
+# which ruff version's *default* rule set is in effect. CI runs:
+#   ruff check . --exclude frontend,venv,.venv
+#   ruff format --check . --exclude frontend,venv,.venv
+
+line-length = 100
+
+[lint]
+select = [
+    "E4",  # pycodestyle – import / indentation basics
+    "E7",  # pycodestyle – statement-level issues
+    "E9",  # pycodestyle – runtime and syntax errors
+    "F",   # pyflakes – undefined names, unused imports/variables, redefinitions
+    "I",   # isort – deterministic import ordering
+]
+ignore = []
+
+[lint.per-file-ignores]
+# Package __init__ files re-export names intentionally.
+"**/__init__.py" = ["F401"]

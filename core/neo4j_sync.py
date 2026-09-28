@@ -12,7 +12,6 @@ Edges are formatted with explicit properties:
 
 from __future__ import annotations
 
-import hashlib
 import json
 import time
 from datetime import datetime, timezone
@@ -32,6 +31,7 @@ logger = get_logger(__name__)
 
 
 # ── Neo4j Async Driver Wrapper ────────────────────────────────────────────────
+
 
 class Neo4jDriver:
     """Async Neo4j driver wrapper with connection pooling."""
@@ -55,6 +55,7 @@ class Neo4jDriver:
             return
         try:
             from neo4j import AsyncGraphDatabase
+
             self._driver = AsyncGraphDatabase.driver(
                 self._uri,
                 auth=(self._user, self._password),
@@ -65,9 +66,7 @@ class Neo4jDriver:
                 await session.run("RETURN 1")
             logger.info("Neo4j connected to %s", self._uri)
         except ImportError:
-            logger.warning(
-                "neo4j package not installed — using mock driver"
-            )
+            logger.warning("neo4j package not installed — using mock driver")
             self._driver = _MockNeo4jDriver()
 
     async def close(self) -> None:
@@ -127,11 +126,11 @@ class _MockNeo4jDriver:
             logger.debug("[Mock Neo4j] %s | params=%s", query[:80], params)
             return _MockResult()
 
-        async def begin_transaction(self) -> "_MockTransaction":
-            return _MockTransaction()
+        async def begin_transaction(self) -> "_MockNeo4jDriver.MockTransaction":
+            return _MockNeo4jDriver.MockTransaction()
 
     class MockTransaction:
-        async def __aenter__(self) -> "_MockTransaction":
+        async def __aenter__(self) -> "_MockNeo4jDriver.MockTransaction":
             return self
 
         async def __aexit__(self, *args: Any) -> None:
@@ -165,6 +164,7 @@ SYNC_TASK_THRESHOLD = 1000  # Sync every N system tasks
 
 
 # ── Neo4j Graph Sync Worker ───────────────────────────────────────────────────
+
 
 class Neo4jEpistemicSyncWorker:
     """
@@ -340,7 +340,6 @@ class Neo4jEpistemicSyncWorker:
                 win_rate = float(seq.get("win_rate", 0.0))
                 avg_reward = float(seq.get("avg_reward", 0.0))
                 sequence_hash = str(seq.get("sequence_hash", ""))
-                execution_count = int(seq.get("execution_count", 0))
 
                 if not sequence_hash:
                     continue
@@ -356,19 +355,21 @@ class Neo4jEpistemicSyncWorker:
                 action_type = seq_data.get("action_type", "general")
 
                 # ── Create Causal Node ────────────────────────────────
-                cypher_batch.append((
-                    self.MERGE_CAUSAL_NODE,
-                    {
-                        "node_id": causal_id,
-                        "name": f"Causal: {action_type}",
-                        "description": f"Trigger: {trigger} → Effect: {effect}",
-                        "trigger_pattern": trigger,
-                        "effect_pattern": effect,
-                        "confidence": avg_reward,
-                        "created_at": now_iso,
-                        "updated_at": now_iso,
-                    },
-                ))
+                cypher_batch.append(
+                    (
+                        self.MERGE_CAUSAL_NODE,
+                        {
+                            "node_id": causal_id,
+                            "name": f"Causal: {action_type}",
+                            "description": f"Trigger: {trigger} → Effect: {effect}",
+                            "trigger_pattern": trigger,
+                            "effect_pattern": effect,
+                            "confidence": avg_reward,
+                            "created_at": now_iso,
+                            "updated_at": now_iso,
+                        },
+                    )
+                )
                 stats["causal_nodes"] += 1
 
                 # ── Create Economic Node ──────────────────────────────
@@ -376,90 +377,100 @@ class Neo4jEpistemicSyncWorker:
                 cost_impact = seq_data.get("cost_impact", 0.0)
                 roi = (revenue_impact - cost_impact) / max(cost_impact, 0.01)
 
-                cypher_batch.append((
-                    self.MERGE_ECONOMIC_NODE,
-                    {
-                        "node_id": economic_id,
-                        "name": f"Economic: {action_type}",
-                        "description": f"Rev=${revenue_impact:.2f} Cost=${cost_impact:.2f} ROI={roi:.2f}x",
-                        "revenue_impact": revenue_impact,
-                        "cost_impact": cost_impact,
-                        "roi_estimate": roi,
-                        "created_at": now_iso,
-                        "updated_at": now_iso,
-                    },
-                ))
+                cypher_batch.append(
+                    (
+                        self.MERGE_ECONOMIC_NODE,
+                        {
+                            "node_id": economic_id,
+                            "name": f"Economic: {action_type}",
+                            "description": f"Rev=${revenue_impact:.2f} Cost=${cost_impact:.2f} ROI={roi:.2f}x",
+                            "revenue_impact": revenue_impact,
+                            "cost_impact": cost_impact,
+                            "roi_estimate": roi,
+                            "created_at": now_iso,
+                            "updated_at": now_iso,
+                        },
+                    )
+                )
                 stats["economic_nodes"] += 1
 
                 # ── Create Abstraction Node ───────────────────────────
                 abstraction_level = seq_data.get("abstraction_level", 1)
                 generalization = min(avg_reward * win_rate * 1.5, 1.0)
 
-                cypher_batch.append((
-                    self.MERGE_ABSTRACTION_NODE,
-                    {
-                        "node_id": abstraction_id,
-                        "name": f"Abstraction: {action_type}",
-                        "description": f"Level {abstraction_level} generalization",
-                        "abstraction_level": abstraction_level,
-                        "generalization_score": generalization,
-                        "created_at": now_iso,
-                        "updated_at": now_iso,
-                    },
-                ))
+                cypher_batch.append(
+                    (
+                        self.MERGE_ABSTRACTION_NODE,
+                        {
+                            "node_id": abstraction_id,
+                            "name": f"Abstraction: {action_type}",
+                            "description": f"Level {abstraction_level} generalization",
+                            "abstraction_level": abstraction_level,
+                            "generalization_score": generalization,
+                            "created_at": now_iso,
+                            "updated_at": now_iso,
+                        },
+                    )
+                )
                 stats["abstraction_nodes"] += 1
 
                 # ── Create CAUSES Edges ───────────────────────────────
                 # Causal → Economic
                 edge_weight = avg_reward
-                cypher_batch.append((
-                    self.MERGE_CAUSES_EDGE,
-                    {
-                        "source_label": "CausalNode",
-                        "source_id": causal_id,
-                        "target_label": "EconomicNode",
-                        "target_id": economic_id,
-                        "weight": edge_weight,
-                        "historical_win_rate": win_rate,
-                        "updated_at": now_iso,
-                        "edge_type": "causal_to_economic",
-                        "description": f"Causal sequence drives economic outcome (win_rate={win_rate:.3f})",
-                    },
-                ))
+                cypher_batch.append(
+                    (
+                        self.MERGE_CAUSES_EDGE,
+                        {
+                            "source_label": "CausalNode",
+                            "source_id": causal_id,
+                            "target_label": "EconomicNode",
+                            "target_id": economic_id,
+                            "weight": edge_weight,
+                            "historical_win_rate": win_rate,
+                            "updated_at": now_iso,
+                            "edge_type": "causal_to_economic",
+                            "description": f"Causal sequence drives economic outcome (win_rate={win_rate:.3f})",
+                        },
+                    )
+                )
                 stats["edges_created"] += 1
 
                 # Economic → Abstraction
-                cypher_batch.append((
-                    self.MERGE_CAUSES_EDGE,
-                    {
-                        "source_label": "EconomicNode",
-                        "source_id": economic_id,
-                        "target_label": "AbstractionNode",
-                        "target_id": abstraction_id,
-                        "weight": edge_weight * 0.8,
-                        "historical_win_rate": win_rate,
-                        "updated_at": now_iso,
-                        "edge_type": "economic_to_abstraction",
-                        "description": f"Economic outcome informs abstraction (weight={edge_weight * 0.8:.3f})",
-                    },
-                ))
+                cypher_batch.append(
+                    (
+                        self.MERGE_CAUSES_EDGE,
+                        {
+                            "source_label": "EconomicNode",
+                            "source_id": economic_id,
+                            "target_label": "AbstractionNode",
+                            "target_id": abstraction_id,
+                            "weight": edge_weight * 0.8,
+                            "historical_win_rate": win_rate,
+                            "updated_at": now_iso,
+                            "edge_type": "economic_to_abstraction",
+                            "description": f"Economic outcome informs abstraction (weight={edge_weight * 0.8:.3f})",
+                        },
+                    )
+                )
                 stats["edges_created"] += 1
 
                 # Abstraction → Causal (feedback loop)
-                cypher_batch.append((
-                    self.MERGE_CAUSES_EDGE,
-                    {
-                        "source_label": "AbstractionNode",
-                        "source_id": abstraction_id,
-                        "target_label": "CausalNode",
-                        "target_id": causal_id,
-                        "weight": generalization,
-                        "historical_win_rate": win_rate,
-                        "updated_at": now_iso,
-                        "edge_type": "abstraction_to_causal",
-                        "description": f"Abstraction feeds back into causal model (gen={generalization:.3f})",
-                    },
-                ))
+                cypher_batch.append(
+                    (
+                        self.MERGE_CAUSES_EDGE,
+                        {
+                            "source_label": "AbstractionNode",
+                            "source_id": abstraction_id,
+                            "target_label": "CausalNode",
+                            "target_id": causal_id,
+                            "weight": generalization,
+                            "historical_win_rate": win_rate,
+                            "updated_at": now_iso,
+                            "edge_type": "abstraction_to_causal",
+                            "description": f"Abstraction feeds back into causal model (gen={generalization:.3f})",
+                        },
+                    )
+                )
                 stats["edges_created"] += 1
 
             # ── Phase 3: Execute atomic batch ─────────────────────────
@@ -498,7 +509,7 @@ class Neo4jEpistemicSyncWorker:
                     else:
                         edge_queries.append((q, params))
 
-                results = await self._neo4j.run_in_transaction(edge_queries)
+                await self._neo4j.run_in_transaction(edge_queries)
                 logger.info(
                     "Phase 3: %d Cypher mutations executed in atomic transaction",
                     len(edge_queries),
@@ -516,7 +527,8 @@ class Neo4jEpistemicSyncWorker:
                     if seq_id:
                         try:
                             await self._postgres.mark_synced(
-                                int(seq_id), sync_target="neo4j",
+                                int(seq_id),
+                                sync_target="neo4j",
                             )
                         except (ValueError, TypeError):
                             pass

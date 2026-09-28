@@ -9,8 +9,7 @@ import asyncio
 import logging
 from typing import Optional
 
-import aiohttp
-from aiohttp import ClientTimeout, ClientSession, TCPConnector
+from aiohttp import ClientSession, ClientTimeout, TCPConnector
 from tenacity import (
     before_sleep_log,
     retry,
@@ -101,7 +100,9 @@ class HttpClient:
                 text = await response.text(encoding="utf-8", errors="replace")
                 logger.debug(
                     "Fetched %s — status %s, %d bytes",
-                    url, response.status, len(text),
+                    url,
+                    response.status,
+                    len(text),
                 )
                 await asyncio.sleep(self._rate_limit_delay)
                 return text
@@ -113,7 +114,9 @@ class HttpClient:
         reraise=True,
     )
     async def fetch_json(
-        self, url: str, **kwargs: object,
+        self,
+        url: str,
+        **kwargs: object,
     ) -> dict[str, object] | list[dict[str, object]]:
         """
         Fetch JSON content from a URL with retry logic.
@@ -132,7 +135,8 @@ class HttpClient:
                 data = await response.json()
                 logger.debug(
                     "Fetched JSON %s — status %s",
-                    url, response.status,
+                    url,
+                    response.status,
                 )
                 await asyncio.sleep(self._rate_limit_delay)
                 return data  # type: ignore[return-value]
@@ -156,5 +160,3 @@ async def close_http_client() -> None:
     if _http_client:
         await _http_client.close()
         _http_client = None
-
-

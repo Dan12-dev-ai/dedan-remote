@@ -12,14 +12,13 @@ from __future__ import annotations
 
 import os
 import tempfile
-from pathlib import Path
 
 import pytest
 from fastapi.testclient import TestClient
 
+import api.store as store_module
 from api.main import app
 from api.security import rate_limiter, validate_external_url
-import api.store as store_module
 
 
 @pytest.fixture()
@@ -37,8 +36,7 @@ def auth_client(client):
     """Client registered + signed in; auth header applied to all requests."""
     resp = client.post(
         "/api/auth/register",
-        json={"email": "qa@example.com", "password": "longenough1",
-              "display_name": "QA"},
+        json={"email": "qa@example.com", "password": "longenough1", "display_name": "QA"},
     )
     assert resp.status_code == 201, resp.text
     token = resp.json()["token"]
@@ -47,6 +45,7 @@ def auth_client(client):
 
 
 # ── Health & meta ────────────────────────────────────────────────────────────
+
 
 class TestMeta:
     def test_health(self, client):
@@ -120,13 +119,13 @@ class TestMeta:
 
 # ── Jobs: rendering, search, filters, pagination ───────────────────────────
 
+
 class TestJobsList:
     def test_list_returns_page_envelope(self, client):
         r = client.get("/api/jobs")
         assert r.status_code == 200
         data = r.json()
-        assert {"items", "page", "page_size", "total", "pages",
-                "has_next", "has_prev"} <= set(data)
+        assert {"items", "page", "page_size", "total", "pages", "has_next", "has_prev"} <= set(data)
 
     def test_job_card_fields(self, client):
         r = client.get("/api/jobs?page_size=5")
@@ -134,9 +133,19 @@ class TestJobsList:
         assert items, "expected real jobs in discovery DB"
         job = items[0]
         required = [
-            "id", "slug", "title", "company", "source", "source_info",
-            "apply_url", "salary_disclosed", "location_label", "remote",
-            "tags", "freshness", "score",
+            "id",
+            "slug",
+            "title",
+            "company",
+            "source",
+            "source_info",
+            "apply_url",
+            "salary_disclosed",
+            "location_label",
+            "remote",
+            "tags",
+            "freshness",
+            "score",
         ]
         for field in required:
             assert field in job, f"missing {field}"
@@ -150,47 +159,50 @@ class TestJobsList:
         all_items = client.get("/api/jobs", params={"page_size": 50}).json()
         total = all_items["total"]
         filtered = client.get(
-            "/api/jobs", params={"q": "annotation", "page_size": 50},
+            "/api/jobs",
+            params={"q": "annotation", "page_size": 50},
         ).json()
         assert filtered["total"] <= total
         # Every hit must actually contain the term somewhere.
         for job in filtered["items"]:
-            blob = " ".join([
-                job["title"], job["company"], job["source"],
-                " ".join(job["tags"]), job["description"] or "",
-            ]).lower()
+            blob = " ".join(
+                [
+                    job["title"],
+                    job["company"],
+                    job["source"],
+                    " ".join(job["tags"]),
+                    job["description"] or "",
+                ]
+            ).lower()
             assert "annotation" in blob
 
     def test_source_filter(self, client):
-        r = client.get("/api/jobs", params={"source": "oneforma",
-                                             "page_size": 50})
+        r = client.get("/api/jobs", params={"source": "oneforma", "page_size": 50})
         assert r.status_code == 200
         for job in r.json()["items"]:
             assert job["source"] == "oneforma"
 
     def test_min_score_filter(self, client):
-        r = client.get("/api/jobs", params={"min_score": 65,
-                                             "page_size": 50})
+        r = client.get("/api/jobs", params={"min_score": 65, "page_size": 50})
         assert r.status_code == 200
         for job in r.json()["items"]:
             assert job["score"] >= 65
 
     def test_remote_filter(self, client):
-        r = client.get("/api/jobs", params={"remote": "true",
-                                             "page_size": 50})
+        r = client.get("/api/jobs", params={"remote": "true", "page_size": 50})
         assert r.status_code == 200
         for job in r.json()["items"]:
             assert job["remote"] is True
 
-    @pytest.mark.parametrize("sort", ["newest", "best_match", "score",
-                                      "salary", "freshness"])
+    @pytest.mark.parametrize("sort", ["newest", "best_match", "score", "salary", "freshness"])
     def test_all_sorts_accepted(self, client, sort):
         r = client.get("/api/jobs", params={"sort": sort})
         assert r.status_code == 200
 
     def test_score_sort_descending(self, client):
         items = client.get(
-            "/api/jobs", params={"sort": "score", "page_size": 50},
+            "/api/jobs",
+            params={"sort": "score", "page_size": 50},
         ).json()["items"]
         scores = [j["score"] for j in items]
         assert scores == sorted(scores, reverse=True)
@@ -267,6 +279,7 @@ class TestJobDetail:
 
 # ── Auth boundaries ─────────────────────────────────────────────────────────
 
+
 class TestAuth:
     def test_register_login_me_logout(self, client):
         r = client.post(
@@ -295,44 +308,42 @@ class TestAuth:
         assert r.status_code == 409
 
     def test_wrong_password_rejected(self, client):
-        client.post("/api/auth/register",
-                    json={"email": "x@example.com",
-                          "password": "longenough1"})
-        r = client.post("/api/auth/login",
-                        json={"email": "x@example.com",
-                              "password": "wrongpass11"})
+        client.post(
+            "/api/auth/register", json={"email": "x@example.com", "password": "longenough1"}
+        )
+        r = client.post(
+            "/api/auth/login", json={"email": "x@example.com", "password": "wrongpass11"}
+        )
         assert r.status_code == 401
 
     def test_short_password_validation(self, client):
-        r = client.post("/api/auth/register",
-                        json={"email": "y@example.com", "password": "short"})
+        r = client.post("/api/auth/register", json={"email": "y@example.com", "password": "short"})
         assert r.status_code == 422
 
     def test_bogus_token_rejected(self, client):
-        r = client.get("/api/saved",
-                       headers={"Authorization": "Bearer not-a-real-token"})
+        r = client.get("/api/saved", headers={"Authorization": "Bearer not-a-real-token"})
         assert r.status_code == 401
 
     def test_browse_requires_no_auth(self, client):
         # Public experience must never be gated.
-        for path in ("/api/jobs", "/api/stats", "/api/status",
-                     "/api/sources", "/api/categories"):
+        for path in ("/api/jobs", "/api/stats", "/api/status", "/api/sources", "/api/categories"):
             assert client.get(path).status_code == 200, path
 
-    @pytest.mark.parametrize("path", ["/api/saved", "/api/applications",
-                                      "/api/profile", "/api/recommendations"])
+    @pytest.mark.parametrize(
+        "path", ["/api/saved", "/api/applications", "/api/profile", "/api/recommendations"]
+    )
     def test_private_endpoints_require_auth(self, client, path):
         assert client.get(path).status_code == 401
 
 
 # ── Save & application tracking ────────────────────────────────────────────
 
+
 class TestSaved:
     def test_save_list_unsave_cycle(self, auth_client):
         job_id = auth_client.get("/api/jobs").json()["items"][0]["id"]
 
-        r = auth_client.post(f"/api/jobs/{job_id}/save",
-                             json={"note": "follow up"})
+        r = auth_client.post(f"/api/jobs/{job_id}/save", json={"note": "follow up"})
         assert r.status_code == 201
 
         saved = auth_client.get("/api/saved").json()
@@ -388,63 +399,72 @@ class TestApplications:
         assert r.status_code == 422
 
     def test_application_for_unknown_job_404(self, auth_client):
-        r = auth_client.post("/api/applications",
-                             json={"job_id": "ffffffffffffffff"})
+        r = auth_client.post("/api/applications", json={"job_id": "ffffffffffffffff"})
         assert r.status_code == 404
 
     def test_patch_other_users_application_404(self, client):
         # user A creates
-        r = client.post("/api/auth/register",
-                        json={"email": "a@example.com",
-                              "password": "longenough1"})
+        r = client.post(
+            "/api/auth/register", json={"email": "a@example.com", "password": "longenough1"}
+        )
         h_a = {"Authorization": f"Bearer {r.json()['token']}"}
         job_id = client.get("/api/jobs").json()["items"][0]["id"]
         created = client.post(
-            "/api/applications", json={"job_id": job_id}, headers=h_a,
+            "/api/applications",
+            json={"job_id": job_id},
+            headers=h_a,
         ).json()
 
         # user B tries to patch it
-        r = client.post("/api/auth/register",
-                        json={"email": "b@example.com",
-                              "password": "longenough1"})
+        r = client.post(
+            "/api/auth/register", json={"email": "b@example.com", "password": "longenough1"}
+        )
         h_b = {"Authorization": f"Bearer {r.json()['token']}"}
-        r = client.patch(f"/api/applications/{created['id']}",
-                         json={"status": "rejected"}, headers=h_b)
+        r = client.patch(
+            f"/api/applications/{created['id']}", json={"status": "rejected"}, headers=h_b
+        )
         assert r.status_code == 404
 
     def test_user_cannot_see_others_applications(self, client):
-        r = client.post("/api/auth/register",
-                        json={"email": "c@example.com",
-                              "password": "longenough1"})
+        r = client.post(
+            "/api/auth/register", json={"email": "c@example.com", "password": "longenough1"}
+        )
         h = {"Authorization": f"Bearer {r.json()['token']}"}
         assert client.get("/api/applications", headers=h).json() == []
 
 
 # ── External redirect safety ────────────────────────────────────────────────
 
+
 class TestExternalUrlValidation:
-    @pytest.mark.parametrize("url", [
-        "javascript:alert(1)",
-        "file:///etc/passwd",
-        "data:text/html,<script>x</script>",
-        "http://localhost/admin",
-        "http://127.0.0.1/x",
-        "http://169.254.169.254/latest/meta-data/",
-        "http://192.168.1.1/router",
-        "http://10.0.0.5/internal",
-        "ftp://evil.example.com/payload",
-        "",
-    ])
+    @pytest.mark.parametrize(
+        "url",
+        [
+            "javascript:alert(1)",
+            "file:///etc/passwd",
+            "data:text/html,<script>x</script>",
+            "http://localhost/admin",
+            "http://127.0.0.1/x",
+            "http://169.254.169.254/latest/meta-data/",
+            "http://192.168.1.1/router",
+            "http://10.0.0.5/internal",
+            "ftp://evil.example.com/payload",
+            "",
+        ],
+    )
     def test_blocked_urls(self, url):
         valid, cleaned = validate_external_url(url)
         assert valid is False
         assert cleaned is None
 
-    @pytest.mark.parametrize("url", [
-        "https://example.com/jobs/123",
-        "http://jobs.telusdigital.com/?ref=abc",
-        "https://outlier.ai/expert-jobs?q=x#top",
-    ])
+    @pytest.mark.parametrize(
+        "url",
+        [
+            "https://example.com/jobs/123",
+            "http://jobs.telusdigital.com/?ref=abc",
+            "https://outlier.ai/expert-jobs?q=x#top",
+        ],
+    )
     def test_allowed_urls(self, url):
         valid, cleaned = validate_external_url(url)
         assert valid is True
@@ -464,14 +484,17 @@ class TestExternalUrlValidation:
 
 # ── Preferences & recommendations ──────────────────────────────────────────
 
+
 class TestPreferences:
     def test_patch_and_read_profile(self, auth_client):
         r = auth_client.patch(
             "/api/profile",
-            json={"display_name": "Ada",
-                  "categories": ["ai-ml", "data"],
-                  "experience": "intermediate",
-                  "regions": ["worldwide", "europe"]},
+            json={
+                "display_name": "Ada",
+                "categories": ["ai-ml", "data"],
+                "experience": "intermediate",
+                "regions": ["worldwide", "europe"],
+            },
         )
         assert r.status_code == 200
         data = r.json()
@@ -480,21 +503,17 @@ class TestPreferences:
         assert data["preferences"]["experience"] == "intermediate"
 
     def test_invalid_experience_rejected(self, auth_client):
-        r = auth_client.patch("/api/profile",
-                              json={"experience": "wizard"})
+        r = auth_client.patch("/api/profile", json={"experience": "wizard"})
         assert r.status_code == 422
 
     def test_recommendations_labeled_not_ai_claims(self, auth_client):
-        auth_client.patch("/api/profile",
-                          json={"categories": ["data"],
-                                "regions": ["worldwide"]})
+        auth_client.patch("/api/profile", json={"categories": ["data"], "regions": ["worldwide"]})
         r = auth_client.get("/api/recommendations")
         assert r.status_code == 200
         data = r.json()
         assert data["basis"] in ("user_preferences", "top_ranked")
         # Must be transparent about method — no fake AI claims.
-        assert "AI language model" in data["method"] or \
-               "not" in data["method"].lower()
+        assert "AI language model" in data["method"] or "not" in data["method"].lower()
         for item in data["items"]:
             if item["preference_match"]:
                 assert item["preference_match"]["basis"] == "user_preferences"
@@ -507,6 +526,7 @@ class TestPreferences:
 
 
 # ── Rate limiting ───────────────────────────────────────────────────────────
+
 
 class TestRateLimit:
     def test_auth_endpoint_rate_limited(self, client):
@@ -530,6 +550,7 @@ class TestRateLimit:
 
 # ── Command search ──────────────────────────────────────────────────────────
 
+
 class TestCommandSearch:
     """Search must group real results and never pad an empty query."""
 
@@ -552,13 +573,11 @@ class TestCommandSearch:
         assert len(data["opportunities"]) <= 3
         for item in data["opportunities"]:
             # Every hit is a real serialized opportunity.
-            for field in ("id", "slug", "title", "source_info", "freshness",
-                          "score"):
+            for field in ("id", "slug", "title", "source_info", "freshness", "score"):
                 assert field in item
 
     def test_no_match_is_honest(self, client):
-        r = client.get("/api/search",
-                       params={"q": "zzzz-unfindable-query-zzzz"})
+        r = client.get("/api/search", params={"q": "zzzz-unfindable-query-zzzz"})
         assert r.status_code == 200
         data = r.json()
         assert data["opportunities"] == []
@@ -567,14 +586,14 @@ class TestCommandSearch:
     def test_suggestions_are_runnable_kinds(self, client):
         r = client.get("/api/search", params={"q": "ai"})
         for suggestion in r.json()["suggestions"]:
-            assert suggestion["kind"] in ("tag", "source", "category",
-                                          "keyword")
+            assert suggestion["kind"] in ("tag", "source", "category", "keyword")
             assert suggestion["label"]
         # The response must state that matching is deterministic, not magic.
         assert "not a language model" in r.json()["note"].lower()
 
 
 # ── Activity signals ────────────────────────────────────────────────────────
+
 
 class TestActivitySignals:
     def test_requires_authentication(self, client):
@@ -594,12 +613,14 @@ class TestActivitySignals:
             pytest.skip("discovery database has no rows to act on")
         job_id = page["items"][0]["id"]
 
-        assert auth_client.post(f"/api/jobs/{job_id}/save",
-                                json={}).status_code == 201
-        assert auth_client.post(
-            "/api/applications",
-            json={"job_id": job_id, "status": "applied"},
-        ).status_code == 201
+        assert auth_client.post(f"/api/jobs/{job_id}/save", json={}).status_code == 201
+        assert (
+            auth_client.post(
+                "/api/applications",
+                json={"job_id": job_id, "status": "applied"},
+            ).status_code
+            == 201
+        )
 
         items = auth_client.get("/api/notifications").json()["items"]
         kinds = {item["kind"] for item in items}
@@ -617,17 +638,21 @@ class TestActivitySignals:
 
 # ── Versioned surface ───────────────────────────────────────────────────────
 
+
 class TestVersionedAliases:
     """`/api` is canonical; `/api/v1` mirrors it for future breaking changes."""
 
-    @pytest.mark.parametrize("path", [
-        "/api/v1/health",
-        "/api/v1/stats",
-        "/api/v1/sources",
-        "/api/v1/categories",
-        "/api/v1/jobs?page_size=2",
-        "/api/v1/search?q=ai",
-    ])
+    @pytest.mark.parametrize(
+        "path",
+        [
+            "/api/v1/health",
+            "/api/v1/stats",
+            "/api/v1/sources",
+            "/api/v1/categories",
+            "/api/v1/jobs?page_size=2",
+            "/api/v1/search?q=ai",
+        ],
+    )
     def test_public_aliases_respond(self, client, path):
         assert client.get(path).status_code == 200
 
@@ -646,4 +671,3 @@ class TestVersionedAliases:
         paths = client.get("/api/openapi.json").json()["paths"]
         assert not any(p.startswith("/api/v1") for p in paths)
         assert "/api/jobs" in paths
-

@@ -14,30 +14,67 @@ logger = get_logger(__name__)
 
 # Countries known to restrict remote work payments to Ethiopia
 RESTRICTIVE_COUNTRIES: set[str] = {
-    "iran", "syria", "north korea", "cuba", "sudan",
-    "crimea", "venezuela", "myanmar", "belarus",
+    "iran",
+    "syria",
+    "north korea",
+    "cuba",
+    "sudan",
+    "crimea",
+    "venezuela",
+    "myanmar",
+    "belarus",
 }
 
 # Payment platforms common in Ethiopia
 ETHIOPIA_FRIENDLY_PAYMENT: set[str] = {
-    "paypal", "payoneer", "wise", "cryptocurrency", "crypto",
-    "airtm", "bitcoin", "usdt", "wire transfer", "telebirr",
+    "paypal",
+    "payoneer",
+    "wise",
+    "cryptocurrency",
+    "crypto",
+    "airtm",
+    "bitcoin",
+    "usdt",
+    "wire transfer",
+    "telebirr",
 }
 
 # Countries known to work well with Ethiopian freelancers
 ETHIOPIA_FRIENDLY_COUNTRIES: set[str] = {
-    "worldwide", "global", "remote", "anywhere", "united states",
-    "united kingdom", "canada", "australia", "germany", "netherlands",
-    "switzerland", "singapore", "uae", "united arab emirates",
+    "worldwide",
+    "global",
+    "remote",
+    "anywhere",
+    "united states",
+    "united kingdom",
+    "canada",
+    "australia",
+    "germany",
+    "netherlands",
+    "switzerland",
+    "singapore",
+    "uae",
+    "united arab emirates",
 }
 
 # Indicators that payment may be restricted for Ethiopia
 RESTRICTION_INDICATORS: list[str] = [
-    "us citizens only", "us residents only", "must be in us",
-    "north america only", "us only", "united states only",
-    "uk only", "europe only", "eu only", "eu residents",
-    "must be located in", "must reside in", "local candidates only",
-    "onsite required", "on-site required", "hybrid",
+    "us citizens only",
+    "us residents only",
+    "must be in us",
+    "north america only",
+    "us only",
+    "united states only",
+    "uk only",
+    "europe only",
+    "eu only",
+    "eu residents",
+    "must be located in",
+    "must reside in",
+    "local candidates only",
+    "onsite required",
+    "on-site required",
+    "hybrid",
 ]
 
 
@@ -118,9 +155,12 @@ class EligibilityEngine:
     def _is_blocked_for_ethiopia(self, text: str) -> bool:
         """Check if posting explicitly excludes Ethiopia."""
         blocks = [
-            "not available in ethiopia", "unavailable in ethiopia",
-            "excluding ethiopia", "ethiopia not supported",
-            "cannot pay ethiopia", "ethiopia restricted",
+            "not available in ethiopia",
+            "unavailable in ethiopia",
+            "excluding ethiopia",
+            "ethiopia not supported",
+            "cannot pay ethiopia",
+            "ethiopia restricted",
         ]
         return any(phrase in text for phrase in blocks)
 
@@ -135,18 +175,24 @@ class EligibilityEngine:
     def _has_restrictive_payment_indicator(self, text: str) -> bool:
         """Detect payment restrictions."""
         indicators = [
-            "must have us bank account", "us bank account required",
-            "ach transfer only", "direct deposit only",
-            "must have ssn", "social security number required",
+            "must have us bank account",
+            "us bank account required",
+            "ach transfer only",
+            "direct deposit only",
+            "must have ssn",
+            "social security number required",
         ]
         return any(ind in text for ind in indicators)
 
     def _requires_us_citizenship(self, text: str) -> bool:
         """Check if posting explicitly requires US citizenship."""
         citizenship = [
-            "us citizens only", "us citizenship required",
-            "must be us citizen", "us person",
-            "export controlled", "itear",
+            "us citizens only",
+            "us citizenship required",
+            "must be us citizen",
+            "us person",
+            "export controlled",
+            "itear",
         ]
         return any(phrase in text for phrase in citizenship)
 

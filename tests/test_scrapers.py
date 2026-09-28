@@ -22,8 +22,8 @@ from scrapers.telus_scraper import TelusScraper
 from scrapers.toloka_scraper import TolokaScraper
 from scrapers.welocalize_scraper import WelocalizeScraper
 
-
 # ── HTTP mocks ────────────────────────────────────────────────────────────────
+
 
 class FakeClient:
     """Minimal stand-in for utils.http_client.HttpClient."""
@@ -42,6 +42,7 @@ class FakeClient:
 
 def attach_client(scraper: BaseScraper, client: FakeClient) -> BaseScraper:
     """Replace a scraper's lazy HTTP client with the fake one."""
+
     async def _get_client() -> FakeClient:
         return client
 
@@ -82,6 +83,7 @@ TOLOKA_TASK_HTML = """
 
 
 # ── BaseScraper contract ─────────────────────────────────────────────────────
+
 
 class TestBaseScraperContract:
     """The abstract base class enforces required metadata."""
@@ -146,7 +148,10 @@ class TestPlatformScrapers:
 
     @pytest.mark.parametrize("scraper_cls,source,company", PLATFORM_CASES)
     async def test_parse_listing(
-        self, scraper_cls: type[BaseScraper], source: str, company: str,
+        self,
+        scraper_cls: type[BaseScraper],
+        source: str,
+        company: str,
     ) -> None:
         scraper = attach_client(scraper_cls(), FakeClient(GENERIC_LISTING_HTML))
         jobs = await scraper.scrape()
@@ -163,18 +168,25 @@ class TestPlatformScrapers:
 
     @pytest.mark.parametrize("scraper_cls,source,company", PLATFORM_CASES)
     async def test_network_failure_returns_empty_list(
-        self, scraper_cls: type[BaseScraper], source: str, company: str,
+        self,
+        scraper_cls: type[BaseScraper],
+        source: str,
+        company: str,
     ) -> None:
         """Scrapers never raise — failures degrade to an empty list."""
         scraper = attach_client(
-            scraper_cls(), FakeClient(error=ConnectionError("network down")),
+            scraper_cls(),
+            FakeClient(error=ConnectionError("network down")),
         )
         jobs = await scraper.scrape()
         assert jobs == []
 
     @pytest.mark.parametrize("scraper_cls,source,company", PLATFORM_CASES)
     async def test_empty_html_returns_list(
-        self, scraper_cls: type[BaseScraper], source: str, company: str,
+        self,
+        scraper_cls: type[BaseScraper],
+        source: str,
+        company: str,
     ) -> None:
         scraper = attach_client(scraper_cls(), FakeClient("<html></html>"))
         jobs = await scraper.scrape()
@@ -191,7 +203,8 @@ class TestPlatformScrapers:
 
     async def test_dataannotation_extracts_pay(self) -> None:
         scraper = attach_client(
-            DataAnnotationScraper(), FakeClient(GENERIC_LISTING_HTML),
+            DataAnnotationScraper(),
+            FakeClient(GENERIC_LISTING_HTML),
         )
         jobs = await scraper.scrape()
         assert jobs[0].salary == "$15/hr"
@@ -225,6 +238,7 @@ class TestPlatformScrapers:
 
 # ── Toloka scraper (previously a stub) ───────────────────────────────────────
 
+
 class TestTolokaScraper:
     """Toloka must behave like every other fully-implemented scraper."""
 
@@ -255,6 +269,7 @@ class TestTolokaScraper:
 
     async def test_falls_back_to_second_catalog_url(self) -> None:
         """If the first catalog URL fails, the next one is tried."""
+
         class FailingFirstClient(FakeClient):
             async def fetch_html(self, url: str, **kwargs: object) -> str:
                 self.calls.append(url)
@@ -268,13 +283,15 @@ class TestTolokaScraper:
 
     async def test_returns_empty_when_all_urls_fail(self) -> None:
         scraper = attach_client(
-            TolokaScraper(), FakeClient(error=TimeoutError("all down")),
+            TolokaScraper(),
+            FakeClient(error=TimeoutError("all down")),
         )
         jobs = await scraper.scrape()
         assert jobs == []
 
 
 # ── Registry auto-discovery ──────────────────────────────────────────────────
+
 
 class TestScraperRegistry:
     """The registry auto-discovers every scraper in the package."""
@@ -284,12 +301,17 @@ class TestScraperRegistry:
         registry.discover_scrapers()
         sources = registry.scraper_sources
         expected = {
-            "outlier", "alignerr", "oneforma", "telus", "welocalize",
-            "appen", "dataannotation", "clickworker", "toloka",
+            "outlier",
+            "alignerr",
+            "oneforma",
+            "telus",
+            "welocalize",
+            "appen",
+            "dataannotation",
+            "clickworker",
+            "toloka",
         }
-        assert expected.issubset(set(sources)), (
-            f"Missing scrapers: {expected - set(sources)}"
-        )
+        assert expected.issubset(set(sources)), f"Missing scrapers: {expected - set(sources)}"
 
     def test_get_by_source(self) -> None:
         registry = ScraperRegistry()

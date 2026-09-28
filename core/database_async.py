@@ -11,13 +11,11 @@ Provides connection pooling and async DML for:
 from __future__ import annotations
 
 import json
-from datetime import datetime, timezone
 from typing import Any, Optional
 
 import asyncpg
 from asyncpg import Pool, Record
 
-from core.metrics import TASK_PROCESSING_LATENCY
 from utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -37,9 +35,7 @@ class AsyncPostgresDB:
         min_size: int = 4,
         max_size: int = 20,
     ) -> None:
-        self._dsn = dsn or (
-            f"postgresql://{user}:{password}@{host}:{port}/{database}"
-        )
+        self._dsn = dsn or (f"postgresql://{user}:{password}@{host}:{port}/{database}")
         self._pool: Optional[Pool] = None
         self._min_size = min_size
         self._max_size = max_size
@@ -56,7 +52,8 @@ class AsyncPostgresDB:
         )
         logger.info(
             "AsyncPostgresDB pool created (min=%d, max=%d)",
-            self._min_size, self._max_size,
+            self._min_size,
+            self._max_size,
         )
 
     async def close(self) -> None:
@@ -179,13 +176,19 @@ class AsyncPostgresDB:
                (task_id, agent_id, milestone_type, payload, tokens, business_value)
                VALUES ($1, $2, $3, $4::jsonb, $5::text[], $6)
                RETURNING id""",
-            task_id, agent_id, milestone_type,
-            json.dumps(payload), tokens, business_value,
+            task_id,
+            agent_id,
+            milestone_type,
+            json.dumps(payload),
+            tokens,
+            business_value,
         )
         inserted_id = row["id"] if row else 0
         logger.debug(
             "Episodic milestone #%d inserted (type=%s, task=%s)",
-            inserted_id, milestone_type, task_id,
+            inserted_id,
+            milestone_type,
+            task_id,
         )
         return inserted_id  # type: ignore[return-value]
 
@@ -221,7 +224,8 @@ class AsyncPostgresDB:
         """Update the Qdrant embeddings ID for a record."""
         await self._execute(
             "UPDATE tier2_episodic_memory SET embeddings_id = $1 WHERE id = $2",
-            embeddings_id, record_id,
+            embeddings_id,
+            record_id,
         )
 
     # ── Dead-Letter Queue ────────────────────────────────────────────────────
@@ -241,7 +245,9 @@ class AsyncPostgresDB:
                (task_id, platform, payload, failure_reason, failure_detail, idempotency_key)
                VALUES ($1, $2, $3::jsonb, $4, $5::jsonb, $6)
                RETURNING id""",
-            task_id, platform, json.dumps(payload),
+            task_id,
+            platform,
+            json.dumps(payload),
             failure_reason,
             json.dumps(failure_detail) if failure_detail else None,
             idempotency_key,
@@ -249,7 +255,9 @@ class AsyncPostgresDB:
         dlq_id = row["id"] if row else 0
         logger.warning(
             "Dead-letter entry #%d created (platform=%s, reason=%s)",
-            dlq_id, platform, failure_reason,
+            dlq_id,
+            platform,
+            failure_reason,
         )
         return dlq_id  # type: ignore[return-value]
 
@@ -283,8 +291,13 @@ class AsyncPostgresDB:
                 net_profit, risk_index, token_overhead, policy_loss)
                VALUES ($1, $2::jsonb, $3, $4, $5, $6, $7, $8)
                RETURNING id""",
-            epoch, json.dumps(state_vector), action_taken,
-            reward_total, net_profit, risk_index, token_overhead,
+            epoch,
+            json.dumps(state_vector),
+            action_taken,
+            reward_total,
+            net_profit,
+            risk_index,
+            token_overhead,
             policy_loss,
         )
         return row["id"] if row else 0  # type: ignore[return-value]
@@ -323,8 +336,11 @@ class AsyncPostgresDB:
                    END,
                    execution_count = t2_high_performing_sequences.execution_count + 1,
                    last_seen_at = NOW()""",
-            sequence_hash, json.dumps(sequence_data),
-            reward, win_rate, execution_count,
+            sequence_hash,
+            json.dumps(sequence_data),
+            reward,
+            win_rate,
+            execution_count,
         )
 
     async def fetch_high_performing_sequences(
@@ -339,7 +355,9 @@ class AsyncPostgresDB:
                WHERE win_rate >= $1 AND execution_count >= $2
                ORDER BY win_rate DESC, avg_reward DESC
                LIMIT $3""",
-            min_win_rate, min_executions, limit,
+            min_win_rate,
+            min_executions,
+            limit,
         )
         return rows
 

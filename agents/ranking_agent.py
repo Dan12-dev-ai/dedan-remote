@@ -6,7 +6,6 @@ Produces a 0-100 score used to determine notification urgency.
 from __future__ import annotations
 
 from datetime import datetime, timezone
-from typing import Optional
 
 from config.settings import get_settings
 from models.job import Job
@@ -55,14 +54,13 @@ class RankingAgent:
             "freshness": self._score_freshness(job),
         }
 
-        total = sum(
-            scores[dim] * self._weights[dim]
-            for dim in self._weights
-        )
+        total = sum(scores[dim] * self._weights[dim] for dim in self._weights)
 
         logger.debug(
             "Score for %s @ %s: %.1f (details: %s)",
-            job.title, job.company, total,
+            job.title,
+            job.company,
+            total,
             {k: round(v, 1) for k, v in scores.items()},
         )
         return round(min(max(total, 0.0), 100.0), 1)
@@ -84,15 +82,39 @@ class RankingAgent:
 
         salary_lower = job.salary.lower()
         # Check for high-value indicators
-        high_value_keywords = ["$50", "$60", "$70", "$80", "$90", "$100",
-                               "50k", "60k", "70k", "80k", "90k", "100k",
-                               "competitive", "negotiable", "doe"]
+        high_value_keywords = [
+            "$50",
+            "$60",
+            "$70",
+            "$80",
+            "$90",
+            "$100",
+            "50k",
+            "60k",
+            "70k",
+            "80k",
+            "90k",
+            "100k",
+            "competitive",
+            "negotiable",
+            "doe",
+        ]
         if any(kw in salary_lower for kw in high_value_keywords):
             return 100.0
 
         # Medium value
-        medium_keywords = ["$20", "$30", "$40", "20k", "30k", "40k",
-                           "hour", "hr", "/hr", "per hour"]
+        medium_keywords = [
+            "$20",
+            "$30",
+            "$40",
+            "20k",
+            "30k",
+            "40k",
+            "hour",
+            "hr",
+            "/hr",
+            "per hour",
+        ]
         if any(kw in salary_lower for kw in medium_keywords):
             return 60.0
 
@@ -106,12 +128,27 @@ class RankingAgent:
         text = f"{job.title} {job.description or ''} {' '.join(job.tags)}".lower()
 
         beginner_indicators = [
-            "beginner", "entry level", "entry-level", "no experience",
-            "training provided", "junior", "no degree", "anyone can",
-            "start today", "immediate start", "easy", "simple",
-            "no prior experience", "welcome", "all levels",
-            "remote friendly", "flexible hours", "work from home",
-            "no interview", "quick apply", "instant",
+            "beginner",
+            "entry level",
+            "entry-level",
+            "no experience",
+            "training provided",
+            "junior",
+            "no degree",
+            "anyone can",
+            "start today",
+            "immediate start",
+            "easy",
+            "simple",
+            "no prior experience",
+            "welcome",
+            "all levels",
+            "remote friendly",
+            "flexible hours",
+            "work from home",
+            "no interview",
+            "quick apply",
+            "instant",
         ]
         for keyword in beginner_indicators:
             if keyword in text:
@@ -124,20 +161,41 @@ class RankingAgent:
         text = f"{job.title} {job.description or ''} {' '.join(job.tags)}".lower()
 
         high_ai = [
-            "ai", "artificial intelligence", "machine learning", "ml",
-            "deep learning", "llm", "gpt", "neural network", "nlp",
-            "prompt engineer", "rhlf", "rlhf", "reinforcement learning",
-            "model training", "ai training", "ai evaluation",
-            "data annotation", "ai data", "training data",
+            "ai",
+            "artificial intelligence",
+            "machine learning",
+            "ml",
+            "deep learning",
+            "llm",
+            "gpt",
+            "neural network",
+            "nlp",
+            "prompt engineer",
+            "rhlf",
+            "rlhf",
+            "reinforcement learning",
+            "model training",
+            "ai training",
+            "ai evaluation",
+            "data annotation",
+            "ai data",
+            "training data",
         ]
         for kw in high_ai:
             if kw in text:
                 return 100.0
 
         medium_ai = [
-            "data labeling", "data labelling", "tagging", "categorization",
-            "classification", "transcription", "annotation",
-            "human feedback", "search evaluation", "rating",
+            "data labeling",
+            "data labelling",
+            "tagging",
+            "categorization",
+            "classification",
+            "transcription",
+            "annotation",
+            "human feedback",
+            "search evaluation",
+            "rating",
         ]
         for kw in medium_ai:
             if kw in text:
@@ -149,9 +207,17 @@ class RankingAgent:
         """English-language jobs score higher."""
         text = f"{job.title} {job.description or ''} {' '.join(job.tags)}".lower()
         non_english = [
-            "español", "français", "deutsch", "italiano",
-            "português", "中文", "日本語", "한국어",
-            "русский", "arabic", "hindi",
+            "español",
+            "français",
+            "deutsch",
+            "italiano",
+            "português",
+            "中文",
+            "日本語",
+            "한국어",
+            "русский",
+            "arabic",
+            "hindi",
         ]
         for lang in non_english:
             if lang in text:
@@ -166,18 +232,30 @@ class RankingAgent:
         text = f"{job.title} {job.description or ''} {' '.join(job.tags)}".lower()
 
         simple_indicators = [
-            "online", "remote", "flexible", "work from home",
-            "no experience needed", "start immediately",
-            "freelance", "contract", "part-time",
-            "anywhere", "worldwide", "open to all",
+            "online",
+            "remote",
+            "flexible",
+            "work from home",
+            "no experience needed",
+            "start immediately",
+            "freelance",
+            "contract",
+            "part-time",
+            "anywhere",
+            "worldwide",
+            "open to all",
         ]
         for kw in simple_indicators:
             if kw in text:
                 return 90.0
 
         complex_indicators = [
-            "phd", "doctorate", "10 years", "senior",
-            "extensive experience", "advanced degree",
+            "phd",
+            "doctorate",
+            "10 years",
+            "senior",
+            "extensive experience",
+            "advanced degree",
         ]
         for kw in complex_indicators:
             if kw in text:
@@ -195,9 +273,13 @@ class RankingAgent:
         try:
             # Try various date formats
             for fmt in (
-                "%Y-%m-%d", "%m/%d/%Y", "%d/%m/%Y",
-                "%B %d, %Y", "%b %d, %Y",
-                "%Y-%m-%dT%H:%M:%S", "%Y-%m-%dT%H:%M:%S%z",
+                "%Y-%m-%d",
+                "%m/%d/%Y",
+                "%d/%m/%Y",
+                "%B %d, %Y",
+                "%b %d, %Y",
+                "%Y-%m-%dT%H:%M:%S",
+                "%Y-%m-%dT%H:%M:%S%z",
                 "%Y-%m-%d %H:%M:%S",
             ):
                 try:

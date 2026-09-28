@@ -5,12 +5,12 @@ Handles schema creation, job storage, deduplication, and execution history.
 
 from __future__ import annotations
 
-import asyncio
 from contextlib import asynccontextmanager
 from datetime import datetime, timezone
-from typing import AsyncGenerator, Optional
+from typing import Any, AsyncGenerator, Optional
 
 import asyncpg
+
 from config.settings import get_settings
 from models.job import Job
 
@@ -161,7 +161,7 @@ class PostgresDatabase:
         async with self.connect() as conn:
             return await conn.fetchrow(query, *args)
 
-    async def fetchval(self, query: str, *args) -> Optional[object]:
+    async def fetchval(self, query: str, *args) -> Any:  # asyncpg value type depends on the query
         """Fetch a single value from a query."""
         async with self.connect() as conn:
             return await conn.fetchval(query, *args)
@@ -183,14 +183,13 @@ class PostgresDatabase:
 
     async def job_exists(self, job_id: str) -> bool:
         """Check if a job already exists in the database."""
-        result = await self.fetchval(
-            "SELECT 1 FROM jobs WHERE id = $1", job_id
-        )
+        result = await self.fetchval("SELECT 1 FROM jobs WHERE id = $1", job_id)
         return result is not None
 
     async def insert_job(self, job: Job, score: float = 0.0) -> None:
         """Insert a job into the database."""
-        await self.execute("""
+        await self.execute(
+            """
             INSERT INTO jobs (
                 id, title, company, url, source, salary, country, remote,
                 posted_date, description, tags, discovered_at, score
@@ -231,7 +230,8 @@ class PostgresDatabase:
         now = datetime.now(timezone.utc)
 
         if success:
-            await self.execute("""
+            await self.execute(
+                """
                 INSERT INTO website_status (
                     source, last_checked, last_success, consecutive_failures, circuit_open
                 ) VALUES ($1, $2, $3, 0, FALSE)
@@ -243,10 +243,13 @@ class PostgresDatabase:
                     circuit_open = FALSE,
                     circuit_open_until = NULL
             """,
-                source, now, now
+                source,
+                now,
+                now,
             )
         else:
-            await self.execute("""
+            await self.execute(
+                """
                 INSERT INTO website_status (
                     source, last_checked, last_error, consecutive_failures
                 ) VALUES ($1, $2, $3, 1)
@@ -255,21 +258,24 @@ class PostgresDatabase:
                     last_error = EXCLUDED.last_error,
                     consecutive_failures = website_status.consecutive_failures + 1
             """,
-                source, now, error or "Unknown error"
+                source,
+                now,
+                error or "Unknown error",
             )
 
     async def is_circuit_open(self, source: str) -> bool:
         """Check if circuit breaker is open for a source."""
-        record = await self.fetchrow("""
+        record = await self.fetchrow(
+            """
             SELECT circuit_open, circuit_open_until FROM website_status
             WHERE source = $1
         """,
-            source
+            source,
         )
-        
+
         if not record:
             return False
-            
+
         if record["circuit_open"] and record["circuit_open_until"]:
             until = record["circuit_open_until"]
             now = datetime.now(timezone.utc)
@@ -279,27 +285,31 @@ class PostgresDatabase:
             if now < until:
                 return True
             # Reset circuit if expired
-            await self.execute("""
+            await self.execute(
+                """
                 UPDATE website_status SET circuit_open = FALSE, circuit_open_until = NULL
                 WHERE source = $1
             """,
-                source
+                source,
             )
-        
+
         return False
 
     async def open_circuit(self, source: str, timeout_seconds: int = 60) -> None:
         """Open circuit breaker for a source."""
         from datetime import timedelta
+
         until = datetime.now(timezone.utc) + timedelta(seconds=timeout_seconds)
-        await self.execute("""
+        await self.execute(
+            """
             INSERT INTO website_status (source, circuit_open, circuit_open_until)
             VALUES ($1, TRUE, $2)
             ON CONFLICT (source) DO UPDATE SET
                 circuit_open = EXCLUDED.circuit_open,
                 circuit_open_until = EXCLUDED.circuit_open_until
         """,
-            source, until
+            source,
+            until,
         )
 
     async def start_execution(self) -> int:
@@ -320,7 +330,8 @@ class PostgresDatabase:
         errors: Optional[str] = None,
     ) -> None:
         """Complete an execution cycle."""
-        await self.execute("""
+        await self.execute(
+            """
             UPDATE execution_history SET
                 completed_at = NOW(),
                 status = 'completed',
@@ -331,7 +342,11 @@ class PostgresDatabase:
                 duration_seconds = EXTRACT(EPOCH FROM (NOW() - started_at))
             WHERE id = $1
         """,
-            execution_id, jobs_found, jobs_new, jobs_notified, errors
+            execution_id,
+            jobs_found,
+            jobs_new,
+            jobs_notified,
+            errors,
         )
 
     async def get_stats(self) -> dict[str, int]:
@@ -340,7 +355,7 @@ class PostgresDatabase:
         notified = await self.fetchval("SELECT COUNT(*) FROM jobs WHERE notified = TRUE")
         pending = await self.fetchval("SELECT COUNT(*) FROM jobs WHERE notified = FALSE")
         executions = await self.fetchval("SELECT COUNT(*) FROM execution_history")
-        
+
         return {
             "total_jobs": total or 0,
             "notified_jobs": notified or 0,
@@ -350,17 +365,19 @@ class PostgresDatabase:
 
     async def get_recent_jobs(self, limit: int = 50) -> list[Job]:
         """Get recent jobs ordered by discovery date."""
-        records = await self.fetch("""
+        records = await self.fetch(
+            """
             SELECT * FROM jobs ORDER BY discovered_at DESC LIMIT $1
         """,
-            limit
+            limit,
         )
         return [self._job_from_record(record) for record in records]
 
     async def search_jobs(self, query: str, limit: int = 50) -> list[Job]:
         """Search jobs by title, company, or description."""
         search_pattern = f"%{query}%"
-        records = await self.fetch("""
+        records = await self.fetch(
+            """
             SELECT * FROM jobs
             WHERE title ILIKE $1
                OR company ILIKE $1
@@ -368,6 +385,7 @@ class PostgresDatabase:
             ORDER BY discovered_at DESC
             LIMIT $2
         """,
-            search_pattern, limit
+            search_pattern,
+            limit,
         )
         return [self._job_from_record(record) for record in records]

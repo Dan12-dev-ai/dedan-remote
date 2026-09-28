@@ -4,8 +4,6 @@ Scraper for Outlier (https://outlier.ai) — AI training & evaluation platform.
 
 from __future__ import annotations
 
-from typing import Optional
-
 from parsel import Selector
 
 from models.job import Job, job_from_scraper_result
@@ -49,10 +47,13 @@ class OutlierScraper(BaseScraper):
                     if not url_path:
                         continue
 
-                    full_url = url_path if url_path.startswith("http") else f"{self.base_url}{url_path}"
-                    company = card.css("[class*='company']::text, [class*='org']::text").get("Outlier")
+                    full_url = (
+                        url_path if url_path.startswith("http") else f"{self.base_url}{url_path}"
+                    )
+                    company = card.css("[class*='company']::text, [class*='org']::text").get(
+                        "Outlier"
+                    )
                     salary = card.css("[class*='salary']::text, [class*='pay']::text").get("")
-                    location = card.css("[class*='location']::text, [class*='loc']::text").get("")
                     description = card.css("p::text, [class*='desc']::text").get("")
 
                     tags = []

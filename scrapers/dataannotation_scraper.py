@@ -38,17 +38,13 @@ class DataAnnotationScraper(BaseScraper):
             for item in items[:30]:
                 try:
                     title = item.css(
-                        "h2::text, h3::text, [class*='title']::text, "
-                        "strong::text, a::text"
+                        "h2::text, h3::text, [class*='title']::text, strong::text, a::text"
                     ).get("")
                     if not title:
                         continue
 
                     href = item.css("a::attr(href)").get("") or ""
-                    full_url = (
-                        href if href.startswith("http")
-                        else f"{self.base_url}{href}"
-                    )
+                    full_url = href if href.startswith("http") else f"{self.base_url}{href}"
                     pay = item.css(
                         "[class*='pay']::text, [class*='rate']::text, "
                         "[class*='salary']::text, [class*='price']::text"

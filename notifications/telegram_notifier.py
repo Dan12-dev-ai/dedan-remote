@@ -5,8 +5,6 @@ Uses python-telegram-bot to send messages.
 
 from __future__ import annotations
 
-from typing import Optional
-
 from config.settings import get_settings
 from models.job import Job
 from utils.logger import get_logger
@@ -62,7 +60,6 @@ class TelegramNotifier:
 
         try:
             from telegram import Bot
-            from telegram.error import TelegramError
 
             bot = Bot(token=self._bot_token)
             message = self._format_message(job, score)
@@ -75,7 +72,9 @@ class TelegramNotifier:
             logger.info("Telegram sent for %s @ %s", job.title, job.company)
             return True
         except ImportError:
-            logger.warning("python-telegram-bot not installed. Install with: pip install python-telegram-bot")
+            logger.warning(
+                "python-telegram-bot not installed. Install with: pip install python-telegram-bot"
+            )
             return False
         except Exception as exc:
             logger.error("Telegram send failed: %s", exc)

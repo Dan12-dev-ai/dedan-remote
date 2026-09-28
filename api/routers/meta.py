@@ -2,10 +2,10 @@
 
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Request
 
 from api import services
-from api.deps import enforce_rate_limit, require_system_token
+from api.deps import enforce_rate_limit
 from api.schemas import CategoryStat, SourceStat, StatsResponse, StatusResponse
 
 router = APIRouter(prefix="/api", tags=["meta"])

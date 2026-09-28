@@ -17,15 +17,14 @@ import asyncio
 import signal
 import sys
 from datetime import datetime, timezone
-from typing import Any, Optional
+from typing import Optional
 
-from core.api_sentinel import APISentinel, Platform
+from core.api_sentinel import APISentinel
 from core.database_async import AsyncPostgresDB
 from core.metrics import (
     CONTEXT_KEY_COUNT,
     CONTEXT_MEMORY_SIZE,
     TASK_PROCESSING_COUNT,
-    TASK_PROCESSING_LATENCY,
     start_metrics_server,
 )
 from core.neo4j_sync import Neo4jEpistemicSyncWorker
@@ -134,7 +133,8 @@ class AEOSOrchestrator:
         for sig in (signal.SIGINT, signal.SIGTERM):
             try:
                 loop.add_signal_handler(
-                    sig, lambda s=sig: asyncio.create_task(self.shutdown(s)),
+                    sig,
+                    lambda s=sig: asyncio.create_task(self.shutdown(s)),
                 )
             except (NotImplementedError, ValueError):
                 pass
@@ -174,7 +174,9 @@ class AEOSOrchestrator:
                 reward = self._ppo_engine.compute_reward()
                 logger.debug(
                     "PPO cycle: action=%d (%s) reward=%.4f",
-                    action, self._ppo_engine.get_action_name(action), reward,
+                    action,
+                    self._ppo_engine.get_action_name(action),
+                    reward,
                 )
 
                 # ── PPO: Train at intervals ───────────────────────────
@@ -190,11 +192,13 @@ class AEOSOrchestrator:
 
                 # ── Update context memory metrics periodically ─────────
                 CONTEXT_KEY_COUNT.labels(
-                    tier="1", pool="default",
+                    tier="1",
+                    pool="default",
                 ).set(self._system_task_count % 1000)
 
                 CONTEXT_MEMORY_SIZE.labels(
-                    tier="1", pool="default",
+                    tier="1",
+                    pool="default",
                 ).set(self._system_task_count * 128)
 
                 TASK_PROCESSING_COUNT.labels(
@@ -217,7 +221,6 @@ class AEOSOrchestrator:
         Returns:
             PPOState with current system metrics.
         """
-        from datetime import datetime
         hour = datetime.now(timezone.utc).hour
 
         return PPOState(

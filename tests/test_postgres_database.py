@@ -15,13 +15,28 @@ import pytest
 from database.postgres_database import PostgresDatabase
 from models.job import Job
 
-
 EXPECTED_METHODS = [
-    "__init__", "_ensure_pool", "close", "connect", "create_tables",
-    "execute", "fetch", "fetchrow", "fetchval", "_job_from_record",
-    "job_exists", "insert_job", "get_job", "update_website_status",
-    "is_circuit_open", "open_circuit", "start_execution",
-    "complete_execution", "get_stats", "get_recent_jobs", "search_jobs",
+    "__init__",
+    "_ensure_pool",
+    "close",
+    "connect",
+    "create_tables",
+    "execute",
+    "fetch",
+    "fetchrow",
+    "fetchval",
+    "_job_from_record",
+    "job_exists",
+    "insert_job",
+    "get_job",
+    "update_website_status",
+    "is_circuit_open",
+    "open_circuit",
+    "start_execution",
+    "complete_execution",
+    "get_stats",
+    "get_recent_jobs",
+    "search_jobs",
 ]
 
 
@@ -31,6 +46,7 @@ class TestPostgresDatabaseModule:
     def test_module_imports_cleanly(self) -> None:
         """Regression: this module once had a SyntaxError at line 215."""
         import database.postgres_database as mod
+
         assert hasattr(mod, "PostgresDatabase")
 
     @pytest.mark.parametrize("method", EXPECTED_METHODS)
@@ -41,8 +57,7 @@ class TestPostgresDatabaseModule:
         )
 
     def test_instance_initialises_without_connection(self) -> None:
-        db = PostgresDatabase(host="localhost", port=5432, user="u",
-                               password="p", database="d")
+        db = PostgresDatabase(host="localhost", port=5432, user="u", password="p", database="d")
         assert db._pool is None
         assert db._host == "localhost"
         assert db._database == "d"
@@ -52,8 +67,9 @@ class TestJobRecordConversion:
     """_job_from_record maps rows to Job objects faithfully."""
 
     def setup_method(self) -> None:
-        self.db = PostgresDatabase(host="localhost", port=5432, user="u",
-                                   password="p", database="d")
+        self.db = PostgresDatabase(
+            host="localhost", port=5432, user="u", password="p", database="d"
+        )
 
     @staticmethod
     def make_record(**overrides: object) -> dict[str, object]:
@@ -86,8 +102,9 @@ class TestJobRecordConversion:
 
     def test_handles_null_optionals(self) -> None:
         job = self.db._job_from_record(  # type: ignore[arg-type]
-            self.make_record(salary=None, country=None,
-                             posted_date=None, description=None, tags=[]),
+            self.make_record(
+                salary=None, country=None, posted_date=None, description=None, tags=[]
+            ),
         )
         assert job.salary is None
         assert job.country is None
@@ -106,8 +123,9 @@ class TestQueryHelpers:
     """execute/fetch/fetchrow/fetchval delegate through the pool."""
 
     def setup_method(self) -> None:
-        self.db = PostgresDatabase(host="localhost", port=5432, user="u",
-                                   password="p", database="d")
+        self.db = PostgresDatabase(
+            host="localhost", port=5432, user="u", password="p", database="d"
+        )
 
     async def test_fetchval_delegates_to_connection(self) -> None:
         calls: list[tuple[str, tuple]] = []
@@ -150,6 +168,7 @@ class TestQueryHelpers:
         async def make_fetchval(value: object):
             async def fake(query: str, *args: object) -> object:
                 return value
+
             return fake
 
         self.db.fetchval = await make_fetchval(1)  # type: ignore[method-assign]

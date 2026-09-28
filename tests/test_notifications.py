@@ -31,6 +31,7 @@ def make_job(**kwargs: object) -> Job:
 
 # ── Telegram ─────────────────────────────────────────────────────────────────
 
+
 class TestTelegramNotifier:
     """Message formatting and configuration gating."""
 
@@ -121,6 +122,7 @@ class TestTelegramNotifier:
 
 # ── Discord ──────────────────────────────────────────────────────────────────
 
+
 class TestDiscordNotifier:
     """Embed construction and webhook gating."""
 
@@ -169,6 +171,7 @@ class TestDiscordNotifier:
     @staticmethod
     def _install_fake_webhook(monkeypatch, status_code: int) -> None:
         """Install a fake discord_webhook module returning a status code."""
+
         class FakeEmbed:
             def __init__(self, **kwargs: object) -> None:
                 self.fields: list[object] = []
@@ -212,6 +215,7 @@ class TestDiscordNotifier:
 
 # ── Central dispatcher ───────────────────────────────────────────────────────
 
+
 class TestNotifierDispatcher:
     """Notifier fans out to enabled channels and reports successes."""
 
@@ -246,6 +250,3 @@ class TestNotifierDispatcher:
             assert job is self.job
             assert score in (90.0, 70.0)
             assert channels == ["email"]
-
-
-

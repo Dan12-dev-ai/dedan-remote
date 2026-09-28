@@ -12,18 +12,18 @@ Tests verify:
 
 from __future__ import annotations
 
-import pytest
-from datetime import datetime, timezone, timedelta
-
 import tempfile
 
-from models.job import job_from_scraper_result
-from hypothesis import given, strategies as st
-from hypothesis import settings as hypothesis_settings, HealthCheck
-from database.database import Database
+import pytest
+from hypothesis import HealthCheck, given
+from hypothesis import settings as hypothesis_settings
+from hypothesis import strategies as st
 
+from database.database import Database
+from models.job import job_from_scraper_result
 
 # ── Legacy SQLite Tests (Backward Compatibility) ──────────────────────────────
+
 
 class TestDatabaseLegacySQLite:
     """Legacy tests using SQLite (temp_db fixture)."""
@@ -98,9 +98,7 @@ class TestDatabaseLegacySQLite:
         )
 
         conn = temp_db.connect()
-        row = conn.execute(
-            "SELECT * FROM execution_history WHERE id = ?", (exec_id,)
-        ).fetchone()
+        row = conn.execute("SELECT * FROM execution_history WHERE id = ?", (exec_id,)).fetchone()
         assert row["status"] == "completed"
         assert row["jobs_found"] == 10
         assert row["jobs_new"] == 5
@@ -119,12 +117,13 @@ class TestDatabaseLegacySQLite:
 
 # ── Advanced PostgreSQL Integration Tests ────────────────────────────────────
 
+
 class TestDatabasePostgresIntegration:
     """
     Advanced database tests using live PostgreSQL via testcontainers.
-    
+
     REQUIRES: Docker daemon running
-    
+
     Tests advanced scenarios:
       - Concurrent operations
       - Transaction isolation
@@ -132,7 +131,7 @@ class TestDatabasePostgresIntegration:
       - Performance
       - Edge cases
     """
-    
+
     @pytest.mark.integration
     @pytest.mark.asyncio
     async def test_postgres_schema_integrity(self, postgres_pool) -> None:
@@ -144,44 +143,44 @@ class TestDatabasePostgresIntegration:
             WHERE table_schema = 'public'
             ORDER BY table_name, ordinal_position
         """)
-        
+
         # Should have tables
         assert len(rows) > 0
-        
+
         # Verify expected columns exist
         column_names = {row["column_name"] for row in rows}
         assert "id" in column_names
-    
+
     @pytest.mark.integration
     @pytest.mark.asyncio
     async def test_postgres_insert_performance(self, postgres_pool) -> None:
         """
         Test: Insert performance meets requirements.
-        
+
         Should handle 1000 inserts in < 10 seconds.
         """
         import time
-        
+
         start = time.time()
-        
+
         for i in range(1000):
             await postgres_pool._execute(
                 "INSERT INTO tier2_episodic_memory (task_id, data) VALUES ($1, $2)",
                 f"perf_task_{i}",
-                f'{{"index": {i}}}'
+                f'{{"index": {i}}}',
             )
-        
+
         elapsed = time.time() - start
-        
+
         # Performance assertion
         assert elapsed < 10.0, f"Insert performance degraded: {elapsed}s for 1000 records"
-    
+
     @pytest.mark.integration
     @pytest.mark.asyncio
     async def test_postgres_query_isolation(self, postgres_pool) -> None:
         """
         Test: Transactions are properly isolated.
-        
+
         One transaction's changes shouldn't be visible to others
         until committed.
         """
@@ -189,77 +188,78 @@ class TestDatabasePostgresIntegration:
         await postgres_pool._execute(
             "INSERT INTO tier2_episodic_memory (task_id, data) VALUES ($1, $2)",
             "isolation_test",
-            '{"version": 1}'
+            '{"version": 1}',
         )
-        
+
         # Verify it exists
         row = await postgres_pool._fetchrow(
-            "SELECT * FROM tier2_episodic_memory WHERE task_id = $1",
-            "isolation_test"
+            "SELECT * FROM tier2_episodic_memory WHERE task_id = $1", "isolation_test"
         )
         assert row is not None
-    
+
     @pytest.mark.integration
     @pytest.mark.asyncio
     async def test_postgres_concurrent_writes(self, postgres_pool) -> None:
         """
         Test: Concurrent writes maintain consistency.
-        
+
         50 concurrent inserts should all succeed without conflicts.
         """
         import asyncio
-        
+
         async def parallel_insert(i: int):
             await postgres_pool._execute(
                 "INSERT INTO tier2_episodic_memory (task_id, data) VALUES ($1, $2)",
                 f"concurrent_{i}",
-                f'{{"worker": {i}}}'
+                f'{{"worker": {i}}}',
             )
-        
+
         # Run 50 concurrent operations
         tasks = [parallel_insert(i) for i in range(50)]
         await asyncio.gather(*tasks)
-        
+
         # Verify all succeeded
         count_row = await postgres_pool._fetchrow(
             "SELECT COUNT(*) as cnt FROM tier2_episodic_memory WHERE task_id LIKE 'concurrent_%'"
         )
         assert count_row["cnt"] == 50
-    
+
     @pytest.mark.integration
     @pytest.mark.asyncio
     async def test_postgres_data_type_validation(self, postgres_pool) -> None:
         """
         Test: Data types are properly validated.
-        
+
         Inserting incompatible types should raise errors.
         """
         # This should work
         await postgres_pool._execute(
             "INSERT INTO tier2_episodic_memory (task_id, data) VALUES ($1, $2)",
             "type_test",
-            '{"string": "value"}'
+            '{"string": "value"}',
         )
-        
+
         # Verify the insert
         row = await postgres_pool._fetchrow(
-            "SELECT * FROM tier2_episodic_memory WHERE task_id = $1",
-            "type_test"
+            "SELECT * FROM tier2_episodic_memory WHERE task_id = $1", "type_test"
         )
         assert row is not None
 
 
 # ── Property-Based Database Tests ───────────────────────────────────────────
 
+
 class TestDatabaseProperties:
     """Property-based tests for database operations."""
-    
+
     @given(
         job_title=st.text(min_size=1, max_size=256),
         company=st.text(min_size=1, max_size=256),
         salary_range=st.one_of(st.none(), st.text(max_size=50)),
     )
-    @hypothesis_settings(max_examples=100, suppress_health_check=[HealthCheck.function_scoped_fixture])
+    @hypothesis_settings(
+        max_examples=100, suppress_health_check=[HealthCheck.function_scoped_fixture]
+    )
     @pytest.mark.property_based
     def test_job_storage_property(self, job_title, company, salary_range) -> None:
         """
@@ -287,12 +287,13 @@ class TestDatabaseProperties:
         finally:
             db.close()
             import os
+
             os.unlink(db_path)
-    
-    @given(
-        scores=st.lists(st.floats(min_value=0, max_value=100), min_size=1, max_size=20)
+
+    @given(scores=st.lists(st.floats(min_value=0, max_value=100), min_size=1, max_size=20))
+    @hypothesis_settings(
+        max_examples=50, suppress_health_check=[HealthCheck.function_scoped_fixture]
     )
-    @hypothesis_settings(max_examples=50, suppress_health_check=[HealthCheck.function_scoped_fixture])
     @pytest.mark.property_based
     def test_score_persistence_property(self, scores) -> None:
         """
@@ -333,19 +334,21 @@ class TestDatabaseProperties:
         finally:
             db.close()
             import os
+
             os.unlink(db_path)
 
 
 # ── Edge Case & Error Handling Tests ────────────────────────────────────────
 
+
 class TestDatabaseEdgeCases:
     """Test edge cases and error conditions."""
-    
+
     def test_empty_database_query(self, temp_db) -> None:
         """Test: Queries on empty database return empty results."""
         unnotified = temp_db.get_new_unnotified_jobs(min_score=50.0)
         assert unnotified == []
-    
+
     def test_null_values_handled(self, temp_db) -> None:
         """Test: NULL values are handled correctly."""
         job = job_from_scraper_result(
@@ -356,10 +359,10 @@ class TestDatabaseEdgeCases:
             salary=None,  # NULL
             description=None,  # NULL
         )
-        
+
         result = temp_db.insert_job(job)
         assert result is True
-    
+
     def test_special_characters_escaped(self, temp_db) -> None:
         """Test: Special characters in input are properly escaped."""
         job = job_from_scraper_result(
@@ -368,13 +371,13 @@ class TestDatabaseEdgeCases:
             url="https://example.com/1",
             source="test",
         )
-        
+
         result = temp_db.insert_job(job)
         assert result is True
-        
+
         # Verify it can be retrieved
         assert temp_db.job_exists(job.id)
-    
+
     def test_very_long_strings(self, temp_db) -> None:
         """Test: Very long strings are handled."""
         job = job_from_scraper_result(
@@ -383,7 +386,7 @@ class TestDatabaseEdgeCases:
             url="https://example.com/1",
             source="test",
         )
-        
+
         # May succeed or fail gracefully depending on schema
         try:
             result = temp_db.insert_job(job)
@@ -409,6 +412,7 @@ class TestDatabaseEdgeCases:
         assert temp_db.is_circuit_open("test_source")
         # Wait for circuit to close
         import time
+
         time.sleep(6)
         assert not temp_db.is_circuit_open("test_source")
 

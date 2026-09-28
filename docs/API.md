@@ -105,9 +105,14 @@ Authorization: Bearer <token>
 - **Auth**: None
 - **Description**: Returns active job categories derived dynamically from indexed tags.
 
-#### `GET /api/stats` (Alias: `/api/stats`)
+#### `GET /api/stats` (Alias: `/api/v1/stats`)
 - **Auth**: None
 - **Description**: Returns truthful aggregated statistics from the active database ledger.
+
+#### `GET /api/status` (Alias: `/api/v1/status`)
+- **Auth**: None
+- **Rate limit**: 120 requests/minute per IP
+- **Description**: Returns real discovery-engine status (cycle state and timing). No simulated live activity.
 
 
 ---
@@ -179,6 +184,12 @@ Authorization: Bearer <token>
 ### `GET /api/recommendations`
 - **Auth**: Required
 - **Description**: Candidate-specific recommendations weighted by user profile match.
+
+### `GET /api/notifications` (Alias: `/api/v1/notifications`)
+- **Auth**: Required (`Bearer <token>`)
+- **Query**: `limit` (integer, 1-100, default 30)
+- **Rate limit**: 120 requests/minute per IP
+- **Response `200 OK`**: Activity feed for the signed-in user — saves, application updates, and real discovery events on matching listings. No synthetic events are produced.
 
 ---
 

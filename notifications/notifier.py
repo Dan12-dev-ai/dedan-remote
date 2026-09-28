@@ -6,9 +6,9 @@ from __future__ import annotations
 
 from config.settings import get_settings
 from models.job import Job
+from notifications.discord_notifier import DiscordNotifier
 from notifications.email_notifier import EmailNotifier
 from notifications.telegram_notifier import TelegramNotifier
-from notifications.discord_notifier import DiscordNotifier
 from utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -53,13 +53,16 @@ class Notifier:
         if success_channels:
             logger.info(
                 "Notified %s @ %s via %s (score=%.1f)",
-                job.title, job.company,
-                ", ".join(success_channels), score,
+                job.title,
+                job.company,
+                ", ".join(success_channels),
+                score,
             )
         else:
             logger.warning(
                 "No notification sent for %s @ %s — no channels configured",
-                job.title, job.company,
+                job.title,
+                job.company,
             )
 
         return success_channels

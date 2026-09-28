@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import hashlib
-import hmac
 import ipaddress
 import re
 import secrets
@@ -29,8 +28,9 @@ def hash_password(password: str) -> str:
 def verify_password(password: str, hashed: str) -> bool:
     """Constant-time password verification."""
     try:
-        return bcrypt.checkpw(password.encode("utf-8")[:_MAX_PASSWORD_BYTES],
-                              hashed.encode("ascii"))
+        return bcrypt.checkpw(
+            password.encode("utf-8")[:_MAX_PASSWORD_BYTES], hashed.encode("ascii")
+        )
     except (ValueError, TypeError):
         return False
 
@@ -53,6 +53,7 @@ def hash_token(token: str) -> str:
 def session_expiry_iso(now_iso: str) -> str:
     """Return expiry ISO string 30 days after now_iso."""
     from datetime import datetime, timedelta, timezone
+
     now = datetime.fromisoformat(now_iso)
     if now.tzinfo is None:
         now = now.replace(tzinfo=timezone.utc)
@@ -148,6 +149,7 @@ def client_ip(request: Any) -> str:
 
     try:
         from config.settings import get_settings
+
         trust_proxy = bool(get_settings().DEDAN_TRUST_PROXY)
     except Exception:
         trust_proxy = False
@@ -175,6 +177,7 @@ def client_ip(request: Any) -> str:
 
 
 # ── Simple in-memory sliding-window rate limiter ─────────────────────────────
+
 
 class RateLimiter:
     """Sliding-window rate limiter (per-process, no external dependencies)."""

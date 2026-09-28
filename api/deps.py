@@ -13,8 +13,9 @@ from api.store import get_user_store
 class ApiError(HTTPException):
     """Structured API error — never leaks internals to clients."""
 
-    def __init__(self, status_code: int, code: str, message: str,
-                 headers: Optional[dict[str, str]] = None) -> None:
+    def __init__(
+        self, status_code: int, code: str, message: str, headers: Optional[dict[str, str]] = None
+    ) -> None:
         super().__init__(
             status_code=status_code,
             detail={"code": code, "message": message},
@@ -62,8 +63,7 @@ def get_current_user(
     return user
 
 
-def enforce_rate_limit(request: Request, bucket: str, limit: int,
-                       window: int = 60) -> None:
+def enforce_rate_limit(request: Request, bucket: str, limit: int, window: int = 60) -> None:
     """
     Per-IP sliding-window limit; raises 429 when exceeded.
 
@@ -88,6 +88,7 @@ def require_system_token(
 ) -> None:
     """Protect /api/system with a configured token (503 when unset)."""
     from config.settings import get_settings
+
     expected = get_settings().DEDAN_SYSTEM_TOKEN
     if not expected:
         raise ApiError(
@@ -96,9 +97,8 @@ def require_system_token(
             "System dashboard is not configured on this deployment.",
         )
     import secrets
-    if not x_system_token or not secrets.compare_digest(
-        x_system_token, expected
-    ):
+
+    if not x_system_token or not secrets.compare_digest(x_system_token, expected):
         raise ApiError(
             status.HTTP_401_UNAUTHORIZED,
             "invalid_token",

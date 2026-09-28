@@ -5,11 +5,10 @@ All secrets are stored in .env only - never hardcoded.
 
 from __future__ import annotations
 
-import os
 from pathlib import Path
 from typing import ClassVar
 
-from pydantic import Field, field_validator
+from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -77,10 +76,16 @@ class Settings(BaseSettings):
 
     CACHED_WEIGHTS: ClassVar[dict[str, float] | None] = None
 
-    @field_validator("RANKING_WEIGHT_REMOTE", "RANKING_WEIGHT_WORLDWIDE",
-                     "RANKING_WEIGHT_SALARY", "RANKING_WEIGHT_BEGINNER",
-                     "RANKING_WEIGHT_AI_RELATED", "RANKING_WEIGHT_ENGLISH",
-                     "RANKING_WEIGHT_SIMPLICITY", "RANKING_WEIGHT_FRESHNESS")
+    @field_validator(
+        "RANKING_WEIGHT_REMOTE",
+        "RANKING_WEIGHT_WORLDWIDE",
+        "RANKING_WEIGHT_SALARY",
+        "RANKING_WEIGHT_BEGINNER",
+        "RANKING_WEIGHT_AI_RELATED",
+        "RANKING_WEIGHT_ENGLISH",
+        "RANKING_WEIGHT_SIMPLICITY",
+        "RANKING_WEIGHT_FRESHNESS",
+    )
     @classmethod
     def validate_weight_range(cls, v: float) -> float:
         """Ensure weight is between 0 and 1."""
@@ -168,7 +173,6 @@ class Settings(BaseSettings):
         """Return directory for log file."""
         return Path(self.LOG_FILE).parent
 
-
     @property
     def is_production(self) -> bool:
         """True when running in a production deployment."""
@@ -183,6 +187,7 @@ def get_settings() -> Settings:
         example_path = Path(".env.example")
         if example_path.exists():
             import shutil
+
             shutil.copy(example_path, env_path)
             print("[WARN] .env created from .env.example — please update with your credentials.")
     return Settings()  # type: ignore[call-arg]

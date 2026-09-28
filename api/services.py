@@ -95,32 +95,54 @@ def _cached(key: str, producer: Callable[[], T]) -> T:
     _AGGREGATE_CACHE.set(key, value, ttl)
     return value
 
+
 # Freshness threshold (days) beyond which an opportunity is flagged stale.
 STALE_AFTER_DAYS = 30
 
 # Canonical category taxonomy — maps UI categories to real tag/title keywords.
 # Used ONLY to filter/sort real text fields; never invents data.
 CATEGORY_KEYWORDS: dict[str, list[str]] = {
-    "ai-ml": ["ai", "ml", "machine learning", "llm", "rlhf", "gpt",
-              "prompt", "nlp", "model"],
-    "software": ["software", "engineer", "developer", "programming",
-                 "python", "javascript", "full stack", "backend",
-                 "frontend", "devops"],
-    "data": ["data", "annotation", "labeling", "labelling", "tagging",
-             "categorization", "classification", "transcription", "dataset"],
-    "ai-training": ["training", "evaluation", "evaluator", "rating",
-                    "reviewer", "ai training", "quality"],
+    "ai-ml": ["ai", "ml", "machine learning", "llm", "rlhf", "gpt", "prompt", "nlp", "model"],
+    "software": [
+        "software",
+        "engineer",
+        "developer",
+        "programming",
+        "python",
+        "javascript",
+        "full stack",
+        "backend",
+        "frontend",
+        "devops",
+    ],
+    "data": [
+        "data",
+        "annotation",
+        "labeling",
+        "labelling",
+        "tagging",
+        "categorization",
+        "classification",
+        "transcription",
+        "dataset",
+    ],
+    "ai-training": [
+        "training",
+        "evaluation",
+        "evaluator",
+        "rating",
+        "reviewer",
+        "ai training",
+        "quality",
+    ],
     "research": ["research", "scientist", "analysis", "analyst"],
-    "general-remote": ["remote", "freelance", "contract", "part-time",
-                       "worldwide", "virtual"],
+    "general-remote": ["remote", "freelance", "contract", "part-time", "worldwide", "virtual"],
 }
 
 REGION_KEYWORDS: dict[str, list[str]] = {
     "worldwide": ["worldwide", "global", "anywhere", "remote"],
-    "africa": ["africa", "nigeria", "kenya", "ethiopia", "ghana",
-               "south africa", "egypt"],
-    "europe": ["europe", "uk", "united kingdom", "germany", "france",
-               "spain", "netherlands"],
+    "africa": ["africa", "nigeria", "kenya", "ethiopia", "ghana", "south africa", "egypt"],
+    "europe": ["europe", "uk", "united kingdom", "germany", "france", "spain", "netherlands"],
     "north-america": ["usa", "united states", "canada", "north america"],
     "latin-america": ["latin america", "brazil", "mexico", "argentina"],
     "asia": ["asia", "india", "japan", "singapore", "philippines"],
@@ -128,34 +150,51 @@ REGION_KEYWORDS: dict[str, list[str]] = {
 }
 
 BEGINNER_KEYWORDS = [
-    "no experience", "no experience required", "beginner", "entry level",
-    "entry-level", "no degree", "no prior", "training provided",
-    "welcome to apply", "open to all", "start immediately", "any background",
+    "no experience",
+    "no experience required",
+    "beginner",
+    "entry level",
+    "entry-level",
+    "no degree",
+    "no prior",
+    "training provided",
+    "welcome to apply",
+    "open to all",
+    "start immediately",
+    "any background",
 ]
 
 AI_KEYWORDS = [
-    "ai", "ml", "machine learning", "llm", "rlhf", "gpt", "annotation",
-    "labeling", "labelling", "prompt", "model", "nlp", "evaluator",
-    "chatbot", "training data",
+    "ai",
+    "ml",
+    "machine learning",
+    "llm",
+    "rlhf",
+    "gpt",
+    "annotation",
+    "labeling",
+    "labelling",
+    "prompt",
+    "model",
+    "nlp",
+    "evaluator",
+    "chatbot",
+    "training data",
 ]
 
 # Human labels for ranking dimensions (must match RankingAgent keys).
 DIMENSION_LABELS: dict[str, tuple[str, str]] = {
     "remote": ("Remote-friendly", "This role is listed as remote work."),
-    "worldwide": ("Open worldwide",
-                  "No single-country restriction detected in the listing."),
-    "salary": ("Compensation listed",
-               "A salary or pay rate is published in the source listing."),
-    "beginner": ("Beginner-friendly",
-                 "Listing text suggests low or no prior-experience barriers."),
-    "ai_related": ("AI-related work",
-                   "Title, tags or description reference AI/data work."),
-    "english": ("English-language role",
-                "Listing appears to be in English."),
-    "simplicity": ("Low application barrier",
-                   "Signals like flexible/online/anywhere reduce friction."),
-    "freshness": ("Recently posted",
-                  "The listing's posted date is recent relative to today."),
+    "worldwide": ("Open worldwide", "No single-country restriction detected in the listing."),
+    "salary": ("Compensation listed", "A salary or pay rate is published in the source listing."),
+    "beginner": ("Beginner-friendly", "Listing text suggests low or no prior-experience barriers."),
+    "ai_related": ("AI-related work", "Title, tags or description reference AI/data work."),
+    "english": ("English-language role", "Listing appears to be in English."),
+    "simplicity": (
+        "Low application barrier",
+        "Signals like flexible/online/anywhere reduce friction.",
+    ),
+    "freshness": ("Recently posted", "The listing's posted date is recent relative to today."),
 }
 
 
@@ -187,8 +226,7 @@ def _parse_dt(value: Optional[str]) -> Optional[datetime]:
 def freshness_info(row: dict[str, Any]) -> dict[str, Any]:
     """Compute honest freshness from discovered_at / posted_date."""
     now = datetime.now(timezone.utc)
-    basis = _parse_dt(row.get("posted_date")) or _parse_dt(
-        row.get("discovered_at"))
+    basis = _parse_dt(row.get("posted_date")) or _parse_dt(row.get("discovered_at"))
     age_days = None
     label = "Unknown"
     if basis:
@@ -221,8 +259,7 @@ def _split_tags(row: dict[str, Any]) -> list[str]:
 
 def _classify_category(row: dict[str, Any]) -> Optional[str]:
     """First matching canonical category from tags + title text."""
-    text = " ".join([row.get("title") or "",
-                     " ".join(_split_tags(row))]).lower()
+    text = " ".join([row.get("title") or "", " ".join(_split_tags(row))]).lower()
     for cat, keywords in CATEGORY_KEYWORDS.items():
         if any(k in text for k in keywords):
             return cat
@@ -233,30 +270,33 @@ def _matches_category(row: dict[str, Any], category: str) -> bool:
     keywords = CATEGORY_KEYWORDS.get(category)
     if not keywords:
         return category in _split_tags(row)
-    text = " ".join([row.get("title") or "", row.get("description") or "",
-                     " ".join(_split_tags(row))]).lower()
+    text = " ".join(
+        [row.get("title") or "", row.get("description") or "", " ".join(_split_tags(row))]
+    ).lower()
     return any(k in text for k in keywords)
 
 
 def is_ai_related(row: dict[str, Any]) -> bool:
-    text = " ".join([row.get("title") or "", row.get("description") or "",
-                     " ".join(_split_tags(row))]).lower()
+    text = " ".join(
+        [row.get("title") or "", row.get("description") or "", " ".join(_split_tags(row))]
+    ).lower()
     return any(k in text for k in AI_KEYWORDS)
 
 
 def is_beginner_friendly(row: dict[str, Any]) -> bool:
-    text = " ".join([row.get("title") or "", row.get("description") or "",
-                     " ".join(_split_tags(row))]).lower()
+    text = " ".join(
+        [row.get("title") or "", row.get("description") or "", " ".join(_split_tags(row))]
+    ).lower()
     return any(k in text for k in BEGINNER_KEYWORDS)
 
 
 def experience_hint(row: dict[str, Any]) -> Optional[str]:
     if is_beginner_friendly(row):
         return "beginner"
-    text = " ".join([row.get("title") or "", row.get("description") or "",
-                     " ".join(_split_tags(row))]).lower()
-    senior = ["senior", "lead", "phd", "5+ years", "10 years", "expert",
-              "doctorate", "specialist"]
+    text = " ".join(
+        [row.get("title") or "", row.get("description") or "", " ".join(_split_tags(row))]
+    ).lower()
+    senior = ["senior", "lead", "phd", "5+ years", "10 years", "expert", "doctorate", "specialist"]
     if any(k in text for k in senior):
         return "advanced"
     return None
@@ -278,8 +318,9 @@ def matches_region(row: dict[str, Any], regions: list[str]) -> bool:
         return True
     if "worldwide" in regions:
         return True
-    text = " ".join([row.get("country") or "", row.get("title") or "",
-                     " ".join(_split_tags(row))]).lower()
+    text = " ".join(
+        [row.get("country") or "", row.get("title") or "", " ".join(_split_tags(row))]
+    ).lower()
     for region in regions:
         keywords = REGION_KEYWORDS.get(region, [region])
         if any(k in text for k in keywords):
@@ -288,6 +329,7 @@ def matches_region(row: dict[str, Any], regions: list[str]) -> bool:
 
 
 # ── Discovery database (read-only) ────────────────────────────────────────────
+
 
 def connect_jobs_db() -> sqlite3.Connection:
     """
@@ -349,9 +391,7 @@ def find_rows_by_slug_or_id(ident: str) -> Optional[dict[str, Any]]:
         return None
     conn = connect_jobs_db()
     try:
-        rows = conn.execute(
-            "SELECT * FROM jobs WHERE id LIKE ?", (suffix + "%",)
-        ).fetchall()
+        rows = conn.execute("SELECT * FROM jobs WHERE id LIKE ?", (suffix + "%",)).fetchall()
         for r in rows:
             d = dict(r)
             if job_slug(d["id"], d.get("title") or "") == ident:
@@ -374,6 +414,7 @@ def source_registry() -> dict[str, dict[str, str]]:
 def _load_source_registry() -> dict[str, dict[str, str]]:
     try:
         from scrapers.scraper_registry import get_registry
+
         registry = get_registry()
         out: dict[str, dict[str, str]] = {}
         for scraper in registry.get_all():
@@ -387,6 +428,7 @@ def _load_source_registry() -> dict[str, dict[str, str]]:
 
 
 # ── Query / search / filter / sort / paginate ────────────────────────────────
+
 
 def query_jobs(
     *,
@@ -452,12 +494,8 @@ def query_jobs(
             params.append(min_score)
 
         if max_age_days is not None:
-            cutoff = (
-                datetime.now(timezone.utc) - timedelta(days=max_age_days)
-            ).isoformat()
-            where.append(
-                "COALESCE(NULLIF(posted_date, ''), discovered_at) >= ?"
-            )
+            cutoff = (datetime.now(timezone.utc) - timedelta(days=max_age_days)).isoformat()
+            where.append("COALESCE(NULLIF(posted_date, ''), discovered_at) >= ?")
             params.append(cutoff)
 
         if has_salary:
@@ -501,17 +539,13 @@ def query_jobs(
         if where:
             base_sql += " WHERE " + " AND ".join(where)
 
-        total = conn.execute(
-            f"SELECT COUNT(*) {base_sql}", params
-        ).fetchone()[0]
+        total = conn.execute(f"SELECT COUNT(*) {base_sql}", params).fetchone()[0]
 
         order = {
             "newest": "discovered_at DESC, id ASC",
-            "freshness": "COALESCE(NULLIF(posted_date, ''), discovered_at) DESC,"
-                         " id ASC",
+            "freshness": "COALESCE(NULLIF(posted_date, ''), discovered_at) DESC, id ASC",
             "score": "score DESC, discovered_at DESC, id ASC",
-            "salary": "(salary IS NULL OR trim(salary) = ''), score DESC,"
-                      " discovered_at DESC",
+            "salary": "(salary IS NULL OR trim(salary) = ''), score DESC, discovered_at DESC",
         }
         if sort == "best_match":
             if q:
@@ -553,10 +587,12 @@ def query_jobs(
 
 # ── Serialization ────────────────────────────────────────────────────────────
 
+
 def build_score_explanation(row: dict[str, Any]) -> Optional[dict[str, Any]]:
     """Recompute RankingAgent dimensions for this row and build reasons."""
     try:
         from models.job import Job
+
         job = Job.from_dict(row)
         agent = RankingAgent()
         result = agent.explain(job)
@@ -574,19 +610,22 @@ def build_score_explanation(row: dict[str, Any]) -> Optional[dict[str, Any]]:
             if key == "freshness" and not row.get("posted_date"):
                 continue
             label, detail = DIMENSION_LABELS.get(key, (key, ""))
-            reasons.append({
-                "dimension": key,
-                "label": label,
-                "detail": detail,
-            })
+            reasons.append(
+                {
+                    "dimension": key,
+                    "label": label,
+                    "detail": detail,
+                }
+            )
         reasons.sort(
             key=lambda r: float(dims[r["dimension"]]["contribution"]),
             reverse=True,
         )
+        total_score: Any = row.get("score") or result["total"]
         return {
             "basis": "system_ranking",
             "label": "System ranking",
-            "total": float(row.get("score") or result["total"]),
+            "total": float(total_score),
             "dimensions": dims,
             "reasons": reasons[:6],
         }
@@ -594,9 +633,7 @@ def build_score_explanation(row: dict[str, Any]) -> Optional[dict[str, Any]]:
         return None
 
 
-def build_preference_match(
-    row: dict[str, Any], prefs: dict[str, Any]
-) -> Optional[dict[str, Any]]:
+def build_preference_match(row: dict[str, Any], prefs: dict[str, Any]) -> Optional[dict[str, Any]]:
     """
     Deterministic, transparent preference match (not an AI claim).
 
@@ -617,9 +654,7 @@ def build_preference_match(
         matched = [c for c in categories if _matches_category(row, c)]
         if matched:
             category_points = 100.0
-            reasons.append(
-                "Matches your preferred categories: " + ", ".join(matched)
-            )
+            reasons.append("Matches your preferred categories: " + ", ".join(matched))
         else:
             reasons.append("No overlap with your preferred categories")
     else:
@@ -632,9 +667,7 @@ def build_preference_match(
             reasons.append("Available in your preferred work region")
         else:
             region_points = 20.0
-            reasons.append(
-                "Region not confirmed for your preferred areas — check listing"
-            )
+            reasons.append("Region not confirmed for your preferred areas — check listing")
     else:
         region_points = 50.0
 
@@ -644,15 +677,14 @@ def build_preference_match(
         else:
             reasons.append("No explicit beginner-friendly signals found")
 
-    score = round(0.6 * system_score + 0.2 * category_points
-                  + 0.2 * region_points, 1)
+    score = round(0.6 * system_score + 0.2 * category_points + 0.2 * region_points, 1)
     return {
         "basis": "user_preferences",
         "label": "Preference match",
         "score": min(100.0, score),
         "reasons": reasons,
         "note": "Calculated from your saved preferences and the system score."
-                " Not an AI prediction of hiring success.",
+        " Not an AI prediction of hiring success.",
     }
 
 
@@ -713,6 +745,7 @@ def serialize_job(
 
 # ── Stats / status / meta ────────────────────────────────────────────────────
 
+
 def _relative_label(iso: Optional[str]) -> str:
     dt = _parse_dt(iso)
     if not dt:
@@ -737,22 +770,15 @@ def _load_stats() -> dict[str, Any]:
     conn = connect_jobs_db()
     try:
         total = conn.execute("SELECT COUNT(*) FROM jobs").fetchone()[0]
-        cutoff = (
-            datetime.now(timezone.utc) - timedelta(days=7)
-        ).isoformat()
+        cutoff = (datetime.now(timezone.utc) - timedelta(days=7)).isoformat()
         new_7 = conn.execute(
             "SELECT COUNT(*) FROM jobs WHERE discovered_at >= ?", (cutoff,)
         ).fetchone()[0]
         last_cycle = conn.execute(
-            "SELECT completed_at, status FROM execution_history"
-            " ORDER BY id DESC LIMIT 1"
+            "SELECT completed_at, status FROM execution_history ORDER BY id DESC LIMIT 1"
         ).fetchone()
-        total_cycles = conn.execute(
-            "SELECT COUNT(*) FROM execution_history"
-        ).fetchone()[0]
-        sources_count = conn.execute(
-            "SELECT COUNT(*) FROM website_status"
-        ).fetchone()[0]
+        total_cycles = conn.execute("SELECT COUNT(*) FROM execution_history").fetchone()[0]
+        sources_count = conn.execute("SELECT COUNT(*) FROM website_status").fetchone()[0]
         if sources_count == 0:
             try:
                 sources_count = len(source_registry())
@@ -763,9 +789,7 @@ def _load_stats() -> dict[str, Any]:
             "new_last_7_days": new_7,
             "sources_monitored": sources_count,
             "discovery_interval_minutes": settings.CHECK_INTERVAL,
-            "last_discovery_at": (
-                last_cycle["completed_at"] if last_cycle else None
-            ),
+            "last_discovery_at": (last_cycle["completed_at"] if last_cycle else None),
             "last_cycle_status": last_cycle["status"] if last_cycle else None,
             "total_cycles": total_cycles,
         }
@@ -784,12 +808,9 @@ def _load_status() -> dict[str, Any]:
         last_cycle = conn.execute(
             "SELECT * FROM execution_history ORDER BY id DESC LIMIT 1"
         ).fetchone()
-        total_cycles = conn.execute(
-            "SELECT COUNT(*) FROM execution_history"
-        ).fetchone()[0]
+        total_cycles = conn.execute("SELECT COUNT(*) FROM execution_history").fetchone()[0]
         sources = conn.execute(
-            "SELECT source, consecutive_failures, circuit_open, last_success"
-            " FROM website_status"
+            "SELECT source, consecutive_failures, circuit_open, last_success FROM website_status"
         ).fetchall()
         failing = sum(1 for s in sources if (s["consecutive_failures"] or 0) > 0)
         monitored = len(sources)
@@ -829,9 +850,11 @@ def _load_sources() -> list[dict[str, Any]]:
     registry = source_registry()
     conn = connect_jobs_db()
     try:
-        counts = dict(conn.execute(
-            "SELECT lower(source), COUNT(*) FROM jobs GROUP BY lower(source)"
-        ).fetchall())
+        counts = dict(
+            conn.execute(
+                "SELECT lower(source), COUNT(*) FROM jobs GROUP BY lower(source)"
+            ).fetchall()
+        )
         status_rows = conn.execute(
             "SELECT source, last_success, circuit_open FROM website_status"
         ).fetchall()
@@ -844,24 +867,28 @@ def _load_sources() -> list[dict[str, Any]]:
     for src_id, meta in registry.items():
         seen.add(src_id)
         st = status_map.get(src_id)
-        result.append({
-            "id": src_id,
-            "name": meta["name"],
-            "job_count": int(counts.get(src_id, 0)),
-            "monitored": True,
-            "last_success": st["last_success"] if st else None,
-            "circuit_open": bool(st["circuit_open"]) if st else False,
-        })
-    for src_id, st in status_map.items():
-        if src_id not in seen:
-            result.append({
+        result.append(
+            {
                 "id": src_id,
-                "name": src_id.title(),
+                "name": meta["name"],
                 "job_count": int(counts.get(src_id, 0)),
                 "monitored": True,
-                "last_success": st["last_success"],
-                "circuit_open": bool(st["circuit_open"]),
-            })
+                "last_success": st["last_success"] if st else None,
+                "circuit_open": bool(st["circuit_open"]) if st else False,
+            }
+        )
+    for src_id, st in status_map.items():
+        if src_id not in seen:
+            result.append(
+                {
+                    "id": src_id,
+                    "name": src_id.title(),
+                    "job_count": int(counts.get(src_id, 0)),
+                    "monitored": True,
+                    "last_success": st["last_success"],
+                    "circuit_open": bool(st["circuit_open"]),
+                }
+            )
     result.sort(key=lambda s: (-s["job_count"], s["name"]))
     return result
 
@@ -874,9 +901,7 @@ def get_categories() -> list[dict[str, Any]]:
 def _load_categories() -> list[dict[str, Any]]:
     conn = connect_jobs_db()
     try:
-        rows = conn.execute(
-            "SELECT tags FROM jobs WHERE tags IS NOT NULL"
-        ).fetchall()
+        rows = conn.execute("SELECT tags FROM jobs WHERE tags IS NOT NULL").fetchall()
     finally:
         conn.close()
     counts: dict[str, int] = {}
@@ -904,8 +929,9 @@ def get_job_intelligence(row: dict[str, Any]) -> tuple[Optional[dict], str]:
         "not a fact."
     )
     try:
-        from models.job import Job
         from intelligence.scorer import ComprehensiveScorer
+        from models.job import Job
+
         job = Job.from_dict(row)
         result = ComprehensiveScorer().evaluate(job)
         return result.to_dict(), note
@@ -961,18 +987,13 @@ def search_all(query: str, limit: int = 6) -> dict[str, Any]:
         lambda: query_jobs(q=term, sort="best_match", page=1, page_size=limit),
     )
     registry = source_registry()
-    opportunities = [
-        serialize_job(row, registry=registry) for row in pool["items"]
-    ]
+    opportunities = [serialize_job(row, registry=registry) for row in pool["items"]]
 
     lowered = term.lower()
-    categories = [
-        c for c in get_categories() if lowered in c["tag"]
-    ][:limit]
-    sources = [
-        s for s in get_sources()
-        if lowered in s["name"].lower() or lowered in s["id"]
-    ][:limit]
+    categories = [c for c in get_categories() if lowered in c["tag"]][:limit]
+    sources = [s for s in get_sources() if lowered in s["name"].lower() or lowered in s["id"]][
+        :limit
+    ]
 
     suggestions: list[dict[str, Any]] = []
     seen: set[str] = set()

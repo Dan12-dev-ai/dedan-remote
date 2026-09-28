@@ -21,8 +21,7 @@ router = APIRouter(prefix="/api", tags=["discovery"])
 def command_search(
     request: Request,
     q: str = Query(default="", max_length=200, description="Search term"),
-    limit: int = Query(default=6, ge=1, le=20,
-                       description="Opportunities returned per query"),
+    limit: int = Query(default=6, ge=1, le=20, description="Opportunities returned per query"),
 ) -> SearchResponse:
     """
     Grouped search for the command interface.

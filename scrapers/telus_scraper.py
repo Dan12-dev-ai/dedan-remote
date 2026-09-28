@@ -44,8 +44,10 @@ class TelusScraper(BaseScraper):
 
                     href = link.css("::attr(href)").get("")
                     full_url = (
-                        href if href and href.startswith("http")
-                        else f"{self.base_url}{href}" if href
+                        href
+                        if href and href.startswith("http")
+                        else f"{self.base_url}{href}"
+                        if href
                         else self.base_url
                     )
 

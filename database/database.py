@@ -6,9 +6,8 @@ Handles schema creation, job storage, deduplication, and execution history.
 from __future__ import annotations
 
 import sqlite3
-from contextlib import asynccontextmanager
 from pathlib import Path
-from typing import AsyncGenerator, Optional
+from typing import Optional
 
 from config.settings import get_settings
 from models.job import Job
@@ -126,10 +125,19 @@ class Database:
                 posted_date, description, tags, discovered_at, score)
                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
             (
-                data["id"], data["title"], data["company"], data["url"],
-                data["source"], data["salary"], data["country"], data["remote"],
-                data["posted_date"], data["description"], data["tags"],
-                data["discovered_at"], score,
+                data["id"],
+                data["title"],
+                data["company"],
+                data["url"],
+                data["source"],
+                data["salary"],
+                data["country"],
+                data["remote"],
+                data["posted_date"],
+                data["description"],
+                data["tags"],
+                data["discovered_at"],
+                score,
             ),
         )
         conn.commit()
@@ -244,6 +252,7 @@ class Database:
             return False
         if row["circuit_open"] and row["circuit_open_until"]:
             from datetime import datetime, timezone
+
             until_str = row["circuit_open_until"]
             try:
                 until = datetime.fromisoformat(until_str)
@@ -264,6 +273,7 @@ class Database:
     def open_circuit(self, source: str, timeout_seconds: int = 60) -> None:
         """Open circuit breaker for a source."""
         from datetime import datetime, timedelta, timezone
+
         until = (datetime.now(timezone.utc) + timedelta(seconds=timeout_seconds)).isoformat()
         conn = self.connect()
         conn.execute(

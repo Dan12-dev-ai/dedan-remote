@@ -105,8 +105,9 @@ class UserStore:
 
     # == USERS_SESSIONS ==
 
-    def create_user(self, email: str, password_hash: str,
-                    display_name: Optional[str] = None) -> dict[str, Any]:
+    def create_user(
+        self, email: str, password_hash: str, display_name: Optional[str] = None
+    ) -> dict[str, Any]:
         conn = self.connect()
         try:
             user_id = uuid.uuid4().hex
@@ -117,22 +118,23 @@ class UserStore:
                 (user_id, email.lower(), password_hash, display_name, now),
             )
             conn.execute(
-                "INSERT INTO preferences (user_id) VALUES (?)"
-                " ON CONFLICT DO NOTHING",
+                "INSERT INTO preferences (user_id) VALUES (?) ON CONFLICT DO NOTHING",
                 (user_id,),
             )
             conn.commit()
-            return {"id": user_id, "email": email.lower(),
-                    "display_name": display_name, "created_at": now}
+            return {
+                "id": user_id,
+                "email": email.lower(),
+                "display_name": display_name,
+                "created_at": now,
+            }
         finally:
             conn.close()
 
     def get_user_by_email(self, email: str) -> Optional[dict[str, Any]]:
         conn = self.connect()
         try:
-            row = conn.execute(
-                "SELECT * FROM users WHERE email = ?", (email.lower(),)
-            ).fetchone()
+            row = conn.execute("SELECT * FROM users WHERE email = ?", (email.lower(),)).fetchone()
             return dict(row) if row else None
         finally:
             conn.close()
@@ -140,15 +142,12 @@ class UserStore:
     def get_user(self, user_id: str) -> Optional[dict[str, Any]]:
         conn = self.connect()
         try:
-            row = conn.execute(
-                "SELECT * FROM users WHERE id = ?", (user_id,)
-            ).fetchone()
+            row = conn.execute("SELECT * FROM users WHERE id = ?", (user_id,)).fetchone()
             return dict(row) if row else None
         finally:
             conn.close()
 
-    def create_session(self, token_hash: str, user_id: str,
-                       expires_at: str) -> None:
+    def create_session(self, token_hash: str, user_id: str, expires_at: str) -> None:
         conn = self.connect()
         try:
             conn.execute(
@@ -171,9 +170,7 @@ class UserStore:
             if not row:
                 return None
             if row["expires_at"] < _now():
-                conn.execute(
-                    "DELETE FROM sessions WHERE token_hash = ?", (token_hash,)
-                )
+                conn.execute("DELETE FROM sessions WHERE token_hash = ?", (token_hash,))
                 conn.commit()
                 return None
             return row["user_id"]
@@ -183,9 +180,7 @@ class UserStore:
     def delete_session(self, token_hash: str) -> None:
         conn = self.connect()
         try:
-            conn.execute(
-                "DELETE FROM sessions WHERE token_hash = ?", (token_hash,)
-            )
+            conn.execute("DELETE FROM sessions WHERE token_hash = ?", (token_hash,))
             conn.commit()
         finally:
             conn.close()
@@ -200,9 +195,7 @@ class UserStore:
         """
         conn = self.connect()
         try:
-            cursor = conn.execute(
-                "DELETE FROM sessions WHERE expires_at < ?", (_now(),)
-            )
+            cursor = conn.execute("DELETE FROM sessions WHERE expires_at < ?", (_now(),))
             conn.commit()
             return int(cursor.rowcount or 0)
         finally:
@@ -260,8 +253,7 @@ class UserStore:
         try:
             placeholders = ",".join("?" * len(job_ids))
             rows = conn.execute(
-                f"SELECT job_id FROM saved_jobs WHERE user_id = ?"
-                f" AND job_id IN ({placeholders})",
+                f"SELECT job_id FROM saved_jobs WHERE user_id = ? AND job_id IN ({placeholders})",
                 [user_id, *job_ids],
             ).fetchall()
             return {r["job_id"] for r in rows}
@@ -270,8 +262,9 @@ class UserStore:
 
     # == APPLICATIONS ==
 
-    def create_application(self, user_id: str, job_id: str, status: str,
-                           note: Optional[str]) -> dict[str, Any]:
+    def create_application(
+        self, user_id: str, job_id: str, status: str, note: Optional[str]
+    ) -> dict[str, Any]:
         if status not in VALID_STATUSES:
             raise ValueError(f"invalid status: {status}")
         conn = self.connect()
@@ -284,8 +277,7 @@ class UserStore:
             if existing:
                 final_note = note if note is not None else existing["note"]
                 conn.execute(
-                    "UPDATE applications SET status = ?, note = ?, updated_at = ?"
-                    " WHERE id = ?",
+                    "UPDATE applications SET status = ?, note = ?, updated_at = ? WHERE id = ?",
                     (status, final_note, now, existing["id"]),
                 )
                 conn.commit()
@@ -300,16 +292,14 @@ class UserStore:
                 (app_id, user_id, job_id, status, note, now, now),
             )
             conn.commit()
-            row = conn.execute(
-                "SELECT * FROM applications WHERE id = ?", (app_id,)
-            ).fetchone()
+            row = conn.execute("SELECT * FROM applications WHERE id = ?", (app_id,)).fetchone()
             return dict(row)
         finally:
             conn.close()
 
-    def patch_application(self, user_id: str, app_id: str,
-                          status: Optional[str],
-                          note: Optional[str]) -> Optional[dict[str, Any]]:
+    def patch_application(
+        self, user_id: str, app_id: str, status: Optional[str], note: Optional[str]
+    ) -> Optional[dict[str, Any]]:
         conn = self.connect()
         try:
             row = conn.execute(
@@ -323,14 +313,11 @@ class UserStore:
                 raise ValueError(f"invalid status: {new_status}")
             new_note = note if note is not None else row["note"]
             conn.execute(
-                "UPDATE applications SET status = ?, note = ?, updated_at = ?"
-                " WHERE id = ?",
+                "UPDATE applications SET status = ?, note = ?, updated_at = ? WHERE id = ?",
                 (new_status, new_note, _now(), app_id),
             )
             conn.commit()
-            row = conn.execute(
-                "SELECT * FROM applications WHERE id = ?", (app_id,)
-            ).fetchone()
+            row = conn.execute("SELECT * FROM applications WHERE id = ?", (app_id,)).fetchone()
             return dict(row)
         finally:
             conn.close()
@@ -339,17 +326,14 @@ class UserStore:
         conn = self.connect()
         try:
             rows = conn.execute(
-                "SELECT * FROM applications WHERE user_id = ?"
-                " ORDER BY updated_at DESC",
+                "SELECT * FROM applications WHERE user_id = ? ORDER BY updated_at DESC",
                 (user_id,),
             ).fetchall()
             return [dict(r) for r in rows]
         finally:
             conn.close()
 
-    def get_application_status_for_jobs(
-        self, user_id: str, job_ids: list[str]
-    ) -> dict[str, str]:
+    def get_application_status_for_jobs(self, user_id: str, job_ids: list[str]) -> dict[str, str]:
         if not job_ids:
             return {}
         conn = self.connect()
@@ -369,12 +353,9 @@ class UserStore:
     def get_preferences(self, user_id: str) -> dict[str, Any]:
         conn = self.connect()
         try:
-            row = conn.execute(
-                "SELECT * FROM preferences WHERE user_id = ?", (user_id,)
-            ).fetchone()
+            row = conn.execute("SELECT * FROM preferences WHERE user_id = ?", (user_id,)).fetchone()
             if not row:
-                return {"categories": [], "experience": None,
-                        "regions": [], "updated_at": None}
+                return {"categories": [], "experience": None, "regions": [], "updated_at": None}
             return {
                 "categories": json.loads(row["categories"] or "[]"),
                 "experience": row["experience"],
@@ -384,14 +365,16 @@ class UserStore:
         finally:
             conn.close()
 
-    def update_preferences(self, user_id: str, categories: Optional[list[str]],
-                           experience: Optional[str],
-                           regions: Optional[list[str]]) -> dict[str, Any]:
+    def update_preferences(
+        self,
+        user_id: str,
+        categories: Optional[list[str]],
+        experience: Optional[str],
+        regions: Optional[list[str]],
+    ) -> dict[str, Any]:
         conn = self.connect()
         try:
-            row = conn.execute(
-                "SELECT * FROM preferences WHERE user_id = ?", (user_id,)
-            ).fetchone()
+            row = conn.execute("SELECT * FROM preferences WHERE user_id = ?", (user_id,)).fetchone()
             if row:
                 current = {
                     "categories": json.loads(row["categories"] or "[]"),
@@ -409,8 +392,7 @@ class UserStore:
                 " ON CONFLICT(user_id) DO UPDATE SET categories = excluded.categories,"
                 " experience = excluded.experience, regions = excluded.regions,"
                 " updated_at = excluded.updated_at",
-                (user_id, json.dumps(new_cats), new_exp,
-                 json.dumps(new_regs), _now()),
+                (user_id, json.dumps(new_cats), new_exp, json.dumps(new_regs), _now()),
             )
             conn.commit()
             return self.get_preferences(user_id)

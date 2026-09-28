@@ -42,6 +42,7 @@ class BaseScraper(ABC):
         """Lazy-load the shared HTTP client."""
         if self._client is None:
             from utils.http_client import get_http_client
+
             self._client = await get_http_client()
         return self._client
 

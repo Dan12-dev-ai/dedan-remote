@@ -57,16 +57,16 @@ def build_notifications(user_id: str, limit: int = 30) -> list[dict[str, Any]]:
         if not row:
             continue  # listing no longer exists — say nothing rather than lie
         job = services.serialize_job(row, registry=registry)
-        items.append({
-            "id": _signal_id("saved", entry["job_id"]),
-            "kind": "saved",
-            "title": f"Saved {job['title']}",
-            "detail": (
-                f"{job['source_info']['name']} · {job['location_label']}"
-            ),
-            "at": entry["saved_at"],
-            "job": job,
-        })
+        items.append(
+            {
+                "id": _signal_id("saved", entry["job_id"]),
+                "kind": "saved",
+                "title": f"Saved {job['title']}",
+                "detail": (f"{job['source_info']['name']} · {job['location_label']}"),
+                "at": entry["saved_at"],
+                "job": job,
+            }
+        )
 
     # ── 2. Application pipeline movement ───────────────────────────────────
     for entry in store.list_applications(user_id):
@@ -76,18 +76,20 @@ def build_notifications(user_id: str, limit: int = 30) -> list[dict[str, Any]]:
         job = services.serialize_job(row, registry=registry)
         status = entry["status"]
         label = APPLICATION_LABELS.get(status, status.replace("_", " ").title())
-        items.append({
-            "id": _signal_id("application", entry["id"]),
-            "kind": "application",
-            "title": f"{label} — {job['title']}",
-            "detail": (
-                f"Tracking updated · {job['source_info']['name']}"
-                if status != "application_started"
-                else f"Tracking started · {job['source_info']['name']}"
-            ),
-            "at": entry["updated_at"] or entry["created_at"],
-            "job": job,
-        })
+        items.append(
+            {
+                "id": _signal_id("application", entry["id"]),
+                "kind": "application",
+                "title": f"{label} — {job['title']}",
+                "detail": (
+                    f"Tracking updated · {job['source_info']['name']}"
+                    if status != "application_started"
+                    else f"Tracking started · {job['source_info']['name']}"
+                ),
+                "at": entry["updated_at"] or entry["created_at"],
+                "job": job,
+            }
+        )
 
     # ── 3. Fresh opportunities matching stored preferences ─────────────────
     prefs = store.get_preferences(user_id)
@@ -99,9 +101,7 @@ def build_notifications(user_id: str, limit: int = 30) -> list[dict[str, Any]]:
                 services._matches_category(row, c) for c in prefs["categories"]
             ):
                 continue
-            if prefs["regions"] and not services.matches_region(
-                row, prefs["regions"]
-            ):
+            if prefs["regions"] and not services.matches_region(row, prefs["regions"]):
                 continue
             if not row.get("discovered_at"):
                 continue  # cannot date the event honestly
@@ -110,17 +110,19 @@ def build_notifications(user_id: str, limit: int = 30) -> list[dict[str, Any]]:
                 break
         for row in matched:
             job = services.serialize_job(row, registry=registry, prefs=prefs)
-            items.append({
-                "id": _signal_id("discovery", row["id"]),
-                "kind": "discovery",
-                "title": f"New match — {job['title']}",
-                "detail": (
-                    f"Discovered {job['freshness']['label'].lower()} from "
-                    f"{job['source_info']['name']}"
-                ),
-                "at": row["discovered_at"],
-                "job": job,
-            })
+            items.append(
+                {
+                    "id": _signal_id("discovery", row["id"]),
+                    "kind": "discovery",
+                    "title": f"New match — {job['title']}",
+                    "detail": (
+                        f"Discovered {job['freshness']['label'].lower()} from "
+                        f"{job['source_info']['name']}"
+                    ),
+                    "at": row["discovered_at"],
+                    "job": job,
+                }
+            )
 
     # Newest first; rows without a usable timestamp sink to the bottom.
     items.sort(key=lambda i: i["at"] or "", reverse=True)

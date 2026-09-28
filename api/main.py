@@ -14,7 +14,7 @@ import time
 import uuid
 from contextlib import asynccontextmanager
 from pathlib import Path
-from typing import AsyncIterator, Optional
+from typing import AsyncIterator
 
 from fastapi import APIRouter, FastAPI, HTTPException, Request
 from fastapi.exceptions import RequestValidationError
@@ -49,9 +49,7 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     settings = get_settings()
     if not settings.DEDAN_SYSTEM_TOKEN:
         if settings.is_production:
-            logger.warning(
-                "DEDAN_SYSTEM_TOKEN is unset — /api/system is disabled."
-            )
+            logger.warning("DEDAN_SYSTEM_TOKEN is unset — /api/system is disabled.")
     try:
         removed = get_user_store().purge_expired_sessions()
         if removed:
@@ -71,7 +69,6 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     logger.info("DEDAN Remote API shutting down.")
 
 
-
 def _versioned_alias(router: APIRouter) -> APIRouter:
     """
     Mirror a router's routes under /api/v1.
@@ -89,7 +86,7 @@ def _versioned_alias(router: APIRouter) -> APIRouter:
         if not path or not methods or not path.startswith("/api"):
             continue
         alias.add_api_route(
-            "/api/v1" + path[len("/api"):],
+            "/api/v1" + path[len("/api") :],
             route.endpoint,
             methods=sorted(methods),
             response_model=getattr(route, "response_model", None),
@@ -118,11 +115,7 @@ def create_app() -> FastAPI:
     )
 
     settings = get_settings()
-    origins = [
-        o.strip()
-        for o in settings.DEDAN_CORS_ORIGINS.split(",")
-        if o.strip()
-    ]
+    origins = [o.strip() for o in settings.DEDAN_CORS_ORIGINS.split(",") if o.strip()]
     app.add_middleware(
         CORSMiddleware,
         allow_origins=origins,
@@ -156,10 +149,12 @@ def create_app() -> FastAPI:
             if too_big:
                 return JSONResponse(
                     status_code=413,
-                    content={"error": {
-                        "code": "payload_too_large",
-                        "message": "Request body is too large.",
-                    }},
+                    content={
+                        "error": {
+                            "code": "payload_too_large",
+                            "message": "Request body is too large.",
+                        }
+                    },
                     headers={"X-Request-ID": request_id},
                 )
 
@@ -171,9 +166,7 @@ def create_app() -> FastAPI:
         # Baseline hardening headers. Safe for a JSON API and the SPA bundle.
         response.headers.setdefault("X-Content-Type-Options", "nosniff")
         response.headers.setdefault("X-Frame-Options", "DENY")
-        response.headers.setdefault(
-            "Referrer-Policy", "strict-origin-when-cross-origin"
-        )
+        response.headers.setdefault("Referrer-Policy", "strict-origin-when-cross-origin")
         response.headers.setdefault(
             "Permissions-Policy", "geolocation=(), microphone=(), camera=()"
         )
@@ -186,8 +179,11 @@ def create_app() -> FastAPI:
         if request.url.path.startswith("/api"):
             logger.info(
                 "%s %s -> %s (%.0fms) rid=%s",
-                request.method, request.url.path,
-                response.status_code, duration * 1000, request_id,
+                request.method,
+                request.url.path,
+                response.status_code,
+                duration * 1000,
+                request_id,
             )
         return response
 
@@ -212,10 +208,7 @@ def create_app() -> FastAPI:
                     404: "not_found",
                     405: "method_not_allowed",
                 }.get(exc.status_code, "http_error")
-                message = (
-                    detail if isinstance(detail, str)
-                    else "Request could not be completed."
-                )
+                message = detail if isinstance(detail, str) else "Request could not be completed."
                 payload = {"code": code, "message": message}
             return JSONResponse(
                 status_code=exc.status_code,
@@ -229,17 +222,18 @@ def create_app() -> FastAPI:
         )
 
     @app.exception_handler(RequestValidationError)
-    async def validation_error_handler(request: Request,
-                                       exc: RequestValidationError):
+    async def validation_error_handler(request: Request, exc: RequestValidationError):
         first = exc.errors()[0] if exc.errors() else {}
         loc = ".".join(str(p) for p in first.get("loc", []) if p != "body")
         message = first.get("msg", "Invalid request.")
         return JSONResponse(
             status_code=422,
-            content={"error": {
-                "code": "validation_error",
-                "message": f"{loc}: {message}" if loc else message,
-            }},
+            content={
+                "error": {
+                    "code": "validation_error",
+                    "message": f"{loc}: {message}" if loc else message,
+                }
+            },
         )
 
     @app.exception_handler(Exception)
@@ -248,10 +242,12 @@ def create_app() -> FastAPI:
         logger.exception("Unhandled error on %s", request.url.path)
         return JSONResponse(
             status_code=500,
-            content={"error": {
-                "code": "internal_error",
-                "message": "Something went wrong. Please try again.",
-            }},
+            content={
+                "error": {
+                    "code": "internal_error",
+                    "message": "Something went wrong. Please try again.",
+                }
+            },
         )
 
     app.include_router(jobs.router)
@@ -318,8 +314,7 @@ def create_app() -> FastAPI:
     async def api_unmatched(unmatched: str) -> JSONResponse:
         return JSONResponse(
             status_code=404,
-            content={"error": {"code": "not_found",
-                               "message": "API endpoint not found."}},
+            content={"error": {"code": "not_found", "message": "API endpoint not found."}},
         )
 
     # ── Static frontend (production build) ─────────────────────────────────
@@ -337,14 +332,11 @@ def create_app() -> FastAPI:
             # Serve the real file when it exists (bounded to dist/ so no
             # traversal is possible via `..` in the path).
             candidate = (dist_root / full_path).resolve()
-            if (str(candidate).startswith(str(dist_root))
-                    and candidate.is_file()):
+            if str(candidate).startswith(str(dist_root)) and candidate.is_file():
                 headers: dict[str, str] = {}
                 if full_path.startswith(IMMUTABLE_ASSET_PREFIX.lstrip("/")):
                     # Vite content-hashes these filenames -> safe forever.
-                    headers["Cache-Control"] = (
-                        "public, max-age=31536000, immutable"
-                    )
+                    headers["Cache-Control"] = "public, max-age=31536000, immutable"
                 else:
                     headers["Cache-Control"] = "no-cache"
                 return FileResponse(candidate, headers=headers)
@@ -356,19 +348,18 @@ def create_app() -> FastAPI:
             if "." in last_segment:
                 return JSONResponse(
                     status_code=404,
-                    content={"error": {"code": "not_found",
-                                       "message": "Asset not found."}},
+                    content={"error": {"code": "not_found", "message": "Asset not found."}},
                 )
 
             index = dist_root / "index.html"
             if index.is_file():
                 return FileResponse(
-                    index, headers={"Cache-Control": "no-cache"},
+                    index,
+                    headers={"Cache-Control": "no-cache"},
                 )
             return JSONResponse(
                 status_code=404,
-                content={"error": {"code": "not_found",
-                                   "message": "Not found."}},
+                content={"error": {"code": "not_found", "message": "Not found."}},
             )
 
     return app

@@ -59,9 +59,7 @@ class TolokaScraper(BaseScraper):
                 "div[class*='task'], li[class*='task']"
             )
             if not task_cards:
-                task_cards = selector.css(
-                    "a[href*='/tasks/'], a[href*='toloka.ai/']"
-                )
+                task_cards = selector.css("a[href*='/tasks/'], a[href*='toloka.ai/']")
 
             for card in task_cards[:50]:
                 try:
@@ -76,16 +74,13 @@ class TolokaScraper(BaseScraper):
                         continue
 
                     url_path = (
-                        card.css("a::attr(href)").get("")
-                        or card.attrib.get("href", "")
-                        or ""
+                        card.css("a::attr(href)").get("") or card.attrib.get("href", "") or ""
                     )
                     if not url_path:
                         continue
 
                     full_url = (
-                        url_path if url_path.startswith("http")
-                        else f"{self.base_url}{url_path}"
+                        url_path if url_path.startswith("http") else f"{self.base_url}{url_path}"
                     )
 
                     reward = card.css(
@@ -96,8 +91,7 @@ class TolokaScraper(BaseScraper):
                         "p::text, [class*='desc']::text, [class*='hint']::text"
                     ).get("")
                     tag_els = card.css(
-                        "[class*='tag']::text, [class*='badge']::text, "
-                        "[class*='skill']::text"
+                        "[class*='tag']::text, [class*='badge']::text, [class*='skill']::text"
                     ).getall()
                     tags = [t.strip() for t in tag_els if t.strip()]
 

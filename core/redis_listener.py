@@ -15,11 +15,10 @@ from __future__ import annotations
 
 import asyncio
 import hashlib
-import json
 import time
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
-from typing import Any, Callable, Optional
+from typing import Any, Optional
 
 import redis.asyncio as aioredis
 
@@ -38,6 +37,7 @@ logger = get_logger(__name__)
 
 
 # ── Data Structures ───────────────────────────────────────────────────────────
+
 
 @dataclass
 class DistilledToken:
@@ -63,6 +63,7 @@ class ExpiredContextPayload:
 
 # ── Token Distillation Pipeline ───────────────────────────────────────────────
 
+
 class TokenDistillationPipe:
     """
     Native token distillation pipeline.
@@ -74,24 +75,51 @@ class TokenDistillationPipe:
     # Milestone pattern signatures (regex-free, heuristic)
     MILESTONE_PATTERNS: dict[str, list[str]] = {
         "job_discovery": [
-            "job", "opportunity", "position", "role", "hiring",
-            "remote", "freelance", "contract", "gig",
+            "job",
+            "opportunity",
+            "position",
+            "role",
+            "hiring",
+            "remote",
+            "freelance",
+            "contract",
+            "gig",
         ],
         "application": [
-            "applied", "submitted", "application", "resume",
-            "cover letter", "candidate",
+            "applied",
+            "submitted",
+            "application",
+            "resume",
+            "cover letter",
+            "candidate",
         ],
         "revenue_event": [
-            "payment", "revenue", "sale", "invoice", "payout",
-            "commission", "bonus", "earned",
+            "payment",
+            "revenue",
+            "sale",
+            "invoice",
+            "payout",
+            "commission",
+            "bonus",
+            "earned",
         ],
         "system_event": [
-            "error", "timeout", "failure", "circuit", "retry",
-            "rate_limit", "blocked",
+            "error",
+            "timeout",
+            "failure",
+            "circuit",
+            "retry",
+            "rate_limit",
+            "blocked",
         ],
         "milestone": [
-            "completed", "achieved", "milestone", "target",
-            "goal", "threshold", "record",
+            "completed",
+            "achieved",
+            "milestone",
+            "target",
+            "goal",
+            "threshold",
+            "record",
         ],
     }
 
@@ -129,13 +157,15 @@ class TokenDistillationPipe:
 
             token_id = hashlib.sha256(segment.encode("utf-8")).hexdigest()[:16]
 
-            tokens.append(DistilledToken(
-                token_id=token_id,
-                text=segment,
-                entropy=entropy,
-                milestone_type=milestone_type,
-                business_value=business_value,
-            ))
+            tokens.append(
+                DistilledToken(
+                    token_id=token_id,
+                    text=segment,
+                    entropy=entropy,
+                    milestone_type=milestone_type,
+                    business_value=business_value,
+                )
+            )
 
         return tokens
 
@@ -199,6 +229,7 @@ class TokenDistillationPipe:
 
 # ── Qdrant Sync Client ────────────────────────────────────────────────────────
 
+
 class QdrantSyncClient:
     """
     Minimal async Qdrant client for syncing text embeddings.
@@ -225,6 +256,7 @@ class QdrantSyncClient:
         """Get or create an aiohttp session."""
         if self._session is None:
             import aiohttp
+
             self._session = aiohttp.ClientSession(
                 headers={"Content-Type": "application/json"},
             )
@@ -300,6 +332,7 @@ class QdrantSyncClient:
 
 # ── Embedding Generator (lightweight) ─────────────────────────────────────────
 
+
 class EmbeddingGenerator:
     """
     Generates text embeddings using a lightweight hash-based approach.
@@ -331,6 +364,7 @@ class EmbeddingGenerator:
 
 
 # ── Main Redis Listener ───────────────────────────────────────────────────────
+
 
 class RedisKeyspaceListener:
     """
@@ -512,13 +546,15 @@ class RedisKeyspaceListener:
 
                 if qdrant_success:
                     await self._postgres.update_embeddings_id(
-                        milestone_id, token.token_id,
+                        milestone_id,
+                        token.token_id,
                     )
 
             except Exception as exc:
                 logger.error(
                     "Failed to process token %s: %s",
-                    token.token_id, exc,
+                    token.token_id,
+                    exc,
                 )
 
         # Update metrics
@@ -537,12 +573,15 @@ class RedisKeyspaceListener:
         # Update context memory gauges
         CONTEXT_KEY_COUNT.labels(tier="1", pool=self._pool_name).inc()
         CONTEXT_MEMORY_SIZE.labels(
-            tier="1", pool=self._pool_name,
+            tier="1",
+            pool=self._pool_name,
         ).set(len(raw_value.encode("utf-8")))
 
         logger.info(
             "Processed expired key '%s': %d tokens distilled in %.3fs",
-            key, len(tokens), elapsed,
+            key,
+            len(tokens),
+            elapsed,
         )
 
     async def stop(self) -> None:

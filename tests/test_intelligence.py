@@ -29,6 +29,7 @@ def make_job(**kwargs: object) -> Job:
 
 # ── Eligibility Engine ───────────────────────────────────────────────────────
 
+
 class TestEligibilityEngine:
     """Geographic/payment eligibility for applicants in Ethiopia."""
 
@@ -90,6 +91,7 @@ class TestEligibilityEngine:
 
 # ── Skill Matcher ────────────────────────────────────────────────────────────
 
+
 class TestSkillMatcher:
     """Skill/experience matching biased toward beginners."""
 
@@ -127,38 +129,58 @@ class TestSkillMatcher:
         assert self.matcher.get_experience_level(job) == "Unknown"
 
     def test_is_specialized_role(self) -> None:
-        assert self.matcher.is_specialized_role(
-            make_job(title="Principal AI Engineer"),
-        ) is True
-        assert self.matcher.is_specialized_role(
-            make_job(title="Data Annotator"),
-        ) is False
+        assert (
+            self.matcher.is_specialized_role(
+                make_job(title="Principal AI Engineer"),
+            )
+            is True
+        )
+        assert (
+            self.matcher.is_specialized_role(
+                make_job(title="Data Annotator"),
+            )
+            is False
+        )
 
     def test_is_high_priority(self) -> None:
-        assert self.matcher.is_high_priority(
-            make_job(title="AI Data Labeler"),
-        ) is True
-        assert self.matcher.is_high_priority(
-            make_job(title="Office Manager"),
-        ) is False
+        assert (
+            self.matcher.is_high_priority(
+                make_job(title="AI Data Labeler"),
+            )
+            is True
+        )
+        assert (
+            self.matcher.is_high_priority(
+                make_job(title="Office Manager"),
+            )
+            is False
+        )
 
-    @pytest.mark.parametrize("score_job", [
-        make_job(title="AI Trainer", description="No experience required"),
-        make_job(title="Senior ML Engineer", description="10 years experience"),
-        make_job(title="Mystery Role", description="Enigmatic listing"),
-    ])
+    @pytest.mark.parametrize(
+        "score_job",
+        [
+            make_job(title="AI Trainer", description="No experience required"),
+            make_job(title="Senior ML Engineer", description="10 years experience"),
+            make_job(title="Mystery Role", description="Enigmatic listing"),
+        ],
+    )
     def test_score_always_within_bounds(self, score_job: Job) -> None:
         assert 0 <= self.matcher.score(score_job) <= 100
 
 
 # ── Difficulty Estimator ─────────────────────────────────────────────────────
 
+
 class TestDifficultyEstimator:
     """Difficulty estimation across learning/application/interview dimensions."""
 
     EXPECTED_KEYS = {
-        "learning_curve", "application_difficulty", "interview_difficulty",
-        "technical_difficulty", "overall", "overall_score",
+        "learning_curve",
+        "application_difficulty",
+        "interview_difficulty",
+        "technical_difficulty",
+        "overall",
+        "overall_score",
     }
 
     def setup_method(self) -> None:
@@ -192,16 +214,22 @@ class TestDifficultyEstimator:
 
     def test_hard_indicators_override_easy_ones(self) -> None:
         job = make_job(
-            description="Beginner friendly but requires technical interview "
-                        "and assessment.",
+            description="Beginner friendly but requires technical interview and assessment.",
         )
         result = self.estimator.estimate(job)
         assert result["overall_score"] == 4
         assert result["overall"] == "Hard"
 
-    @pytest.mark.parametrize("label", [
-        "Very Easy", "Easy", "Moderate", "Hard", "Very Hard",
-    ])
+    @pytest.mark.parametrize(
+        "label",
+        [
+            "Very Easy",
+            "Easy",
+            "Moderate",
+            "Hard",
+            "Very Hard",
+        ],
+    )
     def test_score_to_label_mapping(self, label: str) -> None:
         inv = {"Very Easy": 1, "Easy": 2, "Moderate": 3, "Hard": 4, "Very Hard": 5}
         assert self.estimator._score_to_label(inv[label]) == label
@@ -211,6 +239,7 @@ class TestDifficultyEstimator:
 
 
 # ── Success Predictor ────────────────────────────────────────────────────────
+
 
 class TestSuccessPredictor:
     """Probability estimation is bounded and monotonic in key factors."""
@@ -250,24 +279,33 @@ class TestSuccessPredictor:
         # bonus is observable without clamping at 100.
         neutral = dict(title="Data Helper", tags=[])
         remote = self.predictor.predict(
-            make_job(remote=True, **neutral), 50, {"overall_score": 3},
+            make_job(remote=True, **neutral),
+            50,
+            {"overall_score": 3},
         )
         onsite = self.predictor.predict(
-            make_job(remote=False, **neutral), 50, {"overall_score": 3},
+            make_job(remote=False, **neutral),
+            50,
+            {"overall_score": 3},
         )
         assert remote == onsite + 10
 
     def test_high_priority_title_bonus(self) -> None:
         priority = self.predictor.predict(
-            make_job(title="Data Labeler"), 70, {"overall_score": 3},
+            make_job(title="Data Labeler"),
+            70,
+            {"overall_score": 3},
         )
         generic = self.predictor.predict(
-            make_job(title="Office Assistant"), 70, {"overall_score": 3},
+            make_job(title="Office Assistant"),
+            70,
+            {"overall_score": 3},
         )
         assert priority > generic
 
 
 # ── Comprehensive Scorer ─────────────────────────────────────────────────────
+
 
 class TestComprehensiveScorer:
     """End-to-end evaluation pipeline."""
@@ -288,9 +326,17 @@ class TestComprehensiveScorer:
     def test_to_dict_exposes_all_fields(self) -> None:
         data = self.scorer.evaluate(make_job()).to_dict()
         for key in (
-            "overall_score", "eligibility_score", "skill_match_score",
-            "success_probability", "difficulty", "experience_level",
-            "is_eligible", "verdict", "confidence", "insights", "next_steps",
+            "overall_score",
+            "eligibility_score",
+            "skill_match_score",
+            "success_probability",
+            "difficulty",
+            "experience_level",
+            "is_eligible",
+            "verdict",
+            "confidence",
+            "insights",
+            "next_steps",
         ):
             assert key in data
 
@@ -318,10 +364,12 @@ class TestComprehensiveScorer:
 
     def test_batch_evaluate_sorted_descending(self) -> None:
         jobs = [
-            make_job(url="https://example.com/a",
-                     description="No experience, quick apply"),
-            make_job(url="https://example.com/b", title="Senior ML Engineer",
-                     description="PhD, 10 years, system design"),
+            make_job(url="https://example.com/a", description="No experience, quick apply"),
+            make_job(
+                url="https://example.com/b",
+                title="Senior ML Engineer",
+                description="PhD, 10 years, system design",
+            ),
             make_job(url="https://example.com/c"),
         ]
         results = self.scorer.batch_evaluate(jobs)
@@ -331,10 +379,11 @@ class TestComprehensiveScorer:
 
     def test_get_recommended_filters_verdict(self) -> None:
         jobs = [
-            make_job(url="https://example.com/good",
-                     description="No experience, quick apply, start earning"),
-            make_job(url="https://example.com/blocked",
-                     description="Not available in Ethiopia."),
+            make_job(
+                url="https://example.com/good",
+                description="No experience, quick apply, start earning",
+            ),
+            make_job(url="https://example.com/blocked", description="Not available in Ethiopia."),
         ]
         recommended = self.scorer.get_recommended(jobs)
         assert len(recommended) == 1
@@ -345,5 +394,3 @@ class TestComprehensiveScorer:
         assert "overall" in result.difficulty
         assert "overall_score" in result.difficulty
         assert isinstance(result.raw_scores["ease_of_application"], float)
-
-

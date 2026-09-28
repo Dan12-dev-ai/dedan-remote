@@ -62,8 +62,7 @@ class Job:
         loc = "🌍 Worldwide" if not self.country else f"📍 {self.country}"
         tags_str = ", ".join(self.tags[:5]) if self.tags else "N/A"
         return (
-            f"{self.title} @ {self.company} | {loc} | "
-            f"💰 {self.salary or 'N/A'} | Tags: {tags_str}"
+            f"{self.title} @ {self.company} | {loc} | 💰 {self.salary or 'N/A'} | Tags: {tags_str}"
         )
 
     def to_dict(self) -> dict[str, object]:
@@ -86,7 +85,7 @@ class Job:
     @classmethod
     def from_dict(cls, data: dict[str, object]) -> Job:
         """Rehydrate a Job from a dict (e.g. from DB row)."""
-        tags_str = (data.get("tags") or "")
+        tags_str = data.get("tags") or ""
         tags = tags_str.split(",") if isinstance(tags_str, str) and tags_str else []
         return cls(
             title=str(data["title"]),

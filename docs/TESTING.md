@@ -78,8 +78,8 @@ Build output produces bundled production assets in `frontend/dist/`.
 
 Every pull request and push to `master` runs GitHub Actions CI (`.github/workflows/ci.yml`), validating:
 1. Python 3.11 & 3.12 compatibility
-2. Code formatting and linting
-3. Type checking with `mypy`
+2. Code formatting and linting (`ruff check` + `ruff format --check`; rules pinned in `ruff.toml`)
+3. Type checking with `mypy` (blocking; zero-error policy)
 4. Automated pytest test execution with coverage reporting
-5. Frontend TypeScript compile and Vite asset generation
+5. Frontend TypeScript compile, Vite asset generation, and Vitest unit tests
 6. Docker Compose syntax and multi-stage container build

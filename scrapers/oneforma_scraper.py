@@ -31,23 +31,20 @@ class OneFormaScraper(BaseScraper):
 
             # OneForma job rows/cards
             job_rows = selector.css(
-                "div[class*='job'], tr[class*='job'], "
-                "a[href*='job'], div[class*='position']"
+                "div[class*='job'], tr[class*='job'], a[href*='job'], div[class*='position']"
             )
 
             for row in job_rows[:40]:
                 try:
                     title = row.css(
-                        "h2::text, h3::text, [class*='title']::text, "
-                        "a::text, strong::text"
+                        "h2::text, h3::text, [class*='title']::text, a::text, strong::text"
                     ).get("")
                     if not title:
                         continue
 
                     url_path = row.css("a::attr(href)").get("") or ""
                     full_url = (
-                        url_path if url_path.startswith("http")
-                        else f"{self.base_url}{url_path}"
+                        url_path if url_path.startswith("http") else f"{self.base_url}{url_path}"
                     )
 
                     location = row.css(
@@ -55,10 +52,7 @@ class OneFormaScraper(BaseScraper):
                         "[class*='country']::text, "
                         "span:nth-child(2)::text"
                     ).get("")
-                    category = row.css(
-                        "[class*='category']::text, "
-                        "[class*='type']::text"
-                    ).get("")
+                    category = row.css("[class*='category']::text, [class*='type']::text").get("")
 
                     tags = ["annotation", "ai", "data"]
                     if category:

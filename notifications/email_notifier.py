@@ -8,7 +8,6 @@ from __future__ import annotations
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from typing import Optional
 
 from config.settings import get_settings
 from models.job import Job
@@ -103,7 +102,7 @@ class EmailNotifier:
             </div>
 
             <div style="text-align: center; margin-top: 20px; color: #999; font-size: 12px;">
-                <p>DEDAN Remote • Checked at {job.discovered_at.strftime('%Y-%m-%d %H:%M UTC')}</p>
+                <p>DEDAN Remote • Checked at {job.discovered_at.strftime("%Y-%m-%d %H:%M UTC")}</p>
                 <p>To adjust notification settings, edit your .env file.</p>
             </div>
         </body>
@@ -161,7 +160,9 @@ class EmailNotifier:
 
             logger.info(
                 "Email sent for %s @ %s (score=%.1f)",
-                job.title, job.company, score,
+                job.title,
+                job.company,
+                score,
             )
             return True
 

@@ -25,6 +25,7 @@ ExperienceLevel = Literal["beginner", "intermediate", "advanced"]
 
 # ── Job responses ────────────────────────────────────────────────────────────
 
+
 class ScoreDimension(BaseModel):
     """One ranking dimension with its score, weight and contribution."""
 
@@ -144,6 +145,7 @@ class JobDetail(JobSummary):
 
 # ── Pagination ───────────────────────────────────────────────────────────────
 
+
 class Page(BaseModel):
     """Page-based pagination envelope."""
 
@@ -159,6 +161,7 @@ class Page(BaseModel):
 
 
 # ── Meta ─────────────────────────────────────────────────────────────────────
+
 
 class SourceStat(BaseModel):
     model_config = ConfigDict(extra="forbid")
@@ -209,6 +212,7 @@ class StatusResponse(BaseModel):
 
 # ── Auth ─────────────────────────────────────────────────────────────────────
 
+
 class RegisterRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
@@ -242,6 +246,7 @@ class AuthResponse(BaseModel):
 
 
 # ── Saved / Applications ─────────────────────────────────────────────────────
+
 
 class SaveRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
@@ -285,6 +290,7 @@ class ApplicationOut(BaseModel):
 
 # ── Preferences / profile ────────────────────────────────────────────────────
 
+
 class PreferencesOut(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
@@ -323,6 +329,7 @@ class RecommendationPage(BaseModel):
 
 # ── Command search ───────────────────────────────────────────────────────────
 
+
 class SearchSuggestion(BaseModel):
     """A runnable search refinement derived from real stored data."""
 
@@ -355,6 +362,7 @@ class SearchResponse(BaseModel):
 
 
 # ── Activity signals ─────────────────────────────────────────────────────────
+
 
 class NotificationOut(BaseModel):
     """

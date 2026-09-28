@@ -37,11 +37,11 @@ class ColoredConsoleFormatter(logging.Formatter):
     """Console formatter with color-coded log levels."""
 
     COLORS = {
-        "DEBUG": "\033[36m",      # Cyan
-        "INFO": "\033[32m",       # Green
-        "WARNING": "\033[33m",    # Yellow
-        "ERROR": "\033[31m",      # Red
-        "CRITICAL": "\033[1;31m", # Bold Red
+        "DEBUG": "\033[36m",  # Cyan
+        "INFO": "\033[32m",  # Green
+        "WARNING": "\033[33m",  # Yellow
+        "ERROR": "\033[31m",  # Red
+        "CRITICAL": "\033[1;31m",  # Bold Red
     }
     RESET = "\033[0m"
 
@@ -85,10 +85,12 @@ def setup_logger(name: str = "dedan_remote") -> logging.Logger:
     # ── Console handler ────────────────────────────────────────────────
     console_handler = logging.StreamHandler(sys.stdout)
     console_handler.setLevel(getattr(logging, settings.LOG_LEVEL.upper(), logging.INFO))
-    console_handler.setFormatter(ColoredConsoleFormatter(
-        "%(asctime)s | %(levelname)-8s | %(name)s | %(message)s",
-        datefmt="%Y-%m-%d %H:%M:%S",
-    ))
+    console_handler.setFormatter(
+        ColoredConsoleFormatter(
+            "%(asctime)s | %(levelname)-8s | %(name)s | %(message)s",
+            datefmt="%Y-%m-%d %H:%M:%S",
+        )
+    )
     logger.addHandler(console_handler)
 
     return logger
@@ -130,7 +132,11 @@ def log_extra(logger: logging.Logger, level: str, message: str, **extra: object)
     record = logger.makeRecord(
         logger.name,
         getattr(logging, level),
-        "", 0, message, (), None,
+        "",
+        0,
+        message,
+        (),
+        None,
     )
     record.extra_data = extra  # type: ignore[attr-defined]
     log_method(message)

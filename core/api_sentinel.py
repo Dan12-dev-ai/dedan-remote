@@ -1,5 +1,5 @@
 """
-Platform API Sentinel Wrapper — Enterprise-Grade API Interceptor.
+Platform API Sentinel Wrapper — outbound API interceptor with idempotency and rate-limit enforcement.
 
 Injected into all external platform API connectors (Shopify, TikTok Ads,
 Gumroad, Stripe). Forces every outbound call through an inline verification
@@ -21,6 +21,7 @@ import ipaddress
 import json
 import re
 import time
+import urllib.parse
 import uuid
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
@@ -29,10 +30,7 @@ from typing import Any, Callable, Optional
 
 from core.database_async import AsyncPostgresDB
 from core.metrics import (
-    SENTINEL_BLOCK_TRIGGERS,
     SENTINEL_DEAD_LETTER_WRITES,
-    TASK_PROCESSING_COUNT,
-    TASK_PROCESSING_LATENCY,
     TREASURY_BALANCE,
     TREASURY_HARD_BRAKE_TRIGGERS,
 )
@@ -42,6 +40,7 @@ logger = get_logger(__name__)
 
 
 # ── Enums ─────────────────────────────────────────────────────────────────────
+
 
 class SentinelCheckResult(Enum):
     """Result of a sentinel verification check."""
@@ -62,6 +61,7 @@ class Platform(Enum):
 
 
 # ── Data Structures ───────────────────────────────────────────────────────────
+
 
 @dataclass
 class SentinelContext:
@@ -88,6 +88,7 @@ class SentinelResult:
 
 # ── Cryptographic Idempotency Key Manager ─────────────────────────────────────
 
+
 class IdempotencyKeyManager:
     """
     Manages cryptographic idempotency keys.
@@ -100,7 +101,9 @@ class IdempotencyKeyManager:
         self._secret = secret.encode("utf-8")
         self._seen_keys: set[str] = set()
 
-    def generate_idempotency_key(self, task_id: str = "default_task", platform: str = "default_platform") -> str:
+    def generate_idempotency_key(
+        self, task_id: str = "default_task", platform: str = "default_platform"
+    ) -> str:
         """Compatibility wrapper that generates a signed key for tests and callers."""
         return self.generate_key(task_id=task_id, platform=platform)
 
@@ -215,6 +218,7 @@ class IdempotencyKeyManager:
 
 # ── Sliding-Window Token Bucket Rate Limiter ──────────────────────────────────
 
+
 class SlidingWindowTokenBucket:
     """
     Sliding-window token bucket rate limiter.
@@ -250,7 +254,9 @@ class SlidingWindowTokenBucket:
         }
         logger.info(
             "Rate limiter configured for %s: capacity=%d, refill=%.1f/s",
-            platform, capacity, refill_rate,
+            platform,
+            capacity,
+            refill_rate,
         )
 
     async def try_consume(self, platform: str, tokens: int = 1) -> bool:
@@ -304,6 +310,7 @@ class SlidingWindowTokenBucket:
 
 # ── Treasury Hard-Brake ───────────────────────────────────────────────────────
 
+
 class TreasuryHardBrake:
     """
     Treasury hard-brake constraint checker.
@@ -333,7 +340,9 @@ class TreasuryHardBrake:
                 TREASURY_HARD_BRAKE_TRIGGERS.inc()
                 logger.warning(
                     "Treasury hard-brake triggered: $%.2f + $%.2f > $%.2f",
-                    self._current_spend, estimated_cost, self._max_balance,
+                    self._current_spend,
+                    estimated_cost,
+                    self._max_balance,
                 )
                 return False
 
@@ -354,6 +363,7 @@ class TreasuryHardBrake:
 
 
 # ── High-Priority Telemetry Alarm ─────────────────────────────────────────────
+
 
 class TelemetryAlarm:
     """
@@ -398,8 +408,10 @@ class TelemetryAlarm:
         # Log with high visibility
         logger.critical(
             "🔴 SENTINEL ALARM [%s] %s | task=%s key=%s cost=$%.2f",
-            platform.upper(), reason.upper(),
-            context.task_id, context.idempotency_key,
+            platform.upper(),
+            reason.upper(),
+            context.task_id,
+            context.idempotency_key,
             context.estimated_cost,
         )
 
@@ -415,9 +427,10 @@ class TelemetryAlarm:
 
 # ── Main API Sentinel ─────────────────────────────────────────────────────────
 
+
 class APISentinel:
     """
-    Enterprise-grade API sentinel interceptor.
+    Outbound API sentinel interceptor.
 
     Injected into all external platform API connectors. Every outbound
     call passes through this interceptor which enforces:
@@ -476,9 +489,21 @@ class APISentinel:
         if not text:
             return True
         sql_tokens = (
-            "drop table", "union select", "or 1=1", "insert into", "delete from",
-            "update set", "select * from", "sleep(", "--", ";--", "';",
-            "or '1'='1", "waitfor delay", "benchmark(", "concat(",
+            "drop table",
+            "union select",
+            "or 1=1",
+            "insert into",
+            "delete from",
+            "update set",
+            "select * from",
+            "sleep(",
+            "--",
+            ";--",
+            "';",
+            "or '1'='1",
+            "waitfor delay",
+            "benchmark(",
+            "concat(",
         )
         if any(token in text for token in sql_tokens):
             return False
@@ -536,7 +561,9 @@ class APISentinel:
         )
         elapsed = now - bucket["last_refill"]
         bucket["last_refill"] = now
-        bucket["tokens"] = min(float(limit), bucket["tokens"] + elapsed * (float(limit) / float(window_seconds)))
+        bucket["tokens"] = min(
+            float(limit), bucket["tokens"] + elapsed * (float(limit) / float(window_seconds))
+        )
         if bucket["tokens"] >= 1.0:
             bucket["tokens"] -= 1.0
             return True
@@ -552,11 +579,13 @@ class APISentinel:
         """Check whether a transaction exceeds the treasury guardrail."""
         if amount > 1000.0:
             self._treasury_brake_count += 1
-            self._treasury_alerts.append({
-                "amount": amount,
-                "timestamp": datetime.now(timezone.utc).isoformat(),
-                "reason": "treasury hard-brake exceeded",
-            })
+            self._treasury_alerts.append(
+                {
+                    "amount": amount,
+                    "timestamp": datetime.now(timezone.utc).isoformat(),
+                    "reason": "treasury hard-brake exceeded",
+                }
+            )
             self._total_blocks += 1
             return False
         return True
@@ -609,11 +638,13 @@ class APISentinel:
             )
             self._total_blocks += 1
             self._treasury_brake_count += 1
-            self._treasury_alerts.append({
-                "amount": context.estimated_cost,
-                "timestamp": datetime.now(timezone.utc).isoformat(),
-                "reason": "treasury hard-brake exceeded",
-            })
+            self._treasury_alerts.append(
+                {
+                    "amount": context.estimated_cost,
+                    "timestamp": datetime.now(timezone.utc).isoformat(),
+                    "reason": "treasury hard-brake exceeded",
+                }
+            )
             await self.route_to_dlq(context, "Treasury hard-brake constraint exceeded")
             return result
 
@@ -632,9 +663,18 @@ class APISentinel:
         """Check for SQL injection signatures in a payload."""
         blob = json.dumps(payload, sort_keys=True, default=str).lower()
         tokens = (
-            "drop table", "union select", "or 1=1", "sleep(", "benchmark(",
-            "select * from", "insert into", "delete from", "update set",
-            "--", ";--", "waitfor delay",
+            "drop table",
+            "union select",
+            "or 1=1",
+            "sleep(",
+            "benchmark(",
+            "select * from",
+            "insert into",
+            "delete from",
+            "update set",
+            "--",
+            ";--",
+            "waitfor delay",
         )
         return any(token in blob for token in tokens)
 
@@ -678,7 +718,11 @@ class APISentinel:
         if not content_type:
             return False
         normalized = content_type.lower().strip()
-        return normalized in {"application/json", "application/json; charset=utf-8", "application/json; charset=UTF-8"}
+        return normalized in {
+            "application/json",
+            "application/json; charset=utf-8",
+            "application/json; charset=UTF-8",
+        }
 
     def get_recent_alarms(self, limit: int = 10) -> list[dict[str, Any]]:
         """Expose recent telemetry alarms for compatibility."""
@@ -686,6 +730,7 @@ class APISentinel:
 
 
 # ── Decorator for Easy Integration ────────────────────────────────────────────
+
 
 def sentinel_wrapper(sentinel: APISentinel):
     """
@@ -699,6 +744,7 @@ def sentinel_wrapper(sentinel: APISentinel):
     The decorated function receives a `sentinel_result` kwarg with the
     verification result.
     """
+
     def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
         async def wrapper(
             platform: Platform,
@@ -726,6 +772,7 @@ def sentinel_wrapper(sentinel: APISentinel):
             return await func(platform, task_id, payload, *args, **kwargs)
 
         return wrapper
+
     return decorator
 
 

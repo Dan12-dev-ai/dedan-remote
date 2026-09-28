@@ -36,6 +36,7 @@ class ScraperRegistry:
             return
 
         import scrapers  # noqa: F811
+
         scrapers_pkg = scrapers
 
         for importer, modname, ispkg in pkgutil.iter_modules(
@@ -63,11 +64,15 @@ class ScraperRegistry:
                         self._scrapers[key] = obj
                         self._by_source[instance.source] = obj
                         logger.debug(
-                            "Registered scraper: %s (source=%s)", instance.name, instance.source,
+                            "Registered scraper: %s (source=%s)",
+                            instance.name,
+                            instance.source,
                         )
                     except Exception as exc:
                         logger.warning(
-                            "Skipping scraper %s (init failed): %s", name, exc,
+                            "Skipping scraper %s (init failed): %s",
+                            name,
+                            exc,
                         )
 
         self._loaded = True

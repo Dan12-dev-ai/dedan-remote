@@ -15,10 +15,9 @@ from api.deps import (
 )
 from api.schemas import (
     JobDetail,
-    JobSummary,
     Page,
-    SaveRequest,
     SavedItem,
+    SaveRequest,
     SortOption,
 )
 from api.store import get_user_store
@@ -29,8 +28,7 @@ router = APIRouter(prefix="/api", tags=["jobs"])
 @router.get("/jobs", response_model=Page)
 def list_jobs(
     request: Request,
-    q: Optional[str] = Query(default=None, max_length=200,
-                             description="Keyword search"),
+    q: Optional[str] = Query(default=None, max_length=200, description="Keyword search"),
     source: Optional[str] = Query(default=None, max_length=50),
     category: Optional[str] = Query(default=None, max_length=50),
     tag: Optional[str] = Query(default=None, max_length=50),
@@ -56,33 +54,46 @@ def list_jobs(
     """
     enforce_rate_limit(request, "jobs", limit=240, window=60)
     result = services.query_jobs(
-        q=q, source=source, category=category, tag=tag, country=country,
-        worldwide=worldwide, remote_only=remote_only, min_score=min_score,
-        max_age_days=max_age_days, has_salary=has_salary,
-        beginner_only=beginner_only, ai_only=ai_only,
-        sort=sort, page=page, page_size=page_size,
+        q=q,
+        source=source,
+        category=category,
+        tag=tag,
+        country=country,
+        worldwide=worldwide,
+        remote_only=remote_only,
+        min_score=min_score,
+        max_age_days=max_age_days,
+        has_salary=has_salary,
+        beginner_only=beginner_only,
+        ai_only=ai_only,
+        sort=sort,
+        page=page,
+        page_size=page_size,
     )
     registry = services.source_registry()
 
-    saved_ids: set[str] = set()
-    app_status: dict[str, str] = {}
     prefs = None
     if user:
         store = get_user_store()
-        ids = [r["id"] for r in result["items"]]
-        saved_ids = store.is_saved(user["id"], ids)
-        app_status = store.get_application_status_for_jobs(user["id"], ids)
         prefs = store.get_preferences(user["id"])
 
     items = []
     for row in result["items"]:
-        items.append(services.serialize_job(
-            row, registry=registry, prefs=prefs,
-        ))
+        items.append(
+            services.serialize_job(
+                row,
+                registry=registry,
+                prefs=prefs,
+            )
+        )
     return Page(
-        items=items, page=result["page"], page_size=result["page_size"],
-        total=result["total"], pages=result["pages"],
-        has_next=result["has_next"], has_prev=result["has_prev"],
+        items=items,
+        page=result["page"],
+        page_size=result["page_size"],
+        total=result["total"],
+        pages=result["pages"],
+        has_next=result["has_next"],
+        has_prev=result["has_prev"],
     )
 
 
@@ -104,14 +115,15 @@ def job_detail(
     row = _get_job_or_404(ident)
     registry = services.source_registry()
     prefs = None
-    saved_ids: set[str] = set()
     if user:
         store = get_user_store()
         prefs = store.get_preferences(user["id"])
-        saved_ids = store.is_saved(user["id"], [row["id"]])
 
     base = services.serialize_job(
-        row, registry=registry, include_explanation=True, prefs=prefs,
+        row,
+        registry=registry,
+        include_explanation=True,
+        prefs=prefs,
     )
     intelligence, note = services.get_job_intelligence(row)
 
@@ -128,11 +140,13 @@ def job_detail(
     finally:
         conn.close()
 
-    base.update({
-        "intelligence": intelligence,
-        "intelligence_note": note,
-        "source_checked_at": source_checked,
-    })
+    base.update(
+        {
+            "intelligence": intelligence,
+            "intelligence_note": note,
+            "source_checked_at": source_checked,
+        }
+    )
     return JobDetail(**base)
 
 
@@ -148,7 +162,9 @@ def save_job(
     row = _get_job_or_404(ident)
     store = get_user_store()
     saved_at = store.save_job(
-        user["id"], row["id"], payload.note if payload else None,
+        user["id"],
+        row["id"],
+        payload.note if payload else None,
     )
     return {"job_id": row["id"], "saved": True, "saved_at": saved_at}
 
@@ -185,9 +201,11 @@ def list_saved(
         row = services.get_row(entry["job_id"])
         if not row:
             continue  # job removed from discovery DB — skip honestly
-        items.append(SavedItem(
-            job=services.serialize_job(row, registry=registry, prefs=prefs),
-            note=entry["note"],
-            saved_at=entry["saved_at"],
-        ))
+        items.append(
+            SavedItem(
+                job=services.serialize_job(row, registry=registry, prefs=prefs),
+                note=entry["note"],
+                saved_at=entry["saved_at"],
+            )
+        )
     return items

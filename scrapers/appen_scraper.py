@@ -30,24 +30,19 @@ class AppenScraper(BaseScraper):
             selector = Selector(text=html)
 
             job_cards = selector.css(
-                "div[class*='job'], a[class*='job'], "
-                "div[class*='card'], li[class*='job']"
+                "div[class*='job'], a[class*='job'], div[class*='card'], li[class*='job']"
             )
 
             for card in job_cards[:30]:
                 try:
                     title = card.css(
-                        "h2::text, h3::text, h4::text, "
-                        "[class*='title']::text, a::text"
+                        "h2::text, h3::text, h4::text, [class*='title']::text, a::text"
                     ).get("")
                     if not title:
                         continue
 
                     href = card.css("a::attr(href)").get("") or ""
-                    full_url = (
-                        href if href.startswith("http")
-                        else f"{self.base_url}{href}"
-                    )
+                    full_url = href if href.startswith("http") else f"{self.base_url}{href}"
 
                     tags = ["ai", "annotation", "labeling"]
                     if any(kw in title.lower() for kw in ["search", "evaluator", "rater"]):

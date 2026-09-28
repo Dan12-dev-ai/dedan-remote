@@ -28,30 +28,45 @@ class TestJobModel:
     def test_job_id_deterministic(self) -> None:
         """Test that same source+url produces same id."""
         job1 = job_from_scraper_result(
-            title="Job A", company="C", url="https://x.com/1", source="test",
+            title="Job A",
+            company="C",
+            url="https://x.com/1",
+            source="test",
         )
         job2 = job_from_scraper_result(
-            title="Job B", company="C", url="https://x.com/1", source="test",
+            title="Job B",
+            company="C",
+            url="https://x.com/1",
+            source="test",
         )
         assert job1.id == job2.id  # Same source+url = same id
 
     def test_job_id_different_urls(self) -> None:
         """Test that different URLs produce different ids."""
         job1 = job_from_scraper_result(
-            title="Job A", company="C", url="https://x.com/1", source="test",
+            title="Job A",
+            company="C",
+            url="https://x.com/1",
+            source="test",
         )
         job2 = job_from_scraper_result(
-            title="Job A", company="C", url="https://x.com/2", source="test",
+            title="Job A",
+            company="C",
+            url="https://x.com/2",
+            source="test",
         )
         assert job1.id != job2.id
 
     def test_job_immutable(self) -> None:
         """Test that Job is frozen (immutable)."""
         job = job_from_scraper_result(
-            title="AI Trainer", company="OpenAI",
-            url="https://openai.com/123", source="openai",
+            title="AI Trainer",
+            company="OpenAI",
+            url="https://openai.com/123",
+            source="openai",
         )
         import dataclasses
+
         assert dataclasses.fields(job)
 
     def test_short_summary(self) -> None:
@@ -97,15 +112,19 @@ class TestJobModel:
     def test_apply_url(self) -> None:
         """Test apply_url property."""
         job = job_from_scraper_result(
-            title="Test", company="C",
-            url="https://example.com/apply", source="test",
+            title="Test",
+            company="C",
+            url="https://example.com/apply",
+            source="test",
         )
         assert job.apply_url == "https://example.com/apply"
 
     def test_empty_tags(self) -> None:
         """Test job with no tags."""
         job = job_from_scraper_result(
-            title="Test", company="C",
-            url="https://example.com/job", source="test",
+            title="Test",
+            company="C",
+            url="https://example.com/job",
+            source="test",
         )
         assert job.tags == []

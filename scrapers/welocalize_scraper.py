@@ -30,24 +30,19 @@ class WelocalizeScraper(BaseScraper):
             selector = Selector(text=html)
 
             job_items = selector.css(
-                "div[class*='job'], a[href*='job'], "
-                "div[class*='position'], li[class*='job']"
+                "div[class*='job'], a[href*='job'], div[class*='position'], li[class*='job']"
             )
 
             for item in job_items[:30]:
                 try:
                     title = item.css(
-                        "h2::text, h3::text, h4::text, "
-                        "[class*='title']::text, a::text"
+                        "h2::text, h3::text, h4::text, [class*='title']::text, a::text"
                     ).get("")
                     if not title:
                         continue
 
                     href = item.css("a::attr(href)").get("") or ""
-                    full_url = (
-                        href if href.startswith("http")
-                        else f"{self.base_url}{href}"
-                    )
+                    full_url = href if href.startswith("http") else f"{self.base_url}{href}"
 
                     tags = ["ai", "annotation", "translation"]
                     if any(kw in title.lower() for kw in ["linguist", "localization", "translat"]):

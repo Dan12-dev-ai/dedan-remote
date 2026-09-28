@@ -5,6 +5,8 @@ Uses discord-webhook to send messages to Discord channels.
 
 from __future__ import annotations
 
+from typing import Any
+
 from config.settings import get_settings
 from models.job import Job
 from utils.logger import get_logger
@@ -20,14 +22,14 @@ class DiscordNotifier:
         self._enabled = self._settings.ENABLE_DISCORD
         self._webhook_url = self._settings.DISCORD_WEBHOOK_URL
 
-    def _build_embed(self, job: Job, score: float) -> dict[str, object]:
+    def _build_embed(self, job: Job, score: float) -> dict[str, Any]:
         """Build a Discord embed object for the job."""
-        color = 0x00ff00 if score >= 70 else 0xffff00 if score >= 50 else 0xff0000
+        color = 0x00FF00 if score >= 70 else 0xFFFF00 if score >= 50 else 0xFF0000
         location = job.country or "🌍 Worldwide"
         salary = job.salary or "Not specified"
         tags_str = ", ".join(job.tags[:8]) if job.tags else "N/A"
 
-        embed: dict[str, object] = {
+        embed: dict[str, Any] = {
             "title": f"🔥 {job.title}",
             "url": job.url,
             "color": color,
@@ -63,7 +65,7 @@ class DiscordNotifier:
             return False
 
         try:
-            from discord_webhook import DiscordWebhook, DiscordEmbed
+            from discord_webhook import DiscordEmbed, DiscordWebhook
 
             webhook = DiscordWebhook(url=self._webhook_url, rate_limit_retry=True)
             embed_data = self._build_embed(job, score)

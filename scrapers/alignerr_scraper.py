@@ -46,13 +46,12 @@ class AlignerrScraper(BaseScraper):
                         continue
 
                     url_path = (
-                        item.css("a::attr(href)").get("") or
-                        item.css("[class*='apply']::attr(href)").get("") or
-                        ""
+                        item.css("a::attr(href)").get("")
+                        or item.css("[class*='apply']::attr(href)").get("")
+                        or ""
                     )
                     full_url = (
-                        url_path if url_path.startswith("http")
-                        else f"{self.base_url}{url_path}"
+                        url_path if url_path.startswith("http") else f"{self.base_url}{url_path}"
                     )
 
                     tags = ["ai", "training", "labeling", "evaluation"]

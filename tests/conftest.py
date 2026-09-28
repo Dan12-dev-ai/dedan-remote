@@ -1,5 +1,5 @@
 """
-Pytest configuration and shared fixtures — World-Class Testing Infrastructure.
+Pytest configuration and shared fixtures.
 
 This module provides:
   1. Docker TestContainer fixtures (PostgreSQL, Redis) for true integration testing
@@ -14,29 +14,30 @@ from __future__ import annotations
 import asyncio
 import os
 import tempfile
+from datetime import timezone
 from pathlib import Path
-from typing import AsyncGenerator, Generator
-from datetime import datetime, timezone
+from typing import Any, AsyncGenerator, Generator
 
 import pytest
-import asyncpg
 import redis.asyncio as aioredis
 from faker import Faker
+
 try:
     from testcontainers.postgres import PostgresContainer
     from testcontainers.redis import RedisContainer
+
     TESTCONTAINERS_AVAILABLE = True
 except ImportError:
     TESTCONTAINERS_AVAILABLE = False
     PostgresContainer = None  # type: ignore
     RedisContainer = None  # type: ignore
 
+from core.api_sentinel import APISentinel, IdempotencyKeyManager
 from core.database_async import AsyncPostgresDB
-from core.api_sentinel import APISentinel, Platform, IdempotencyKeyManager
 from models.job import Job, job_from_scraper_result
 
-
 # ── Scope & Markers ──────────────────────────────────────────────────────────
+
 
 def pytest_configure(config):
     """Register custom markers."""
@@ -60,20 +61,21 @@ def pytest_configure(config):
 
 # ── Environment Setup ─────────────────────────────────────────────────────────
 
+
 @pytest.fixture(scope="session", autouse=True)
 def setup_test_session() -> Generator[None, None, None]:
     """
     Session-scoped setup for entire test suite.
-    
+
     Initializes:
       - Faker seed for reproducibility
       - Test environment variables
     """
     # Seed Faker for reproducible test data
     Faker.seed(42)
-    
+
     yield
-    
+
     # No cleanup needed at session end
 
 
@@ -81,7 +83,7 @@ def setup_test_session() -> Generator[None, None, None]:
 def set_test_env() -> Generator[None, None, None]:
     """
     Set up test environment variables (function-scoped, autouse).
-    
+
     Isolates test environment from system environment.
     """
     old_env = dict(os.environ)
@@ -93,9 +95,9 @@ def set_test_env() -> Generator[None, None, None]:
     os.environ["AEOS_TREASURY_LIMIT"] = "1000.00"
     os.environ["AEOS_RATE_LIMIT_WINDOW"] = "60"
     os.environ["AEOS_RATE_LIMIT_TOKENS"] = "100"
-    
+
     yield
-    
+
     # Restore environment
     os.environ.clear()
     os.environ.update(old_env)
@@ -103,11 +105,12 @@ def set_test_env() -> Generator[None, None, None]:
 
 # ── Docker Testcontainers (PostgreSQL & Redis) ──────────────────────────────
 
+
 @pytest.fixture(scope="session")
 def postgres_container() -> Generator[Any, None, None]:
     """
     Session-scoped PostgreSQL container fixture.
-    
+
     Provides a live PostgreSQL database for all integration tests.
     Automatically started/stopped with container lifecycle.
     Skips if testcontainers/Docker not available.
@@ -123,9 +126,9 @@ def postgres_container() -> Generator[Any, None, None]:
     except Exception as exc:
         pytest.skip(f"Docker not available: {exc}")
         return
-    
+
     yield container
-    
+
     try:
         container.stop()
     except Exception:
@@ -136,7 +139,7 @@ def postgres_container() -> Generator[Any, None, None]:
 def redis_container() -> Generator[Any, None, None]:
     """
     Session-scoped Redis container fixture.
-    
+
     Provides a live Redis instance for cache layer integration tests.
     Skips if testcontainers/Docker not available.
     """
@@ -148,9 +151,9 @@ def redis_container() -> Generator[Any, None, None]:
     except Exception as exc:
         pytest.skip(f"Docker not available: {exc}")
         return
-    
+
     yield container
-    
+
     try:
         container.stop()
     except Exception:
@@ -159,25 +162,28 @@ def redis_container() -> Generator[Any, None, None]:
 
 # ── Async Database Fixtures ──────────────────────────────────────────────────
 
+
 @pytest.fixture
-async def postgres_pool(postgres_container: PostgresContainer) -> AsyncGenerator[AsyncPostgresDB, None]:
+async def postgres_pool(
+    postgres_container: PostgresContainer,
+) -> AsyncGenerator[AsyncPostgresDB, None]:
     """
     Function-scoped PostgreSQL connection pool fixture.
-    
+
     Returns AsyncPostgresDB instance connected to the test container.
     Creates schema and ensures clean state for each test.
     """
     # Extract connection details from container
     url = postgres_container.get_connection_url().replace("psycopg2://", "postgresql://")
-    
+
     db = AsyncPostgresDB(dsn=url)
     await db.connect()
-    
+
     # Initialize schema
     await db.create_schema()
-    
+
     yield db
-    
+
     # Cleanup
     await db.close()
 
@@ -186,7 +192,7 @@ async def postgres_pool(postgres_container: PostgresContainer) -> AsyncGenerator
 async def redis_client(redis_container: RedisContainer) -> AsyncGenerator[aioredis.Redis, None]:
     """
     Function-scoped Redis async client fixture.
-    
+
     Provides clean Redis connection with automatic flush before/after test.
     """
     # Connect to container
@@ -194,12 +200,12 @@ async def redis_client(redis_container: RedisContainer) -> AsyncGenerator[aiored
         f"redis://{redis_container.get_container_host_ip()}:{redis_container.get_exposed_port(6379)}",
         decode_responses=True,
     )
-    
+
     # Flush to ensure clean state
     await redis.flushall()
-    
+
     yield redis
-    
+
     # Cleanup
     await redis.flushall()
     await redis.close()
@@ -207,33 +213,36 @@ async def redis_client(redis_container: RedisContainer) -> AsyncGenerator[aiored
 
 # ── Legacy SQLite Database Fixtures (for backward compatibility) ─────────────
 
+
 @pytest.fixture
 def temp_db() -> Generator:
     """
     Function-scoped temporary SQLite database (legacy support).
-    
+
     DEPRECATED: Prefer postgres_pool for new tests.
     """
     with tempfile.NamedTemporaryFile(suffix=".db", delete=False) as f:
         db_path = f.name
-    
+
     from database.database import Database
+
     db = Database(db_path)
     db.create_tables()
-    
+
     yield db
-    
+
     db.close()
     Path(db_path).unlink(missing_ok=True)
 
 
 # ── Data Factory Fixtures ────────────────────────────────────────────────────
 
+
 @pytest.fixture
 def faker_instance() -> Faker:
     """
     Faker instance for generating realistic test data.
-    
+
     Uses fixed seed for reproducibility.
     """
     fake = Faker()
@@ -278,33 +287,44 @@ def sample_jobs() -> list[Job]:
 def fake_jobs(faker_instance: Faker) -> list[Job]:
     """
     Generate realistic fake jobs using Faker.
-    
+
     Returns 10 diverse job entries with randomized properties.
     """
     jobs = []
     for i in range(10):
-        jobs.append(job_from_scraper_result(
-            title=faker_instance.job(),
-            company=faker_instance.company(),
-            url=f"https://{faker_instance.domain_name()}/job/{i}",
-            source=faker_instance.random_element(["test_source", "appen", "clickworker", "outlier"]),
-            salary=f"${faker_instance.random_int(min=20, max=150)}/hr" if faker_instance.boolean() else None,
-            country=faker_instance.country(),
-            remote=faker_instance.boolean(),
-            posted_date=faker_instance.date_time(tzinfo=timezone.utc).isoformat(),
-            description=faker_instance.text(max_nb_chars=200),
-            tags=[faker_instance.random_element(["ai", "training", "beginner", "advanced", "remote"])],
-        ))
+        jobs.append(
+            job_from_scraper_result(
+                title=faker_instance.job(),
+                company=faker_instance.company(),
+                url=f"https://{faker_instance.domain_name()}/job/{i}",
+                source=faker_instance.random_element(
+                    ["test_source", "appen", "clickworker", "outlier"]
+                ),
+                salary=f"${faker_instance.random_int(min=20, max=150)}/hr"
+                if faker_instance.boolean()
+                else None,
+                country=faker_instance.country(),
+                remote=faker_instance.boolean(),
+                posted_date=faker_instance.date_time(tzinfo=timezone.utc).isoformat(),
+                description=faker_instance.text(max_nb_chars=200),
+                tags=[
+                    faker_instance.random_element(
+                        ["ai", "training", "beginner", "advanced", "remote"]
+                    )
+                ],
+            )
+        )
     return jobs
 
 
 # ── API Sentinel Fixtures ────────────────────────────────────────────────────
 
+
 @pytest.fixture
 def idempotency_manager() -> IdempotencyKeyManager:
     """
     IdempotencyKeyManager instance for security testing.
-    
+
     Uses a fixed test secret.
     """
     return IdempotencyKeyManager(secret="test-secret-key-for-testing")
@@ -314,7 +334,7 @@ def idempotency_manager() -> IdempotencyKeyManager:
 def api_sentinel(postgres_pool) -> APISentinel:
     """
     APISentinel instance for API gateway hardening tests.
-    
+
     Configured with test database connection.
     """
     return APISentinel(
@@ -325,11 +345,12 @@ def api_sentinel(postgres_pool) -> APISentinel:
 
 # ── Async Helper Utilities ───────────────────────────────────────────────────
 
+
 @pytest.fixture
 def event_loop() -> Generator:
     """
     Provide event loop for async tests.
-    
+
     Ensures proper lifecycle management of async fixtures.
     """
     loop = asyncio.get_event_loop_policy().new_event_loop()
@@ -339,29 +360,31 @@ def event_loop() -> Generator:
 
 # ── Property-Based Testing Context ──────────────────────────────────────────
 
+
 @pytest.fixture
 def hypothesis_settings():
     """
     Configure hypothesis for property-based testing.
-    
+
     Yields explicit settings that balance thoroughness and speed.
     """
-    from hypothesis import settings, HealthCheck
-    
+    from hypothesis import HealthCheck, settings
+
     return settings(
         max_examples=1000,  # Increased from default 100
-        deadline=5000,      # 5-second timeout per test
+        deadline=5000,  # 5-second timeout per test
         suppress_health_check=[HealthCheck.too_slow],
     )
 
 
 # ── Financial Ledger Testing Fixtures ───────────────────────────────────────
 
+
 @pytest.fixture
 def mock_financial_state() -> dict:
     """
     Create initial mock financial ledger state.
-    
+
     Used for stateful property-based tests and financial invariant checking.
     """
     return {
@@ -378,23 +401,25 @@ def mock_financial_state() -> dict:
 
 # ── Performance Benchmarking Fixtures ────────────────────────────────────────
 
+
 @pytest.fixture
 def benchmark_context():
     """
     Provide timing context for performance assertions.
-    
+
     Useful for benchmarking security checks and query times.
     """
+
     class BenchmarkContext:
         def __init__(self):
             self.measurements = {}
-        
+
         def time_operation(self, name: str, operation_time: float):
             """Record an operation's execution time."""
             if name not in self.measurements:
                 self.measurements[name] = []
             self.measurements[name].append(operation_time)
-        
+
         def get_stats(self, name: str) -> dict:
             """Get stats for a named operation."""
             if name not in self.measurements:
@@ -406,17 +431,18 @@ def benchmark_context():
                 "max": max(times),
                 "avg": sum(times) / len(times),
             }
-    
+
     return BenchmarkContext()
 
 
 # ── Security Testing Utilities ───────────────────────────────────────────────
 
+
 @pytest.fixture
 def malicious_payloads() -> dict[str, str]:
     """
     Curated collection of malicious payloads for security penetration testing.
-    
+
     Covers OWASP top 10 attack vectors.
     """
     return {
@@ -424,22 +450,18 @@ def malicious_payloads() -> dict[str, str]:
         "sql_basic": "'; DROP TABLE users; --",
         "sql_union": "' UNION SELECT * FROM users --",
         "sql_time_based": "'; WAITFOR DELAY '00:00:05'; --",
-        
         # SSRF/Loopback
         "ssrf_localhost": "http://localhost:5432/admin",
         "ssrf_internal": "http://169.254.169.254/latest/meta-data/",
         "ssrf_file": "file:///etc/passwd",
-        
         # XSS Payloads
         "xss_script": "<script>alert('xss')</script>",
         "xss_img": "<img src=x onerror=alert('xss')>",
         "xss_event": "<body onload=alert('xss')>",
-        
         # Command Injection
         "cmd_basic": "; rm -rf /",
         "cmd_backtick": "test`whoami`",
         "cmd_dollar": "test$(id)",
-        
         # HMAC/Signature Bypass
         "hmac_empty": "",
         "hmac_invalid": "invalid_signature_string",

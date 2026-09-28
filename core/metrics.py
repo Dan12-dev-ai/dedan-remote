@@ -11,8 +11,6 @@ Exposes gauges for:
 
 from __future__ import annotations
 
-from typing import Optional
-
 from prometheus_client import Counter, Gauge, Histogram, start_http_server
 
 # ── Global Registry ──────────────────────────────────────────────────────────

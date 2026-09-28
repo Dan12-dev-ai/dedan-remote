@@ -5,10 +5,10 @@ Tests for the email notifier.
 from __future__ import annotations
 
 import smtplib
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
 
-from notifications.email_notifier import EmailNotifier
 from models.job import job_from_scraper_result
+from notifications.email_notifier import EmailNotifier
 
 
 class TestEmailNotifier:

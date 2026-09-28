@@ -6,16 +6,15 @@ and notification pipeline for a single execution cycle.
 from __future__ import annotations
 
 import asyncio
-from typing import Optional
 
 from agents.ranking_agent import RankingAgent
 from config.settings import get_settings
 from database.database import Database
 from models.job import Job
 from notifications.notifier import Notifier
+from scrapers.base_scraper import BaseScraper
 from scrapers.scraper_registry import get_registry
 from utils.logger import get_logger
-from utils.http_client import close_http_client
 
 logger = get_logger(__name__)
 
@@ -40,7 +39,7 @@ class DiscoveryAgent:
         self._ranking = RankingAgent()
         self._notifier = Notifier()
 
-    async def run_once(self) -> dict[str, object]:
+    async def run_once(self) -> dict[str, int]:
         """
         Execute one full discovery cycle.
 
@@ -65,7 +64,7 @@ class DiscoveryAgent:
         logger.info("Running %d scrapers concurrently...", len(scrapers))
 
         # ── 2. Run scrapers concurrently ────────────────────────────────
-        async def scrape_with_timeout(scraper: object) -> list[Job]:
+        async def scrape_with_timeout(scraper: BaseScraper) -> list[Job]:
             """Run a single scraper with timeout and error handling."""
             scraper_name = getattr(scraper, "name", str(scraper))
             source = getattr(scraper, "source", "unknown")
@@ -76,7 +75,7 @@ class DiscoveryAgent:
                     return []
 
                 jobs = await asyncio.wait_for(
-                    scraper.scrape(),  # type: ignore[union-attr]
+                    scraper.scrape(),
                     timeout=self._settings.REQUEST_TIMEOUT + 10,
                 )
                 self._db.update_website_status(source, success=True)
@@ -100,10 +99,17 @@ class DiscoveryAgent:
                     "SELECT consecutive_failures FROM website_status WHERE source = ?",
                     (source,),
                 ).fetchone()
-                if row and row["consecutive_failures"] >= self._settings.CIRCUIT_BREAKER_FAILURE_THRESHOLD:
+                if (
+                    row
+                    and row["consecutive_failures"]
+                    >= self._settings.CIRCUIT_BREAKER_FAILURE_THRESHOLD
+                ):
                     self._db.open_circuit(source, self._settings.CIRCUIT_BREAKER_RECOVERY_TIMEOUT)
-                    logger.warning("Circuit opened for %s after %d failures",
-                                   scraper_name, row["consecutive_failures"])
+                    logger.warning(
+                        "Circuit opened for %s after %d failures",
+                        scraper_name,
+                        row["consecutive_failures"],
+                    )
                 return []
 
         tasks = [scrape_with_timeout(s) for s in scrapers]
@@ -131,16 +137,14 @@ class DiscoveryAgent:
 
         # ── 4. Notify on high-scoring jobs ──────────────────────────────
         min_score = self._settings.MIN_SCORE_FOR_NOTIFICATION
-        notify_candidates = [
-            (job, score) for job, score in scored_jobs
-            if score >= min_score
-        ]
+        notify_candidates = [(job, score) for job, score in scored_jobs if score >= min_score]
 
         notified_count = 0
         if notify_candidates:
             logger.info(
                 "Notifying on %d jobs with score >= %d...",
-                len(notify_candidates), min_score,
+                len(notify_candidates),
+                min_score,
             )
             for job, score in notify_candidates:
                 channels = self._notifier.send(job, score)

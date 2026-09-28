@@ -14,11 +14,11 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Any
 
-from models.job import Job
+from intelligence.difficulty_estimator import DifficultyEstimator
 from intelligence.eligibility import EligibilityEngine
 from intelligence.skill_matcher import SkillMatcher
-from intelligence.difficulty_estimator import DifficultyEstimator
 from intelligence.success_predictor import SuccessPredictor
+from models.job import Job
 from utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -107,7 +107,9 @@ class ComprehensiveScorer:
         skill_match_score = self._skill_matcher.score(job)
         difficulty_info = self._difficulty.estimate(job)
         success_prob = self._success_predictor.predict(
-            job, skill_match_score, difficulty_info,
+            job,
+            skill_match_score,
+            difficulty_info,
         )
         experience_level = self._skill_matcher.get_experience_level(job)
         is_eligible = self._eligibility.is_eligible(job)
@@ -117,23 +119,32 @@ class ComprehensiveScorer:
         ease_score = self._ease_from_difficulty(difficulty_info)
 
         overall = (
-            eligibility_score * self.WEIGHTS["eligibility"] +
-            skill_match_score * self.WEIGHTS["skill_match"] +
-            success_prob * self.WEIGHTS["success_probability"] +
-            ease_score * self.WEIGHTS["ease_of_application"]
+            eligibility_score * self.WEIGHTS["eligibility"]
+            + skill_match_score * self.WEIGHTS["skill_match"]
+            + success_prob * self.WEIGHTS["success_probability"]
+            + ease_score * self.WEIGHTS["ease_of_application"]
         )
         overall = round(max(0.0, min(100.0, overall)), 1)
 
         verdict = self._verdict(overall, is_eligible, is_specialized)
         confidence = self._compute_confidence(
-            eligibility_score, skill_match_score, success_prob,
+            eligibility_score,
+            skill_match_score,
+            success_prob,
         )
         insights = self._generate_insights(
-            job, eligibility_score, skill_match_score, difficulty_info,
-            success_prob, is_high_priority, is_specialized,
+            job,
+            eligibility_score,
+            skill_match_score,
+            difficulty_info,
+            success_prob,
+            is_high_priority,
+            is_specialized,
         )
         next_steps = self._generate_next_steps(
-            verdict, difficulty_info, is_high_priority,
+            verdict,
+            difficulty_info,
+            is_high_priority,
         )
 
         raw_scores = {
@@ -143,7 +154,11 @@ class ComprehensiveScorer:
 
         logger.debug(
             "Scored '%s @ %s': overall=%.1f verdict=%s eligible=%s",
-            job.title, job.company, overall, verdict, is_eligible,
+            job.title,
+            job.company,
+            overall,
+            verdict,
+            is_eligible,
         )
 
         return ScorerResult(
@@ -172,7 +187,8 @@ class ComprehensiveScorer:
     def get_recommended(self, jobs: list[Job]) -> list[tuple[Job, ScorerResult]]:
         """Return only RECOMMENDED jobs from a batch."""
         return [
-            (job, result) for job, result in self.batch_evaluate(jobs)
+            (job, result)
+            for job, result in self.batch_evaluate(jobs)
             if result.verdict == "RECOMMENDED"
         ]
 
@@ -212,7 +228,7 @@ class ComprehensiveScorer:
         if mean == 0:
             return 0.5
         variance = sum((s - mean) ** 2 for s in scores) / len(scores)
-        std = variance ** 0.5
+        std = variance**0.5
         normalized_std = std / 100.0
         confidence = max(0.3, min(0.95, 1.0 - normalized_std * 2))
         return round(confidence, 2)
@@ -285,7 +301,9 @@ class ComprehensiveScorer:
 
         overall_score = difficulty.get("overall_score", 3)
         if isinstance(overall_score, int) and overall_score >= 4:
-            steps.append("📝 Prepare application materials: resume, cover letter, portfolio samples")
+            steps.append(
+                "📝 Prepare application materials: resume, cover letter, portfolio samples"
+            )
             steps.append("🎯 Practice interview questions for this role type")
         elif overall_score <= 2:
             steps.append("⚡ Quick application process — can apply in under 15 minutes")

@@ -10,8 +10,9 @@ from fastapi import APIRouter, Depends, Request
 from api import services
 from api.deps import enforce_rate_limit, require_system_token
 
-router = APIRouter(prefix="/api/system", tags=["system"],
-                   dependencies=[Depends(require_system_token)])
+router = APIRouter(
+    prefix="/api/system", tags=["system"], dependencies=[Depends(require_system_token)]
+)
 
 
 def _parse(iso: Optional[str]) -> Optional[datetime]:
@@ -36,20 +37,20 @@ def overview(request: Request) -> dict[str, Any]:
             "SELECT COUNT(*) AS total,"
             " SUM(CASE WHEN discovered_at >= ? THEN 1 ELSE 0 END) AS new_24h"
             " FROM jobs",
-            ((datetime.now(timezone.utc).replace(
-                hour=0, minute=0, second=0, microsecond=0
-            )).isoformat(),),
+            (
+                (
+                    datetime.now(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0)
+                ).isoformat(),
+            ),
         ).fetchone()
         cycles = conn.execute(
-            "SELECT COUNT(*) AS n, AVG(duration_seconds) AS avg_dur"
-            " FROM execution_history"
+            "SELECT COUNT(*) AS n, AVG(duration_seconds) AS avg_dur FROM execution_history"
         ).fetchone()
         last_cycle = conn.execute(
             "SELECT * FROM execution_history ORDER BY id DESC LIMIT 1"
         ).fetchone()
         prev_cycle = conn.execute(
-            "SELECT * FROM execution_history ORDER BY id DESC LIMIT 1"
-            " OFFSET 1"
+            "SELECT * FROM execution_history ORDER BY id DESC LIMIT 1 OFFSET 1"
         ).fetchone()
         sources = conn.execute(
             "SELECT source, last_checked, last_success, last_error,"
@@ -70,8 +71,16 @@ def overview(request: Request) -> dict[str, Any]:
             return None
         # Never surface anything that looks like a credential or DSN.
         lowered = msg.lower()
-        for marker in ("password", "token", "secret", "postgres://",
-                       "redis://", "bolt://", "api_key", "apikey"):
+        for marker in (
+            "password",
+            "token",
+            "secret",
+            "postgres://",
+            "redis://",
+            "bolt://",
+            "api_key",
+            "apikey",
+        ):
             if marker in lowered:
                 return "[redacted error detail]"
         return msg[:300]
@@ -81,8 +90,7 @@ def overview(request: Request) -> dict[str, Any]:
         "jobs_new_today": totals["new_24h"] if totals else 0,
         "cycles_total": cycles["n"] if cycles else 0,
         "avg_cycle_seconds": (
-            round(cycles["avg_dur"], 2)
-            if cycles and cycles["avg_dur"] else None
+            round(cycles["avg_dur"], 2) if cycles and cycles["avg_dur"] else None
         ),
         "last_cycle": dict(last_cycle) if last_cycle else None,
         "previous_cycle": dict(prev_cycle) if prev_cycle else None,

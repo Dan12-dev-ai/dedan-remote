@@ -19,12 +19,12 @@ from __future__ import annotations
 import argparse
 import asyncio
 import sys
-from typing import Any, NoReturn, Optional
+from typing import Any, NoReturn
 
+from agents.scheduler_agent import SchedulerAgent
 from config.settings import get_settings
 from database.database import Database
-from agents.scheduler_agent import SchedulerAgent
-from utils.logger import get_logger, setup_logger
+from utils.logger import setup_logger
 
 logger = setup_logger("dedan_remote")
 
@@ -69,7 +69,7 @@ def parse_args() -> argparse.Namespace:
 _aeos_orchestrator: Any = None
 
 
-async def run_once() -> dict[str, object]:
+async def run_once() -> dict[str, int]:
     """Run a single discovery cycle."""
     logger.info("Running single discovery cycle...")
     scheduler = SchedulerAgent()
@@ -104,6 +104,7 @@ def setup_database() -> None:
 
 async def run_scheduler(enable_aeos: bool = False) -> NoReturn:
     """Start the scheduler and run forever."""
+    settings = get_settings()
     logger.info("Starting DEDAN Remote discovery scheduler...")
     logger.info("Press Ctrl+C to stop")
 
@@ -111,6 +112,7 @@ async def run_scheduler(enable_aeos: bool = False) -> NoReturn:
     global _aeos_orchestrator
     if enable_aeos:
         from core.orchestrator import AEOSOrchestrator
+
         # Build PostgreSQL DSN if not provided directly
         if settings.AEOS_POSTGRES_DSN:
             postgres_dsn = settings.AEOS_POSTGRES_DSN
