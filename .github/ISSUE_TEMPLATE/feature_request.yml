@@ -1,0 +1,39 @@
+name: Feature request
+description: Suggest an idea or enhancement for DEDAN Remote
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please clearly explain the engineering motivation and proposed architecture.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem Statement
+      description: Is your feature request related to a problem or architectural gap?
+      placeholder: A clear and concise description of what the problem is.
+    validations:
+      required: true
+  - type: textarea
+    id: proposed_solution
+    attributes:
+      label: Proposed Solution
+      description: What change do you suggest to the API, data model, scrapers, or pipeline?
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: What other approaches or workarounds have been considered?
+  - type: dropdown
+    id: target_subsystem
+    attributes:
+      label: Target Subsystem
+      options:
+        - Discovery Pipeline & Scrapers
+        - Ranking & Intelligence Engine
+        - REST API & Data Model
+        - Web UI
+        - AE-OS Control Plane
+        - Deployment & Operations

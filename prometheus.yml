@@ -1,5 +1,5 @@
 # ── Prometheus Scrape Configuration for AE-OS ───────────────────────────────
-# Auto-discovers the ai-opportunity-finder metrics endpoint.
+# Auto-discovers the DEDAN Remote metrics endpoint.
 # ─────────────────────────────────────────────────────────────────────────────
 
 global:
@@ -10,7 +10,7 @@ global:
 scrape_configs:
   - job_name: "aeos-core"
     static_configs:
-      - targets: ["ai-opportunity-finder:9090"]
+      - targets: ["dedan-remote:9090"]
         labels:
           service: "aeos-orchestrator"
           tier: "core"

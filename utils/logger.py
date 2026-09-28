@@ -51,7 +51,7 @@ class ColoredConsoleFormatter(logging.Formatter):
         return super().format(record)
 
 
-def setup_logger(name: str = "ai_opportunity_finder") -> logging.Logger:
+def setup_logger(name: str = "dedan_remote") -> logging.Logger:
     """
     Configure and return a structured logger.
 

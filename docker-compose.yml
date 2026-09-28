@@ -1,14 +1,16 @@
 # ─────────────────────────────────────────────────────────────────────────────
-# AI Opportunity Discovery System — Docker Compose
-# With AE-OS Enterprise Multi-Agent Backbone Infrastructure
+# DEDAN Remote — Docker Compose
+# Core Discovery Pipeline, REST API & Web Application with optional AE-OS
 # ─────────────────────────────────────────────────────────────────────────────
 
+name: dedan-remote
+
 services:
-  ai-opportunity-finder:
+  dedan-remote:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: ai-opportunity-finder
+    container_name: dedan-remote
     restart: unless-stopped
     depends_on:
       redis:

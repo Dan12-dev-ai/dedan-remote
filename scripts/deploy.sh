@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# ── DEDAN Remote / AIJobFinder — Cloud Deployment Guide ─────────────────────
-# Deploy the full stack: FastAPI + SPA, discovery scheduler, and the AE-OS
+# ── DEDAN Remote — Cloud Deployment Script ───────────────────────────────
+# Deploy the full stack: FastAPI + SPA, discovery scheduler, and optional AE-OS
 # datastores (Postgres, Redis, Neo4j, Qdrant, Prometheus).
 # =============================================================================
 set -euo pipefail
@@ -10,13 +10,13 @@ ROOT_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
 cd "${ROOT_DIR}"
 
 # ── Config ──────────────────────────────────────────────────────────────────
-REPO_URL="${REPO_URL:-https://github.com/<you>/AIJobFinder.git}"
+REPO_URL="${REPO_URL:-https://github.com/Dan12-dev-ai/dedan-remote.git}"
 COMPOSE_FILE="docker-compose.yml"
-PROJECT_NAME="aijobfinder"
+PROJECT_NAME="dedan-remote"
 
 # ── Preflight ───────────────────────────────────────────────────────────────
 echo "=================================================="
-echo "🚀 AIJobFinder — Cloud Deployment"
+echo "DEDAN Remote — Cloud Deployment"
 echo "=================================================="
 
 for bin in git docker; do
@@ -77,7 +77,7 @@ for i in $(seq 1 60); do
         break
     fi
     [[ "${i}" -eq 60 ]] && { echo "❌ API not ready after 60s"; \
-        docker compose -p "${PROJECT_NAME}" logs --tail=50 ai-opportunity-finder; exit 1; }
+        docker compose -p "${PROJECT_NAME}" logs --tail=50 dedan-remote; exit 1; }
     sleep 1
 done
 
@@ -123,7 +123,7 @@ Next steps:
   4. Back up the discovery database and the AE-OS volumes:
        ./scripts/backup.sh
 
-  5. Logs:  docker compose logs -f ai-opportunity-finder
+  5. Logs:  docker compose logs -f dedan-remote
      Stop:   docker compose down
      Update: git pull && ./scripts/deploy.sh
 EOF

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # ==============================================================================
-# DEDAN Remote / AIJobFinder — Deployment Status Probing Script
+# DEDAN Remote — Deployment Status Probing Script
 # ==============================================================================
 set -euo pipefail
 

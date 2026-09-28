@@ -1,0 +1,66 @@
+name: Bug report
+description: Create a report to help us improve DEDAN Remote
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report!
+  - type: input
+    id: version
+    attributes:
+      label: System Version or Git Commit
+      description: What commit hash or version are you running?
+      placeholder: e.g. a10c4b5 or v1.0.0
+    validations:
+      required: true
+  - type: dropdown
+    id: component
+    attributes:
+      label: Component
+      description: Which area of the codebase does this relate to?
+      options:
+        - API Layer (FastAPI)
+        - Frontend SPA (React/Vite)
+        - Scrapers & Discovery Pipeline
+        - Ranking & Intelligence Engines
+        - Persistence & Storage (SQLite / Postgres)
+        - AE-OS Infrastructure
+        - Docker & Deployment
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to Reproduce
+      description: How can maintainers reproduce the behavior?
+      placeholder: |
+        1. Start service with '...'
+        2. Execute query / request '...'
+        3. Observe error
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: What should have happened?
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual Behavior & Logs
+      description: What happened instead? Please attach relevant logs or stack traces.
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: OS, Python version, Node version, Docker version.
+      value: |
+        - OS: [e.g. Ubuntu 22.04 / Debian / macOS]
+        - Python version: [e.g. 3.12.3]
+        - Node version: [e.g. 22.x]
+        - Docker version: [e.g. 27.x]

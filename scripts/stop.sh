@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # ==============================================================================
-# DEDAN Remote / AIJobFinder — Stop All Deployment Services
+# DEDAN Remote — Stop All Deployment Services
 # ==============================================================================
 set -euo pipefail
 

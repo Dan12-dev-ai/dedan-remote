@@ -41,7 +41,7 @@ class DiscordNotifier:
                 {"name": "🏷️ Tags", "value": tags_str, "inline": False},
             ],
             "footer": {
-                "text": f"AI Opportunity Finder • {job.discovered_at.strftime('%Y-%m-%d %H:%M UTC')}"
+                "text": f"DEDAN Remote • {job.discovered_at.strftime('%Y-%m-%d %H:%M UTC')}"
             },
         }
         if job.description:

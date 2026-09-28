@@ -1,4 +1,4 @@
-# ☁️ Cloud Deployment Guide — AIJobFinder
+# Cloud Deployment Guide — DEDAN Remote
 
 Complete, verified procedure for deploying the full stack to a production
 cloud VM: FastAPI + React SPA, the discovery scheduler, and the AE-OS
@@ -21,7 +21,7 @@ The container image has been built end-to-end and verified locally
                     └─────────┬─────────┘
                               │ 127.0.0.1:8000
         ┌─────────────────────▼──────────────────────┐
-        │        ai-opportunity-finder (app)         │
+        │        dedan-remote (app)                         │
         │  uvicorn api.main:app  +  python main.py  │
         │  serves REST API, /metrics, AND the SPA    │
         └──────┬────────┬─────────┬─────────┬────────┘
@@ -78,8 +78,8 @@ ufw enable
 ## Step 2 — Get the code
 
 ```bash
-git clone https://github.com/<you>/AIJobFinder.git
-cd AIJobFinder
+git clone https://github.com/Dan12-dev-ai/dedan-remote.git
+cd dedan-remote
 chmod +x scripts/deploy.sh
 ```
 
@@ -149,13 +149,13 @@ Or manually:
 ```bash
 # Build (frontend bundle is built INSIDE the image — frontend/dist is
 # gitignored, so skipping this produces an API where every page 404s)
-docker compose -p aijobfinder build
+docker compose -p dedan-remote build
 
 # Start
-docker compose -p aijobfinder up -d
+docker compose -p dedan-remote up -d
 
 # Watch readiness
-docker compose -p aijobfinder logs -f ai-opportunity-finder
+docker compose -p dedan-remote logs -f dedan-remote
 ```
 
 **Expected verification output:**
@@ -172,7 +172,7 @@ Confirm manually:
 curl -fsS http://127.0.0.1:8000/api/health
 curl -fsS http://127.0.0.1:8000/api/ready
 curl -s -o /dev/null -w '%{http_code}\n' http://127.0.0.1:8000/   # must be 200
-docker compose -p aijobfinder ps
+docker compose -p dedan-remote ps
 ```
 
 ---
@@ -203,7 +203,7 @@ your-domain.com {
     }
 
     log {
-        output file /var/log/caddy/aijobfinder.log
+        output file /var/log/caddy/dedan-remote.log
         format json
     }
 }
@@ -232,7 +232,7 @@ ports:
 ```
 
 ```bash
-docker compose -p aijobfinder up -d
+docker compose -p dedan-remote up -d
 ```
 
 **Verify the protected dashboard endpoint** (`/api/system/overview` is guarded
@@ -259,24 +259,24 @@ ssh -L 7474:localhost:7474 root@YOUR_SERVER_IP
 ### Logs
 
 ```bash
-docker compose -p aijobfinder logs -f ai-opportunity-finder
-docker compose -p aijobfinder logs --tail=200 ai-opportunity-finder
+docker compose logs -f dedan-remote
+docker compose logs --tail=200 dedan-remote
 ```
 
 ### Update to a new version
 
 ```bash
-cd AIJobFinder
-git pull
+cd dedan-remote
+git pull origin master
 ./scripts/deploy.sh
 ```
 
 ### Restart / stop
 
 ```bash
-docker compose -p aijobfinder restart ai-opportunity-finder
-docker compose -p aijobfinder down          # keeps volumes
-docker compose -p aijobfinder down -v       # ⚠️ DELETES ALL DATA
+docker compose restart dedan-remote
+docker compose down          # keeps volumes
+docker compose down -v       # ⚠️ DELETES ALL DATA
 ```
 
 ### Backup
@@ -293,11 +293,11 @@ Archives land in `./backups/` (override with `BACKUP_DIR`). To do it by hand:
 
 ```bash
 mkdir -p backups
-docker compose -p aijobfinder exec ai-opportunity-finder \
+docker compose exec dedan-remote \
   tar czf - -C /app data > "backups/app-$(date +%F).tar.gz"
 
 # Named volumes
-docker run --rm -v aijobfinder_postgres-data:/src:ro -v "$PWD/backups:/dst" \
+docker run --rm -v dedan-remote_postgres-data:/src:ro -v "$PWD/backups:/dst" \
   alpine tar czf /dst/postgres-$(date +%F).tar.gz -C /src .
 ```
 
@@ -308,7 +308,7 @@ Schedule nightly with cron:
 
 ```bash
 crontab -e
-# 0 3 * * * cd /path/AIJobFinder && ./scripts/backup.sh >> /var/log/aijobfinder-backup.log 2>&1
+# 0 3 * * * cd /path/dedan-remote && ./scripts/backup.sh >> /var/log/dedan-remote-backup.log 2>&1
 ```
 
 **Test a restore at least once:**
@@ -330,7 +330,7 @@ auth failure. Rotate both sides:
 NEW_PW="$(openssl rand -base64 24)"
 
 # 1. Change it inside the running database.
-docker compose -p aijobfinder exec postgres \
+docker compose -p dedan-remote exec postgres \
   psql -U aeos -d aeos_episodic \
   -c "ALTER USER aeos WITH PASSWORD '${NEW_PW}';"
 
@@ -338,17 +338,17 @@ docker compose -p aijobfinder exec postgres \
 sed -i "s|^AEOS_POSTGRES_PASSWORD=.*|AEOS_POSTGRES_PASSWORD=${NEW_PW}|" .env
 
 # 3. Recreate the app so it picks up the new environment.
-docker compose -p aijobfinder up -d --force-recreate ai-opportunity-finder
+docker compose -p dedan-remote up -d --force-recreate dedan-remote
 ```
 
-Verify: `docker compose -p aijobfinder exec ai-opportunity-finder \
+Verify: `docker compose -p dedan-remote exec dedan-remote \
 python -c "import asyncio,core.database_async as d;m=d.AsyncPostgresDB();\
 print(asyncio.run(m.connect()) or 'OK')"`
 
 ### Run a single discovery cycle (no scheduler)
 
 ```bash
-docker compose -p aijobfinder run --rm ai-opportunity-finder \
+docker compose -p dedan-remote run --rm dedan-remote \
   python main.py --once --aeos
 ```
 
@@ -358,22 +358,22 @@ docker compose -p aijobfinder run --rm ai-opportunity-finder \
 
 | Symptom | Cause | Fix |
 |---|---|---|
-| All pages 404 | SPA not built into image | `docker compose build --no-cache ai-opportunity-finder` |
+| All pages 404 | SPA not built into image | `docker compose build --no-cache dedan-remote` |
 | Container restarts on start | App refuses insecure prod config | Set `DEDAN_SYSTEM_TOKEN`, `DEDAN_CORS_ORIGINS`, `DEDAN_ENV=production` |
 | API up, 403 on requests | CORS origin mismatch | Set `DEDAN_CORS_ORIGINS` to your exact `https://domain` |
 | HTTPS redirect loop | Proxy headers not trusted | Set `DEDAN_TRUST_PROXY=true` |
 | Postgres auth failure | Password not applied yet | Set `AEOS_POSTGRES_PASSWORD` in `.env`. If the `postgres-data` volume already exists, the value is ignored — rotate it (see below) |
-| Discovery finds 0 jobs | Sources blocked / rate-limited | `docker compose logs ai-opportunity-finder \| grep -i scraper` |
+| Discovery finds 0 jobs | Sources blocked / rate-limited | `docker compose logs dedan-remote \| grep -i scraper` |
 | No notifications | Not configured | Set at least one channel in `.env`, `MIN_SCORE_FOR_NOTIFICATION` |
 | Port already in use | Conflict | `ss -lntp \| grep 8000`, then change the host-side port |
 
 Useful diagnostics:
 
 ```bash
-docker compose -p aijobfinder ps
-docker compose -p aijobfinder logs --tail=100 postgres
-docker exec -it aijobfinder-postgres pg_isready -U aeos -d aeos_episodic
-docker compose -p aijobfinder exec redis redis-cli ping
+docker compose -p dedan-remote ps
+docker compose -p dedan-remote logs --tail=100 postgres
+docker exec -it aeos-postgres pg_isready -U aeos -d aeos_episodic
+docker compose -p dedan-remote exec redis redis-cli ping
 ```
 
 ---

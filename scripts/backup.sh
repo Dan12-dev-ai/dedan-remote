@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# ── DEDAN Remote / AIJobFinder — Nightly Backup ───────────────────────────
+# ── DEDAN Remote — Nightly Backup ───────────────────────────────────────
 # Backs up the app's discovery database and the AE-OS datastore volumes.
 # Designed to run from cron; safe to run repeatedly (older archives are pruned).
 # =============================================================================
@@ -9,7 +9,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
 cd "${ROOT_DIR}"
 
-PROJECT_NAME="${PROJECT_NAME:-aijobfinder}"
+PROJECT_NAME="${PROJECT_NAME:-dedan-remote}"
 COMPOSE_FILE="docker-compose.yml"
 BACKUP_DIR="${BACKUP_DIR:-${ROOT_DIR}/backups}"
 RETENTION_DAYS="${RETENTION_DAYS:-14}"
@@ -28,8 +28,8 @@ volume_exists() {
 echo "[${STAMP}] Backup starting → ${BACKUP_DIR}"
 
 # ── 1. App data (discovery SQLite DB) ──────────────────────────────────────
-if dc ps --status running --services 2>/dev/null | grep -qx ai-opportunity-finder; then
-    if dc exec -T ai-opportunity-finder tar czf - -C /app data \
+if dc ps --status running --services 2>/dev/null | grep -qx dedan-remote; then
+    if dc exec -T dedan-remote tar czf - -C /app data \
         > "${BACKUP_DIR}/app-${STAMP}.tar.gz" 2>/dev/null; then
         echo "  ✅ app data      → app-${STAMP}.tar.gz"
     else

@@ -135,7 +135,7 @@ class TestDiscordNotifier:
         field_names = [f["name"] for f in embed["fields"]]  # type: ignore[union-attr]
         assert any("Company" in n for n in field_names)
         assert any("Score" in n for n in field_names)
-        assert "AI Opportunity Finder" in str(embed["footer"])  # type: ignore[index]
+        assert "DEDAN Remote" in str(embed["footer"])  # type: ignore[index]
 
     def test_embed_color_thresholds(self) -> None:
         assert self.notifier._build_embed(self.job, 85.0)["color"] == 0x00FF00

@@ -3,7 +3,7 @@
 [![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
-**DEDAN Remote is an autonomous opportunity discovery system that scans multiple platforms for AI-related remote work opportunities and provides a modern web interface for exploration.**
+**DEDAN Remote is an automated opportunity discovery system that scans multiple platforms for AI-related remote work opportunities and provides a modern web interface for exploration.**
 
 The system consists of:
 - **Backend**: Python-based scrapers, ranking engine, and FastAPI REST API
@@ -15,14 +15,14 @@ The system consists of:
 
 ## 🌟 Features
 
-- **🔍 Multi-Platform Scanning** — Built-in scrapers for Outlier, Alignerr, OneForma, TELUS Digital, Welocalize, Appen, DataAnnotation, Clickworker, and more
+- **🔍 Multi-Platform Scanning** — Built-in scrapers for Outlier, Alignerr, OneForma, TELUS Digital, Welocalize, Appen, DataAnnotation, Clickworker, Toloka, and more
 - **🧩 Extensible Architecture** — Add new websites in minutes by subclassing `BaseScraper`
 - **📊 Smart Ranking** — Every job scored 0-100 based on remote work, salary, AI relevance, beginner-friendliness, freshness, and more
 - **📧 Multi-Channel Notifications** — Email (SMTP or Gmail API), Telegram, and Discord webhooks
 - **🛡️ Error Resilience** — Circuit breakers, exponential backoff retries, graceful degradation
 - **⚡ High Performance** — Async concurrent scraping with connection pooling
 - **🔒 Secure** — All secrets in `.env`, SQL injection prevention, input validation
-- **🧪 Fully Tested** — Unit and integration tests with comprehensive coverage
+- **🧪 Tested** — 269 unit tests + 7 property-based tests passing (350-test suite total; 27 container tests skip without Docker)
 - **🐳 Docker Ready** — Multi-stage Dockerfile and docker-compose.yml included
 - **📈 Production Logging** — Structured JSON logging with rotation
 - **⏰ Flexible Scheduling** — Cron or interval-based execution with overlap prevention
@@ -42,6 +42,7 @@ The system consists of:
 | [Appen](https://www.appen.com) | AI Data Annotation | ✅ Active |
 | [DataAnnotation](https://www.dataannotation.tech) | AI Training | ✅ Active |
 | [Clickworker](https://www.clickworker.com) | Microtasks & AI | ✅ Active |
+| [Toloka](https://toloka.ai) | Microtasks & AI | ✅ Active |
 
 > **Adding a new platform takes less than a minute.** Create a new file in `scrapers/` implementing `BaseScraper` — the system auto-discovers it.
 
@@ -106,7 +107,7 @@ The system consists of:
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/yourusername/dedan-remote.git
+git clone https://github.com/Dan12-dev-ai/dedan-remote.git
 cd dedan-remote
 
 # 2. Create virtual environment
@@ -286,27 +287,27 @@ class MyNewPlatformScraper(BaseScraper):
 
 ```bash
 # 1. Clone on server
-git clone https://github.com/yourusername/AIJobFinder.git
-cd AIJobFinder
+git clone https://github.com/Dan12-dev-ai/dedan-remote.git
+cd dedan-remote
 
 # 2. Docker deployment (recommended)
-docker-compose up --build -d
+docker compose up --build -d
 
 # 3. Or use systemd
-sudo nano /etc/systemd/system/ai-opportunity-finder.service
+sudo nano /etc/systemd/system/dedan-remote.service
 ```
 
 #### systemd Service File
 ```ini
 [Unit]
-Description=AI Opportunity Finder
+Description=DEDAN Remote
 After=network.target
 
 [Service]
 Type=simple
 User=ubuntu
-WorkingDirectory=/opt/AIJobFinder
-ExecStart=/opt/AIJobFinder/venv/bin/python main.py
+WorkingDirectory=/opt/dedan-remote
+ExecStart=/opt/dedan-remote/venv/bin/python main.py
 Restart=always
 RestartSec=30
 
@@ -316,8 +317,8 @@ WantedBy=multi-user.target
 
 ```bash
 sudo systemctl daemon-reload
-sudo systemctl enable ai-opportunity-finder
-sudo systemctl start ai-opportunity-finder
+sudo systemctl enable dedan-remote.service
+sudo systemctl start dedan-remote.service
 ```
 
 ### Monitoring
@@ -327,10 +328,10 @@ sudo systemctl start ai-opportunity-finder
 python main.py --stats
 
 # View logs
-tail -f logs/ai_opportunity_finder.log
+tail -f logs/dedan_remote.log
 
 # Docker logs
-docker-compose logs -f --tail=100
+docker compose logs -f --tail=100
 ```
 
 ---
@@ -379,7 +380,7 @@ website_status — Per-source health tracking with circuit breaker
 ## 🧭 Project Roadmap
 
 - [x] Core scraping framework with auto-discovery
-- [x] 8 platform scrapers
+- [x] 9 platform scrapers
 - [x] Smart scoring and ranking (8 dimensions)
 - [x] Multi-channel notifications
 - [x] Circuit breaker error handling
@@ -388,7 +389,7 @@ website_status — Per-source health tracking with circuit breaker
 - [x] React SPA with cinematic UI
 - [ ] RSS feed output
 - [ ] Slack webhook support
-- [ ] More scrapers (Toloka, Invisible Technologies, etc.)
+- [ ] More scrapers (Invisible Technologies, etc.)
 - [ ] Machine learning-based job matching
 - [ ] AE-OS PPO policy integration
 

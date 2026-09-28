@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security Vulnerabilities
+    url: https://github.com/Dan12-dev-ai/dedan-remote/security/advisories
+    about: Please report security vulnerabilities privately via GitHub Security Advisories or maintainer email.
+  - name: General Support & Questions
+    url: https://github.com/Dan12-dev-ai/dedan-remote/issues
+    about: For architecture discussions and operational questions, please search open issues.

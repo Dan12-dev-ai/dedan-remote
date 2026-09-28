@@ -40,7 +40,7 @@ class Settings(BaseSettings):
 
     # ── Logging ───────────────────────────────────────────────────────────
     LOG_LEVEL: str = "INFO"
-    LOG_FILE: str = "logs/ai_opportunity_finder.log"
+    LOG_FILE: str = "logs/dedan_remote.log"
 
     # ── Telegram ──────────────────────────────────────────────────────────
     ENABLE_TELEGRAM: bool = False

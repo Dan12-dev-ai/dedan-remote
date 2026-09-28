@@ -47,7 +47,7 @@ class EmailNotifier:
             <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
                         padding: 30px; border-radius: 12px; text-align: center; color: white;">
                 <h1 style="margin: 0; font-size: 28px;">🔥 New AI Opportunity Found</h1>
-                <p style="margin: 8px 0 0; opacity: 0.9;">Discovered by AI Opportunity Finder</p>
+                <p style="margin: 8px 0 0; opacity: 0.9;">Discovered by DEDAN Remote</p>
             </div>
 
             <div style="background: white; padding: 30px; border-radius: 12px; 
@@ -103,7 +103,7 @@ class EmailNotifier:
             </div>
 
             <div style="text-align: center; margin-top: 20px; color: #999; font-size: 12px;">
-                <p>AI Opportunity Discovery System • Checked at {job.discovered_at.strftime('%Y-%m-%d %H:%M UTC')}</p>
+                <p>DEDAN Remote • Checked at {job.discovered_at.strftime('%Y-%m-%d %H:%M UTC')}</p>
                 <p>To adjust notification settings, edit your .env file.</p>
             </div>
         </body>

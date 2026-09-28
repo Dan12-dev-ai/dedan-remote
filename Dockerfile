@@ -1,5 +1,5 @@
 # ─────────────────────────────────────────────────────────────────────────────
-# AI Opportunity Discovery System — Production Dockerfile
+# DEDAN Remote — Production Dockerfile
 # Multi-stage build for minimal final image
 # ─────────────────────────────────────────────────────────────────────────────
 

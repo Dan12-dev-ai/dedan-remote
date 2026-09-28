@@ -1,1 +1,1 @@
-"""DEDAN Remote — public API layer over the AIJobFinder discovery engine."""
+"""DEDAN Remote — public REST API layer and opportunity catalog."""

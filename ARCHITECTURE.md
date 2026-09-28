@@ -2,8 +2,8 @@
 
 ## Overview
 
-DEDan Remote is the public REST API layer for the AIJobFinder autonomous opportunity
-discovery system. It consists of two co-running processes within a single Python
+DEDAN Remote is an automated remote-opportunity discovery system with a public
+FastAPI REST layer. It consists of two co-running planes within a single Python
 process:
 
 1. **Product Plane** — Always-on discovery scheduler that scrapes, scores, and
@@ -89,13 +89,13 @@ Agent               Agent        0-100       Agent              Engine
 | HTTP | aiohttp 3 + tenacity | Pooled sessions, exponential backoff, 3 attempts |
 | HTML parse | BeautifulSoup 4, lxml, parsel | Per-platform scrapers |
 | Numerics | NumPy | PPO actor/critic, ranking score computation |
-| Logging | stdlib RotatingFileHandler + JSON formatter | `logs/ai_opportunity_finder.log`, compatible with log aggregation |
+| Logging | stdlib RotatingFileHandler + JSON formatter | `logs/dedan_remote.log`, compatible with log aggregation |
 | Terminal output | Rich | Operator-facing display |
-| Style | black, isort, flake8, mypy | Code quality enforcement |
+| Style | Ruff, mypy | Linting/formatting and type checking (CI-enforced) |
 | Testing | pytest 8, pytest-asyncio, hypothesis | Unit, integration, property-based, security tests |
 | Container | Multi-stage Dockerfile | Builder (node:22-slim + python:3.12-slim) → minimal runtime |
 | Orchestration | Docker Compose 3.9 | App + Redis + PostgreSQL + Neo4j + Qdrant + Prometheus |
-| API | FastAPI + uvicorn | Public REST layer ("DEDan Remote") with auth, filtering, pagination |
+| API | FastAPI + uvicorn | Public REST layer ("DEDAN Remote") with auth, filtering, pagination |
 | Notifications | smtplib, python-telegram-bot, discord-webhook | Email, Telegram, Discord multi-channel alerts |
 
 ### Discovery / Data Pipeline
@@ -118,7 +118,7 @@ Agent               Agent        0-100       Agent              Engine
 | **API Schemas** | `api/schemas.py` | Pydantic models for request/response validation |
 | **API Security** | `api/security.py` | bcrypt password hashing, `require_system_token` dependency for `/api/system/*` |
 | **Frontend** | `frontend/` | React SPA (Vite + React 18). Built inside Docker image at `frontend/dist`. Served at `/` route. |
-| **Discovery** | `scrapers/` | 8 platform-specific scrapers (`BaseScraper` subclass + auto-registration via `ScraperRegistry`) |
+| **Discovery** | `scrapers/` | 9 platform-specific scrapers (`BaseScraper` subclass + auto-registration via `ScraperRegistry`) |
 | **Agents** | `agents/` | `SchedulerAgent` (APScheduler), `DiscoveryAgent` (orchestrate cycle), `RankingAgent` (0-100 scoring) |
 | **Config** | `config/` | Pydantic-settings `Settings` model, ranking weights, AE-OS DSNs, DEDAN Remote settings |
 | **Models** | `models/` | `Job` dataclass, deterministic ID (`sha256(source+url)[:16]`) |
@@ -131,7 +131,7 @@ Agent               Agent        0-100       Agent              Engine
 
 ```bash
 # 1. Clone
-git clone https://github.com/yourusername/dedan-remote.git
+git clone https://github.com/Dan12-dev-ai/dedan-remote.git
 cd dedan-remote
 
 # 2. Create venv
@@ -165,7 +165,7 @@ docker compose up --build -d
 docker compose logs -f
 
 # Run a single cycle
-docker compose run --rm ai-opportunity-finder python main.py --once
+docker compose run --rm dedan-remote python main.py --once
 
 # Or run without AE-OS
 AEOS_ENABLED=false docker compose up --build -d
@@ -209,7 +209,7 @@ pytest tests/ -m property_based -v
 
 ```bash
 # 1. Clone on server
-git clone https://github.com/yourusername/dedan-remote.git
+git clone https://github.com/Dan12-dev-ai/dedan-remote.git
 cd dedan-remote
 
 # 2. Configure secrets
@@ -252,7 +252,6 @@ curl -fsS https://your-domain.com/api/health
 - **Qdrant vectors are hash embeddings** — deterministic 384-dim, not a sentence-transformer model. Production swap required for real embeddings
 - **Neo4j degrades to logging mock** when the `neo4j` driver package is absent — sync loop still completes but no graph features available
 - **Job scraping is not wrapped by API Sentinel** — sentinel guards only the four enumerated commerce platforms (Shopify, TikTok Ads, Gumroad, Stripe)
-- **No web UI public API for jobs** — the only HTTP servers are Prometheus on 9090 and data services in Compose
 - **Email requires Gmail App Password** or SMTP credentials — no OAuth2 flow implemented
 - **Telegram and Discord are optional** — at least one must be enabled for notifications, or the scheduler runs silently
 
@@ -261,18 +260,18 @@ curl -fsS https://your-domain.com/api/health
 | ID | Feature | Status |
 |----|---------|--------|
 | 1 | Core scraping framework with auto-discovery | ✅ Complete |
-| 2 | 8 platform scrapers | ✅ Complete |
+| 2 | 9 platform scrapers | ✅ Complete |
 | 3 | Smart scoring and ranking (8 dimensions) | ✅ Complete |
 | 4 | Multi-channel notifications | ✅ Complete |
 | 5 | Circuit breaker error handling | ✅ Complete |
 | 6 | Docker deployment | ✅ Complete |
 | 7 | GitHub Actions CI | ✅ Complete |
-| 8 | Web dashboard (Flask/React) | 🚧 In Progress |
+| 8 | Web dashboard (React SPA served by FastAPI) | ✅ Complete |
 | 9 | RSS feed output | ⏳ Planned |
 | 10 | Slack webhook support | ⏳ Planned |
-| 11 | More scrapers (Toloka, Invisible Technologies, etc.) | ⏳ Planned |
+| 11 | More scrapers (Invisible Technologies, etc.) | ⏳ Planned |
 | 12 | Machine learning-based job matching | ⏳ Planned |
-| 13 | Public API endpoint for querying jobs | ⏳ Planned |
-| 14 | Eth-specific scoring (ComprehensiveScorer) | ⏳ Planned |
+| 13 | Public API endpoint for querying jobs | ✅ Complete |
+| 14 | Eth-specific scoring (ComprehensiveScorer) | ✅ Complete |
 
 *Roadmap driven by community demand and maintainer availability. Contributions welcome!*

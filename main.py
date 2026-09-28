@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """
-AI Opportunity Discovery Automation System.
+DEDAN Remote — Opportunity Discovery Automation System.
 
-Automatically discovers new online earning opportunities and sends
-immediate notifications via Email, Telegram, or Discord.
+Automatically discovers new remote earning opportunities and sends
+notifications via Email, Telegram, or Discord.
 
 Usage:
     python main.py              # Start in scheduler mode (runs forever)
@@ -26,13 +26,13 @@ from database.database import Database
 from agents.scheduler_agent import SchedulerAgent
 from utils.logger import get_logger, setup_logger
 
-logger = setup_logger("ai_opportunity_finder")
+logger = setup_logger("dedan_remote")
 
 
 def parse_args() -> argparse.Namespace:
     """Parse command-line arguments."""
     parser = argparse.ArgumentParser(
-        description="AI Opportunity Discovery Automation System",
+        description="DEDAN Remote — Opportunity Discovery Automation System",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog=__doc__,
     )
@@ -84,7 +84,7 @@ async def show_stats() -> None:
     stats = scheduler.stats()
     print()
     print("=" * 50)
-    print("📊 AI Opportunity Finder — Database Stats")
+    print("📊 DEDAN Remote — Database Stats")
     print("=" * 50)
     print(f"  Total jobs discovered:   {stats.get('total_jobs', 0)}")
     print(f"  Jobs notified:           {stats.get('notified_jobs', 0)}")
@@ -104,7 +104,7 @@ def setup_database() -> None:
 
 async def run_scheduler(enable_aeos: bool = False) -> NoReturn:
     """Start the scheduler and run forever."""
-    logger.info("Starting AI Opportunity Discovery System...")
+    logger.info("Starting DEDAN Remote discovery scheduler...")
     logger.info("Press Ctrl+C to stop")
 
     # ── Start AE-OS Enterprise Backbone (if enabled) ──────────────────
@@ -154,13 +154,13 @@ async def main() -> None:
 
     # Load settings early to validate .env
     settings = get_settings()
-    logger.info("AI Opportunity Finder v1.0.0")
+    logger.info("DEDAN Remote v1.0.0")
     logger.info("Log level: %s", settings.LOG_LEVEL)
 
     # Determine if AE-OS is enabled
     enable_aeos = args.aeos or settings.AEOS_ENABLED
     if enable_aeos:
-        logger.info("AE-OS Enterprise Multi-Agent Backbone: ENABLED")
+        logger.info("AE-OS Multi-Agent Backbone: ENABLED")
 
     if args.setup:
         setup_database()

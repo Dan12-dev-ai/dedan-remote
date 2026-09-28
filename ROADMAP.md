@@ -1,66 +1,45 @@
-# DEDAN Remote Roadmap
+# Engineering Roadmap — DEDAN Remote
 
-## Completed ✅
-
-- [x] Core scraping framework with auto-discovery
-- [x] 8 platform scrapers (Outlier, Alignerr, OneForma, TELUS Digital, Welocalize, Appen, DataAnnotation, Clickworker)
-- [x] Smart scoring and ranking (8 dimensions: Remote, Worldwide, Salary, Beginner, AI-Related, English, Simplicity, Freshness)
-- [x] Multi-channel notifications (Email, Telegram, Discord)
-- [x] Circuit breaker error handling
-- [x] Docker deployment with docker-compose
-- [x] FastAPI REST API with authentication
-- [x] React SPA with cinematic dark-themed UI
-- [x] SQLite database with job ledger
-- [x] AE-OS multi-agent backbone (optional, PostgreSQL/Redis/Neo4j/Qdrant)
-
-## In Progress 🚧
-
-- [ ] Comprehensive frontend testing
-- [ ] API endpoint documentation (OpenAPI/Swagger)
-- [ ] User preference-based job recommendations
-
-## Planned ⏳
-
-### Short Term
-
-- [ ] RSS feed output for job listings
-- [ ] Slack webhook support
-- [ ] More platform scrapers (Toloka, Invisible Technologies, Prolific, etc.)
-- [ ] Job application tracking integration
-- [ ] Email digest mode (daily/weekly summaries)
-
-### Medium Term
-
-- [ ] Machine learning-based job matching
-- [ ] Natural language job search
-- [ ] Saved search alerts
-- [ ] Job application status tracking
-- [ ] Mobile-responsive design improvements
-
-### Long Term
-
-- [ ] AE-OS PPO policy integration for autonomous decision-making
-- [ ] Real-time job updates via WebSocket
-- [ ] Collaborative filtering for recommendations
-- [ ] Browser extension for quick job saving
-- [ ] Integration with job boards (LinkedIn, Indeed)
-
-## Technology Enhancements
-
-- [ ] Migrate from SQLite to PostgreSQL for primary database
-- [ ] Add Redis caching layer for API responses
-- [ ] Implement rate limiting for API endpoints
-- [ ] Add comprehensive monitoring and alerting
-- [ ] Set up CI/CD pipeline with automated testing
-
-## Community Features
-
-- [ ] User accounts and authentication
-- [ ] Public job feed
-- [ ] Community-contributed scrapers
-- [ ] Job success stories and testimonials
-- [ ] Contributor recognition system
+Development priorities for DEDAN Remote are organized across verified milestones, current operational focus, and future technical objectives.
 
 ---
 
-*Roadmap is subject to change based on community demand and maintainer availability. Contributions welcome!*
+## 1. Completed Milestones (v1.0.0)
+
+- [x] **Asynchronous Discovery Engine**: Scraper framework utilizing `aiohttp` and `asyncio.Semaphore` bounded concurrency.
+- [x] **Platform Scraper Registry**: Parsers for 9 data annotation and AI training job boards (`outlier`, `alignerr`, `oneforma`, `telus`, `welocalize`, `appen`, `dataannotation`, `clickworker`, `toloka`).
+- [x] **Circuit Breaker Fault Tolerance**: Per-source consecutive failure counters with cooldown recovery.
+- [x] **Multi-Criteria Deterministic Scoring**: Weighted 0–100 scoring based on geographic eligibility, skill matching, difficulty, and success probability.
+- [x] **Multi-Channel Notification Dispatcher**: Parallel alerting via SMTP Email (HTML digest), Telegram bot API, and Discord webhooks.
+- [x] **FastAPI REST API**: OpenAPI 3.1 contract, canonical (`/api/*`) and versioned (`/api/v1/*`) route aliases, structured error envelopes, and correlation request IDs.
+- [x] **User Management & Session State**: Bcrypt credential hashing, bearer session tokens, saved bookmarks, and job application tracking.
+- [x] **React 18 Single Page Application**: Production Vite bundle integrated directly into FastAPI SPA fallback routing.
+- [x] **Test Infrastructure**: 350-test automated suite covering unit tests, contract mocks, and Hypothesis property-based invariants.
+- [x] **Packaging**: Multi-stage production `Dockerfile` and `docker-compose.yml`.
+
+---
+
+## 2. Current Engineering Focus (Next)
+
+- [ ] **Headless Browser Execution for Anti-Bot Portals**:
+  - Integrate Playwright/Puppeteer support for JavaScript-rendered and Cloudflare-protected career listings.
+- [ ] **Outbound Webhook Delivery Subsystem**:
+  - Allow users to configure generic HTTP webhook URLs to receive job alerts in JSON format.
+- [ ] **Slack Webhook Integration**:
+  - Native Slack incoming webhook payload adapter alongside existing Discord and Telegram dispatchers.
+- [ ] **Frontend Cypress / Playwright E2E Tests**:
+  - Automate browser testing for candidate filtering, job card interactions, and application tracking workflows.
+
+---
+
+## 3. Future Technical Objectives (Planned)
+
+- [ ] **Dynamic PPO Runtime Actuation**:
+  - Fully couple the experimental PPO agent policy outputs with live asynchronous worker pool scaling and scrape interval backoff.
+- [ ] **Semantic Vector Search (Qdrant)**:
+  - Generate text embeddings for job listings and candidate profiles to enable fuzzy semantic search and vector similarity ranking.
+- [ ] **Knowledge Graph Queries (Neo4j)**:
+  - Model relationship graphs linking platform reliability, skill frequency, and payout distributions.
+- [ ] **Distributed Multi-Node Scheduling**:
+  - Migrate scheduler state and task locking from local APScheduler to Redis/Celery for horizontal multi-worker cluster deployments.
+

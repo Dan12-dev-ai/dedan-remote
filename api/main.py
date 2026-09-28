@@ -1,7 +1,7 @@
 """
 DEDAN Remote — FastAPI application.
 
-Public HTTP API over the AIJobFinder discovery engine. Serves the REST API
+Public HTTP API over the DEDAN Remote discovery engine. Serves the REST API
 and (when built) the static frontend with SPA fallback.
 
 Run:  uvicorn api.main:app --host 0.0.0.0 --port 8000
@@ -108,8 +108,8 @@ def create_app() -> FastAPI:
     app = FastAPI(
         title="DEDAN Remote API",
         description=(
-            "Public API for DEDAN Remote — intelligent global opportunity "
-            "discovery. Read layer over the AIJobFinder discovery engine."
+            "Public API for DEDAN Remote — remote opportunity "
+            "discovery and career tracking catalog."
         ),
         version="1.0.0",
         docs_url="/api/docs",
