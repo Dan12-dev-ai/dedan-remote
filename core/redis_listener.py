@@ -485,7 +485,14 @@ class RedisKeyspaceListener:
         raw_value = ""
         if self._redis:
             try:
-                raw_value = await self._redis.get(shadow_key) or ""
+                stored = await self._redis.get(shadow_key)
+                # Redis hands back raw bytes; the distiller works on text, so the
+                # payload is decoded at this boundary (bytes would otherwise
+                # raise TypeError inside distill()).
+                if isinstance(stored, bytes):
+                    raw_value = stored.decode("utf-8", errors="replace")
+                elif stored:
+                    raw_value = stored
                 # Clean up shadow key
                 await self._redis.delete(shadow_key)
             except Exception:
