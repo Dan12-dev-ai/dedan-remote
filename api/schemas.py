@@ -297,6 +297,8 @@ class PreferencesOut(BaseModel):
     categories: list[str] = Field(default_factory=list)
     experience: Optional[ExperienceLevel] = None
     regions: list[str] = Field(default_factory=list)
+    remote_only: bool = False
+    beginner_friendly: bool = False
     updated_at: Optional[str] = None
 
 
@@ -307,6 +309,8 @@ class ProfilePatch(BaseModel):
     categories: Optional[list[str]] = Field(default=None, max_length=20)
     experience: Optional[ExperienceLevel] = None
     regions: Optional[list[str]] = Field(default=None, max_length=20)
+    remote_only: Optional[bool] = None
+    beginner_friendly: Optional[bool] = None
 
 
 class ProfileOut(BaseModel):

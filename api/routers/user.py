@@ -130,12 +130,16 @@ def patch_profile(
         payload.categories is not None
         or payload.experience is not None
         or payload.regions is not None
+        or payload.remote_only is not None
+        or payload.beginner_friendly is not None
     ):
         store.update_preferences(
             user["id"],
             payload.categories,
             payload.experience,
             payload.regions,
+            payload.remote_only,
+            payload.beginner_friendly,
         )
     prefs = store.get_preferences(user["id"])
     return ProfileOut(
