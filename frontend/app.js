@@ -565,7 +565,7 @@ function renderJobCard(job, index, compact) {
       data-job-id="${escapeHtml(job.slug)}"
       tabindex="0"
       aria-label="${escapeHtml(job.title)} at ${escapeHtml(job.company)}"
-      class="job-card p-[18px] flex flex-col gap-3 animate-pop"
+      class="job-card p-6 flex flex-col gap-4 animate-pop"
       style="animation-delay:${Math.min(index*28, 280)}ms"
     >
       <!-- TOP ROW -->
@@ -680,7 +680,7 @@ function renderQuickPreview(job) {
   const detailHref = `job-detail.html?slug=${encodeURIComponent(job.slug)}`;
 
   container.innerHTML = `
-    <div class="rounded-2xl bg-white hairline-strong shadow-card p-5 flex flex-col gap-4 animate-pop">
+    <div class="rounded-2xl bg-white hairline-strong shadow-card p-6 flex flex-col gap-5 animate-pop">
       <div class="flex items-center justify-between pb-3 border-b border-cocoa/10">
         <div class="flex items-center gap-2">
           <span class="material-symbols-rounded text-gold" style="font-size:18px;">insights</span>
