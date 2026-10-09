@@ -113,6 +113,14 @@ jobs:
           echo "This instance will stay up until the runner job ends"
           echo "(about ${{ inputs.lifetime_minutes }} minutes)."
 
+      - name: Publish URL as a live annotation
+        run: |
+          # The ::notice:: workflow command creates a run annotation, which the
+          # REST API exposes on the job even while it is still running — so the
+          # tunnel URL is fetchable immediately instead of only after the
+          # (hours-long) run completes and flushes its logs.
+          echo "::notice title=DEDAN Remote review URL::Review instance is LIVE. Landing: $REVIEW_URL/ | Explore: $REVIEW_URL/opportunities.html | API docs: $REVIEW_URL/api/docs | Raw URL: $REVIEW_URL"
+
       - name: Keep the instance alive for the review window
         run: |
           SECONDS_LIVE=$(( ${{ inputs.lifetime_minutes }} * 60 ))
