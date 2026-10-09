@@ -11,7 +11,7 @@ import sqlite3
 import threading
 import time
 from datetime import datetime, timedelta, timezone
-from typing import Any, Callable, Optional, TypeVar
+from typing import Any, Callable, Optional, Sequence, TypeVar, Union
 
 from agents.ranking_agent import RankingAgent
 from config.settings import get_settings
@@ -241,8 +241,6 @@ def freshness_info(row: dict[str, Any]) -> dict[str, Any]:
         else:
             label = f"{age_days} days ago"
     is_stale = age_days is not None and age_days > STALE_AFTER_DAYS
-    if is_stale:
-        label = f"Potentially stale · {label}"
     return {
         "label": label,
         "discovered_at": row.get("discovered_at"),
@@ -433,10 +431,11 @@ def _load_source_registry() -> dict[str, dict[str, str]]:
 def query_jobs(
     *,
     q: Optional[str] = None,
-    source: Optional[str] = None,
-    category: Optional[str] = None,
+    # `source` and `category` accept a repeated value, like `country`.
+    source: Optional[Union[str, Sequence[str]]] = None,
+    category: Optional[Union[str, Sequence[str]]] = None,
     tag: Optional[str] = None,
-    country: Optional[str] = None,
+    country: Optional[Union[str, Sequence[str]]] = None,
     worldwide: Optional[bool] = None,
     remote_only: Optional[bool] = None,
     min_score: Optional[float] = None,
@@ -468,17 +467,43 @@ def query_jobs(
             )
             params.extend([like, like, like, like, like])
 
+        # `source` accepts one value or several (the explorer sends a repeated
+        # param per selected source). Matching only the first value would make
+        # a two-source selection silently drop the others: selecting TELUS and
+        # OneForma returned just OneForma's 13 rows instead of the union's 14.
+        # Each entry is an exact (case-insensitive) source id, OR-combined so
+        # picking more sources widens the result set.
         if source:
-            where.append("lower(source) = lower(?)")
-            params.append(source)
+            wanted = [source] if isinstance(source, str) else list(source)
+            clauses = []
+            for value in wanted:
+                value = str(value).strip().lower()
+                if not value:
+                    continue
+                clauses.append("lower(source) = lower(?)")
+                params.append(value)
+            if clauses:
+                where.append("(" + " OR ".join(clauses) + ")")
 
         if tag:
             where.append("lower(COALESCE(tags, '')) LIKE ?")
             params.append(f"%{tag.lower()}%")
 
         if country:
-            where.append("lower(COALESCE(country, '')) LIKE ?")
-            params.append(f"%{country.lower()}%")
+            # `country` accepts one value or several (the explorer sends a
+            # repeated query param per selected country). Each entry is a
+            # substring match, combined with OR so picking three countries
+            # widens the result set rather than narrowing it.
+            wanted = [country] if isinstance(country, str) else list(country)
+            clauses = []
+            for value in wanted:
+                value = value.strip()
+                if not value:
+                    continue
+                clauses.append("lower(COALESCE(country, '')) LIKE ?")
+                params.append(f"%{value.lower()}%")
+            if clauses:
+                where.append("(" + " OR ".join(clauses) + ")")
 
         if worldwide:
             where.append(
@@ -516,14 +541,24 @@ def query_jobs(
             return "(" + " OR ".join(clauses) + ")", kw_params
 
         if category:
-            keywords = CATEGORY_KEYWORDS.get(category)
-            if keywords:
-                clause, kw_params = _text_match_clauses(keywords)
-                where.append(clause)
-                params.extend(kw_params)
-            else:
-                where.append("lower(COALESCE(tags, '')) LIKE ?")
-                params.append(f"%{category.lower()}%")
+            # Several categories OR together, so a broad selection widens the
+            # feed the same way several sources do.
+            wanted = [category] if isinstance(category, str) else list(category)
+            clauses = []
+            for value in wanted:
+                value = str(value).strip().lower()
+                if not value:
+                    continue
+                keywords = CATEGORY_KEYWORDS.get(value)
+                if keywords:
+                    clause, kw_params = _text_match_clauses(keywords)
+                    clauses.append(clause)
+                    params.extend(kw_params)
+                else:
+                    clauses.append("lower(COALESCE(tags, '')) LIKE ?")
+                    params.append(f"%{value}%")
+            if clauses:
+                where.append("(" + " OR ".join(clauses) + ")")
 
         if beginner_only:
             clause, kw_params = _text_match_clauses(BEGINNER_KEYWORDS)

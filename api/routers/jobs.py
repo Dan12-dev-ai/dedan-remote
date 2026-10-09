@@ -30,10 +30,30 @@ router = APIRouter(prefix="/api", tags=["jobs"])
 def list_jobs(
     request: Request,
     q: Optional[str] = Query(default=None, max_length=200, description="Keyword search"),
-    source: Optional[str] = Query(default=None, max_length=50),
-    category: Optional[str] = Query(default=None, max_length=50),
+    source: Optional[list[str]] = Query(
+        default=None,
+        max_length=50,
+        description=(
+            "Filter by source id. Repeat the parameter to match any of "
+            "several sources."
+        ),
+    ),
+    category: Optional[list[str]] = Query(
+        default=None,
+        max_length=50,
+        description=(
+            "Filter by category. Repeat the parameter to match any of "
+            "several categories."
+        ),
+    ),
     tag: Optional[str] = Query(default=None, max_length=50),
-    country: Optional[str] = Query(default=None, max_length=100),
+    country: Optional[list[str]] = Query(
+        default=None,
+        description=(
+            "Substring match on the listing country. Repeat the parameter to "
+            "match any of several countries."
+        ),
+    ),
     worldwide: Optional[bool] = Query(default=None),
     remote_only: Optional[bool] = Query(default=None, alias="remote"),
     min_score: Optional[float] = Query(default=None, ge=0, le=100),
