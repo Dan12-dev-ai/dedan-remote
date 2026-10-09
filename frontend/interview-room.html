@@ -30,10 +30,10 @@
 </div>
 
 <!-- ============ INTERVIEW ROOM ============ -->
-<div id="room" class="hidden flex flex-col min-h-screen">
+<div id="room" class="hidden flex flex-col h-screen overflow-hidden">
 
   <!-- Top bar: identity, role, stage, elapsed, connection -->
-  <header class="sticky top-0 z-30 bg-surface/90 backdrop-blur-xl border-b border-surface-container">
+  <header class="shrink-0 z-30 bg-surface/90 backdrop-blur-xl border-b border-surface-container">
     <div class="max-w-[1440px] mx-auto px-margin-tablet lg:px-margin-desktop h-16 flex items-center justify-between gap-4">
       <div class="flex items-center gap-3 min-w-0">
         <div class="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-on-primary font-headline-sm shrink-0">D</div>
@@ -56,10 +56,10 @@
     </div>
   </header>
 
-  <main class="flex-1 max-w-[1440px] w-full mx-auto px-margin-tablet lg:px-margin-desktop py-space-lg grid grid-cols-1 lg:grid-cols-12 gap-gutter-desktop items-start">
+  <main class="flex-1 min-h-0 max-w-[1440px] w-full mx-auto px-margin-tablet lg:px-margin-desktop py-space-lg grid grid-cols-1 lg:grid-cols-12 gap-gutter-desktop items-stretch">
 
     <!-- Main interview column -->
-    <div class="lg:col-span-8 flex flex-col gap-space-lg">
+    <div class="lg:col-span-8 flex flex-col gap-space-lg min-h-0">
 
       <!-- Stage / progress strip -->
       <div class="flex items-center justify-between gap-3 flex-wrap">
@@ -106,14 +106,14 @@
       </section>
 
       <!-- Live transcript (scoped to this session) -->
-      <section class="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm flex flex-col gap-space-sm">
+      <section class="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm flex flex-col gap-space-sm flex-1 min-h-0">
         <div class="flex items-center justify-between">
           <h3 class="font-headline-sm text-headline-sm text-on-surface font-bold flex items-center gap-2">
             <span class="material-symbols-outlined text-[18px] text-secondary">subtitles</span>Live transcript
           </h3>
           <span class="font-label-sm text-label-sm text-on-surface-variant" id="transcript-note">Stored for this session only</span>
         </div>
-        <div id="transcript" class="flex flex-col gap-2.5 max-h-72 overflow-y-auto pr-1" aria-live="polite">
+        <div id="transcript" class="flex flex-col gap-2.5 flex-1 min-h-0 overflow-y-auto pr-1" aria-live="polite">
           <p class="font-body-sm text-body-sm text-on-surface-variant">The conversation will appear here as it happens.</p>
         </div>
       </section>
@@ -130,7 +130,7 @@
     </div>
 
     <!-- Side rail: candidate + privacy + controls -->
-    <aside class="lg:col-span-4 flex flex-col gap-space-lg">
+    <aside class="lg:col-span-4 flex flex-col gap-space-lg min-h-0">
 
       <!-- Candidate tile -->
       <section class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col gap-space-sm">
@@ -151,7 +151,7 @@
       </section>
 
       <!-- Privacy (real flags from the server) -->
-      <section class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col gap-space-xs">
+      <section class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col gap-space-xs flex-1 min-h-0">
         <div class="flex items-center gap-2">
           <span class="material-symbols-outlined text-[18px] text-secondary">shield</span>
           <span class="font-headline-sm font-bold text-on-surface">Privacy</span>
@@ -178,7 +178,7 @@
   </main>
 
   <!-- Bottom control bar -->
-  <div class="sticky bottom-0 z-30 bg-surface/95 backdrop-blur-xl border-t border-surface-container">
+  <div class="shrink-0 z-30 bg-surface/95 backdrop-blur-xl border-t border-surface-container">
     <div class="max-w-[1440px] mx-auto px-margin-tablet lg:px-margin-desktop py-space-sm flex items-center justify-between gap-3 flex-wrap">
 
       <!-- Capture controls -->
