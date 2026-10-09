@@ -154,6 +154,18 @@ class DiscoveryAgent:
         else:
             logger.info("No jobs above notification threshold (min_score=%d)", min_score)
 
+        # ── 4b. Fire saved skill watches on the fresh listings ──────────
+        # The cycle's job is to store and notify; a broken alert path must not
+        # roll that back, so matching runs defensively and logs rather than raises.
+        skill_matches = 0
+        if scored_jobs:
+            try:
+                skill_matches = self._match_skill_watches(scored_jobs)
+                if skill_matches:
+                    logger.info("Skill watches matched %d listing(s)", skill_matches)
+            except Exception as exc:  # pragma: no cover - defensive
+                logger.error("Skill-watch matching failed this cycle: %s", exc)
+
         # ── 5. Complete execution ───────────────────────────────────────
         error_str = "; ".join(errors[:10]) if errors else None
         self._db.complete_execution(
@@ -169,10 +181,51 @@ class DiscoveryAgent:
             "jobs_found": len(all_jobs),
             "jobs_new": len(new_jobs),
             "jobs_notified": notified_count,
+            "skill_watch_matches": skill_matches,
             "errors": len(errors),
         }
         logger.info("Cycle complete: %s", stats)
         return stats
+
+    def _match_skill_watches(
+        self, scored_jobs: list[tuple[Job, float]]
+    ) -> int:
+        """
+        Run newly ingested listings against every user's saved skill watch.
+
+        A skill watch only helps if it fires the moment a matching listing
+        arrives, so the discovery cycle hands each fresh, scored job here after
+        it is stored. Matching is best-effort per listing but the method does
+        not swallow errors: a broken alert path must be visible, not silently
+        skip the watch. Callers that want the cycle to survive a failure wrap
+        the call themselves.
+
+        Returns the total number of watch matches across all listings.
+        """
+        from interview.workers import match_and_alert
+
+        matched_total = 0
+        for job, _score in scored_jobs:
+            row = self._job_to_row(job)
+            summary = match_and_alert(row, send_email=False)
+            matched_total += int(summary.get("matched") or 0)
+        return matched_total
+
+    @staticmethod
+    def _job_to_row(job: Job) -> dict[str, object]:
+        """Project a scraped Job into the flat dict the matcher reads."""
+        return {
+            "id": job.id,
+            "slug": job.id,
+            "title": job.title,
+            "company": job.company,
+            "url": job.url,
+            "source": job.source,
+            "description": job.description or "",
+            "tags": list(job.tags or []),
+            "salary": job.salary,
+            "country": job.country,
+        }
 
     def get_stats(self) -> dict[str, object]:
         """Get database stats."""

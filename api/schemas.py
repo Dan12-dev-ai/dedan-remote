@@ -393,3 +393,132 @@ class NotificationsResponse(BaseModel):
 
     items: list[NotificationOut]
     note: str
+
+
+# ── AI Interview System ─────────────────────────────────────────────────────
+# Response contracts for the live interview rooms (see api/routers/interview.py).
+# The interview room returns rich nested payloads (role/interview/progress/
+# privacy blocks); these models pin the fields the client and tests rely on and
+# allow extra keys so the domain can evolve without a schema change here.
+
+InterviewTypeValue = Literal[
+    "role_rehearsal",
+    "technical",
+    "behavioral",
+    "system_design",
+    "ai_engineering",
+    "coding",
+    "scenario",
+    "general_rehearsal",
+]
+
+
+class RoomAvailability(BaseModel):
+    """Whether an AI interview can run on this deployment, and its shape.
+
+    Public and secret-free: capability and shape, never the model name,
+    provider or any credential.
+    """
+
+    model_config = ConfigDict(extra="allow")
+
+    live: bool
+    mode: str
+    detail: str = ""
+    default_questions: int
+    interview_types: list[str]
+    privacy: dict[str, object]
+
+
+class RoomSessionOut(BaseModel):
+    """The public state of one interview room (the resume path payload)."""
+
+    model_config = ConfigDict(extra="allow")
+
+    session_id: str
+    state: str
+    phase: str
+    interviewer_state: str
+    interviewer: dict[str, object]
+    opportunity_id: Optional[str] = None
+    mode: Optional[str] = None
+    interview_type: str
+    error: Optional[str] = None
+    role: dict[str, object]
+    interview: dict[str, object]
+    progress: dict[str, object]
+    introduction: str = ""
+    current: Optional[dict[str, object]] = None
+    report_available: bool = False
+    outcome: Optional[str] = None
+    privacy: dict[str, object]
+    elapsed_seconds: float = 0.0
+
+
+class RoomHistoryEntry(BaseModel):
+    """One row in the candidate's interview history. No plan, turns or report."""
+
+    model_config = ConfigDict(extra="allow")
+
+    session_id: str
+    opportunity_id: Optional[str] = None
+    role_title: Optional[str] = None
+    role_company: Optional[str] = None
+    state: Optional[str] = None
+    outcome: Optional[str] = None
+    interview_type: Optional[str] = None
+    turns_asked: int = 0
+    created_at: Optional[str] = None
+    completed_at: Optional[str] = None
+    resumable: bool = False
+
+
+class RoomRecoverableOut(BaseModel):
+    """A session a reload or crash left mid-flight."""
+
+    model_config = ConfigDict(extra="allow")
+
+    session_id: str
+    opportunity_id: Optional[str] = None
+    role_title: Optional[str] = None
+    role_company: Optional[str] = None
+    state: Optional[str] = None
+    turns_answered: int = 0
+    turns_asked: int = 0
+    created_at: Optional[str] = None
+    resumes_at: str
+    completed: bool = False
+
+
+class RoomTranscriptOut(BaseModel):
+    """The chronological transcript, without scores or internal notes."""
+
+    model_config = ConfigDict(extra="allow")
+
+    session_id: str
+    role: dict[str, object]
+    state: str
+    interviewer: str = ""
+    entries: list[dict[str, object]]
+    turns_asked: int = 0
+    turns_answered: int = 0
+    completed: bool = False
+    audio_note: str = ""
+
+
+class RoomStreamTicketOut(BaseModel):
+    """A one-use, short-lived ticket for the SSE stream (EventSource auth)."""
+
+    model_config = ConfigDict(extra="allow")
+
+    ticket: str
+    session_id: str
+    expires_in: int
+
+
+class RoomDiscardOut(BaseModel):
+    """Acknowledgement that an interview and its data were deleted."""
+
+    model_config = ConfigDict(extra="allow")
+
+    status: str

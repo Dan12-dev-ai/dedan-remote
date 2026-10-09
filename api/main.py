@@ -24,7 +24,7 @@ from fastapi.responses import FileResponse, JSONResponse
 
 from api import services
 from api.deps import ApiError
-from api.routers import auth, discovery, jobs, meta, system, user
+from api.routers import auth, discovery, interview, interview_mock, jobs, meta, system, user
 from api.store import get_user_store
 from config.settings import get_settings
 
@@ -257,11 +257,16 @@ def create_app() -> FastAPI:
     app.include_router(user.router)
     app.include_router(discovery.router)
     app.include_router(system.router)
+    # AI interview system: live interview rooms (sessions/questions/streaming)
+    # plus the mock provider (mocks/skills/alerts/report.pdf) used when no real
+    # model endpoint is configured.
+    app.include_router(interview.router)
+    app.include_router(interview_mock.router)
 
     # Versioned mirror of the public surface. The unversioned /api paths stay
     # canonical (existing clients and tests depend on them); /api/v1 exists so
     # future breaking changes have somewhere to land without a rewrite.
-    for module in (jobs, meta, auth, user, discovery, system):
+    for module in (jobs, meta, auth, user, discovery, system, interview, interview_mock):
         app.include_router(_versioned_alias(module.router))
 
     # /api/health and /api/ready are declared on the app itself (they must
@@ -285,6 +290,32 @@ def create_app() -> FastAPI:
     def health() -> dict[str, str]:
         """Liveness: the process is up and serving (no dependencies checked)."""
         return {"status": "ok", "service": "dedan-remote", "version": "1.0.0"}
+
+    def _version_payload() -> dict[str, object]:
+        """
+        Build identity, derived from the app and its own OpenAPI document.
+
+        Every field is read from the live app rather than hand-written, so a
+        transparency page can never drift from what is actually deployed. No
+        host paths, tokens or settings are included — only public identity.
+        """
+        schema = app.openapi()
+        return {
+            "service": "dedan-remote",
+            "version": app.version,
+            "openapi_version": schema.get("openapi", ""),
+            "docs_url": app.docs_url or "",
+            "schema_paths": len(schema.get("paths", {})),
+        }
+
+    @app.get("/api/version", tags=["meta"])
+    def version() -> dict[str, object]:
+        """Public build identity, derived from the running app (no secrets)."""
+        return _version_payload()
+
+    @app.get("/api/v1/version", tags=["meta"], include_in_schema=False)
+    def version_v1() -> dict[str, object]:
+        return _version_payload()
 
     @app.get("/api/ready", tags=["meta"])
     def ready() -> JSONResponse:

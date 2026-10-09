@@ -156,6 +156,85 @@ class Settings(BaseSettings):
     AEOS_IDEMPOTENCY_SECRET: str = "aeos-idempotency-secret-change-me"
     AEOS_TREASURY_MAX: float = 1000.0
 
+    # ── AI Interview System ───────────────────────────────────────────────
+    # The interview feature is provider-agnostic: any OpenAI-compatible chat
+    # completions endpoint works (OpenAI, Azure, Ollama, llama.cpp, vLLM…).
+    # When LLM_BASE_URL/LLM_API_KEY are unset the system runs in an explicit
+    # "model unavailable" state — it never fabricates an interview.
+    #
+    # Master kill-switch: when false the interview model is reported unavailable
+    # and every interview runs unscored (transcript-only), never fabricating a
+    # score. Useful for staging deployments and emergency rollbacks.
+    INTERVIEW_ENABLED: bool = True
+    #
+    # LLM endpoint (OpenAI-compatible /chat/completions).
+    LLM_BASE_URL: str = ""          # e.g. https://api.openai.com/v1
+    LLM_API_KEY: str = ""           # secret — .env only, never in frontend
+    LLM_MODEL: str = "gpt-4o-mini"
+    LLM_TEMPERATURE: float = 0.4
+    LLM_TIMEOUT_SECONDS: float = 30.0
+    # Retry/backoff budget for a single completion call.
+    LLM_MAX_ATTEMPTS: int = 3
+    LLM_RETRY_BASE_DELAY_SECONDS: float = 0.5
+    LLM_RETRY_MAX_DELAY_SECONDS: float = 8.0
+    LLM_RETRY_DEADLINE_SECONDS: float = 30.0
+
+    # Interview sizing / limits.
+    INTERVIEW_MAX_QUESTIONS: int = 12          # default cap per interview
+    INTERVIEW_MIN_QUESTIONS: int = 5           # floor before an interview may close
+    INTERVIEW_MAX_QUESTIONS_SKILLED: int = 20  # cap when many competencies map
+    INTERVIEW_MAX_SESSIONS: int = 50           # concurrent sessions per user
+    INTERVIEW_SESSION_TTL_SECONDS: int = 7200  # 2h; expired sessions are recoverable
+    # Data retention for completed interview rooms (transcripts/results).
+    INTERVIEW_ROOM_RETENTION_DAYS: int = 90
+    # On-disk store for interview sessions/rooms (separate from the job DB).
+    INTERVIEW_DB_PATH: str = "data/interview.db"
+    # Run the background evaluation worker. When true the report is evaluated on
+    # an in-process asyncio queue (or Redis when REDIS_URL is set); when false
+    # evaluation runs inline. In-process is the safe default so a fresh
+    # deployment works without Redis.
+    WORKER_ENABLED: bool = True
+
+    @property
+    def interview_configured(self) -> bool:
+        """True when a usable chat model endpoint is configured and enabled.
+
+        A key and a model are the minimum; the base URL defaults to the
+        OpenAI-compatible public endpoint when left unset, so a deployment that
+        only sets the key + model still counts as configured.
+        """
+        if not self.INTERVIEW_ENABLED:
+            return False
+        return bool(self.LLM_API_KEY.strip()) and bool(self.LLM_MODEL.strip())
+
+    @property
+    def interview_unavailable_reason(self) -> str:
+        """Human-readable reason the interview model is unavailable ('' if OK)."""
+        if self.interview_configured:
+            return ""
+        if not self.INTERVIEW_ENABLED:
+            return (
+                "AI interviews are disabled on this deployment "
+                "(INTERVIEW_ENABLED=false). Interviews run as unscored transcript "
+                "rehearsals; no AI evaluation is performed."
+            )
+        missing = []
+        if not self.LLM_API_KEY.strip():
+            missing.append("LLM_API_KEY")
+        if not self.LLM_MODEL.strip():
+            missing.append("LLM_MODEL")
+        return (
+            "Interview model is not configured. Set "
+            + " and ".join(missing)
+            + " in the environment to enable AI interviews."
+        )
+
+    @property
+    def llm_endpoint(self) -> str:
+        """The chat-completions base URL, defaulting to the public endpoint."""
+        base = self.LLM_BASE_URL.strip().rstrip("/")
+        return base or "https://api.openai.com/v1"
+
     def validate_email_config(self) -> None:
         """Validate that email config is present if email notifications are expected."""
         if not self.EMAIL or not self.EMAIL_PASSWORD:

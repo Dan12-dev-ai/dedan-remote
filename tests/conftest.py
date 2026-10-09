@@ -11,19 +11,9 @@ This module provides:
 
 from __future__ import annotations
 
-# In-progress, not-yet-committed interview/provider subsystems. Their test
-# files are untracked WIP and are excluded from the committed baseline so
-# `pytest` / `hermes verify` reflect what is actually in version control.
-# Remove entries here as each subsystem lands.
-collect_ignore = [
-    "test_interview_room.py",
-    "test_mock_interview.py",
-    "test_interview_api.py",
-    "test_interview_report_pdf.py",
-    "test_interview_client_contract.py",
-    "test_provider_retry.py",
-    "test_version_endpoint.py",
-]
+# The interview/provider subsystem and its tests are now committed and green,
+# so they run as part of the standard suite (no collect_ignore exclusions).
+collect_ignore: list[str] = []
 
 import asyncio
 import os
