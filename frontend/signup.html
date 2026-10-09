@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
-<meta name="theme-color" content="#fbf7f0"/>
+<meta name="theme-color" content="#0B0F17"/>
 <title>Create Account — DEDAN Remote</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
@@ -11,133 +11,166 @@
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet"/>
 <script src="https://cdn.tailwindcss.com"></script>
 <script>
-tailwind.config = { darkMode:'class', theme:{ extend:{
-  fontFamily:{ sans:['Inter','ui-sans-serif','system-ui','sans-serif'], serif:['"Instrument Serif"','ui-serif','Georgia','serif'] },
-  colors:{
-    ivory:{50:'#FDFBF6',100:'#FBF7F0',200:'#F6EFE2',DEFAULT:'#FBF7F0'},
-    cream:{DEFAULT:'#F3ECDF',dark:'#EBE2D0'},
-    cocoa:{100:'#E9DFCF',200:'#D7C9B1',300:'#B8A488',400:'#8E7A5E',500:'#6C5A42',600:'#514330',700:'#3A2F22',800:'#261E14',900:'#17110B',DEFAULT:'#514330'},
-    espresso:{50:'#342A1E',100:'#2A2117',200:'#231C14',300:'#1C1610',400:'#16110C',500:'#110D09',DEFAULT:'#1C1610'},
-    champagne:{50:'#FBF0DA',100:'#F5E3BA',200:'#EBD194',300:'#DDB767',400:'#C89A47',500:'#A87F36',DEFAULT:'#C89A47'},
-    gold:{500:'#B08A3E',600:'#96722C',DEFAULT:'#B08A3E'},
-    success:{DEFAULT:'#2F6D51',soft:'#E6F0EA'},
-    warning:{DEFAULT:'#A87016',soft:'#F7EAD2'},
-    danger:{DEFAULT:'#992F2A',soft:'#F4DAD9'},
-    info:{DEFAULT:'#275E8C',soft:'#DCE8F2'},
-    ink:'#110D09'
-  },
-  boxShadow:{ soft:'0 1px 2px rgba(23,17,11,.04), 0 1px 3px rgba(23,17,11,.04)', card:'0 1px 2px rgba(23,17,11,.05), 0 2px 6px rgba(23,17,11,.04)', lift:'0 8px 24px -12px rgba(23,17,11,.18), 0 2px 6px rgba(23,17,11,.05)' }
-}}};
+tailwind.config = { darkMode:'class', theme:{ extend:{ fontFamily:{ sans:['Inter','ui-sans-serif','system-ui','sans-serif'], serif:['"Instrument Serif"','ui-serif','Georgia','serif'] } }}};
 </script>
+<script src="theme.js"></script>
+<link rel="stylesheet" href="theme.css"/>
 <style>
-  :root { color-scheme: light; }
-  html,body { -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; }
-  body { background:#FBF7F0; color:#17110B; font-family:'Inter',ui-sans-serif,system-ui,sans-serif; }
-  ::selection { background:#DDB767; color:#1C1610; }
-  .material-symbols-rounded { font-variation-settings:'FILL' 0,'wght' 500,'GRAD' 0,'opsz' 20; line-height:1; }
-  .grid-12 { max-width:1520px; margin-inline:auto; padding-inline:20px; }
-  @media (min-width:1280px){ .grid-12{ padding-inline:28px; } }
-  .btn { display:inline-flex; align-items:center; justify-content:center; gap:7px; padding:9px 14px; border-radius:9px; font-weight:600; font-size:13.5px; line-height:1.2; border:1px solid rgba(81,67,48,.12); background:#fff; color:#1C1610; cursor:pointer; transition:all .14s ease; }
-  .btn:hover { background:#FBF7F0; }
-  .btn-primary { background:#1C1610; color:#FBF7F0; border-color:transparent; }
-  .btn-primary:hover { background:#231C14; box-shadow:0 8px 18px -10px rgba(23,17,11,.45); }
-  .field { width:100%; padding:10px 12px; border-radius:9px; border:1px solid rgba(81,67,48,.16); background:#fff; font-size:14px; color:#1C1610; transition:all .15s ease; }
-  .field:focus { outline:none; box-shadow:0 0 0 4px rgba(200,154,71,.16); border-color:#C89A47; }
-  .hairline { box-shadow: inset 0 0 0 1px rgba(81,67,48,.08); }
-  .focus-ring:focus-visible { outline:2px solid #C89A47; outline-offset:3px; border-radius:10px; }
-  .toast { position:fixed; bottom:96px; left:50%; transform:translate(-50%,14px); background:#1C1610; color:#FBF7F0; padding:10px 14px; border-radius:10px; font-size:12.5px; font-weight:600; z-index:90; opacity:0; pointer-events:none; transition:all .22s ease; box-shadow:0 10px 30px rgba(23,17,11,.35); }
+  .focus-ring:focus-visible { outline:none; box-shadow:0 0 0 3px var(--ring); border-radius:10px; }
+  .toast { position:fixed; bottom:96px; left:50%; transform:translate(-50%,14px); background:var(--text); color:var(--bg); padding:10px 14px; border-radius:10px; font-size:12.5px; font-weight:600; z-index:90; opacity:0; pointer-events:none; transition:all .22s ease; box-shadow:var(--shadow-lift); }
   .toast.show { opacity:1; transform:translate(-50%,0); pointer-events:auto; }
-  @media (prefers-reduced-motion: reduce) { *,*::before,*::after{ transition-duration:.01ms !important; } }
+  .showpiece { position:relative; overflow:hidden; background:#0B0F17; }
+  .showpiece::before { content:''; position:absolute; inset:0; background:
+      radial-gradient(700px 300px at 15% 15%, rgba(226,184,87,.20), transparent 60%),
+      radial-gradient(600px 320px at 85% 85%, rgba(96,165,250,.16), transparent 55%); }
+  .showpiece-grid { position:absolute; inset:0; opacity:.35; background-image:linear-gradient(rgba(255,255,255,.06) 1px, transparent 1px),linear-gradient(90deg,rgba(255,255,255,.06) 1px, transparent 1px); background-size:48px 48px; mask-image:radial-gradient(circle at 50% 40%, black, transparent 80%); }
+  .fl { position:relative; }
+  .fl input { width:100%; padding:20px 14px 8px; border-radius:10px; font-size:14px; background:var(--bg-elev); color:var(--text); border:1px solid var(--border-strong); transition:border-color .15s ease, box-shadow .15s ease; }
+  .fl input:focus { outline:none; border-color:var(--accent); box-shadow:0 0 0 3px var(--ring); }
+  .fl label { position:absolute; left:14px; top:14px; font-size:14px; color:var(--text-faint); pointer-events:none; transition:all .15s ease; }
+  .fl input:focus + label, .fl input:not(:placeholder-shown) + label { top:6px; font-size:11px; font-weight:600; color:var(--accent); letter-spacing:.02em; }
+  .fl input[aria-invalid="true"] { border-color:var(--danger); box-shadow:0 0 0 3px rgba(248,113,113,.22); }
+  .meter { height:5px; border-radius:9999px; background:var(--bg-sunken); overflow:hidden; }
+  .meter > span { display:block; height:100%; width:0; border-radius:9999px; transition:width .3s ease, background .3s ease; }
+  .err { color:var(--danger); font-size:12px; font-weight:600; min-height:16px; }
+  .spin { width:16px; height:16px; border-radius:50%; border:2px solid currentColor; border-top-color:transparent; animation:spin .7s linear infinite; }
+  @keyframes spin { to { transform:rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce){ *{ animation-duration:.01ms !important; transition-duration:.01ms !important; } }
 </style>
 </head>
-<body class="min-h-screen bg-ivory text-ink antialiased">
+<body class="min-h-screen antialiased" style="background:var(--bg); color:var(--text);">
 
-<header class="sticky top-0 z-40 bg-[#FBF7F0]/80 backdrop-blur-xl border-b border-cocoa/10">
-  <div class="grid-12 h-16 flex items-center">
-    <a href="index.html" class="flex items-center gap-2.5 shrink-0 focus-ring rounded-lg" aria-label="DEDAN Remote · Home">
-      <div class="relative w-9 h-9 rounded-xl bg-gradient-to-br from-espresso-300 to-espresso-500 text-ivory shadow-card grid place-items-center overflow-hidden">
-        <span class="font-serif text-[18px] italic font-semibold tracking-tight relative -top-0.5">D</span>
-        <span class="absolute -bottom-1 -right-1 w-2.5 h-2.5 rounded-full bg-champagne-300 ring-2 ring-[#FBF7F0]"></span>
-      </div>
-      <div class="flex flex-col leading-tight">
-        <span class="text-[14.5px] font-extrabold tracking-tight text-espresso-300">DEDAN Remote</span>
-        <span class="text-[10px] uppercase tracking-[0.14em] font-semibold text-cocoa-400 -mt-0.5">Opportunity Intelligence</span>
-      </div>
+<div class="min-h-screen grid lg:grid-cols-2">
+  <aside class="showpiece hidden lg:flex flex-col justify-between p-12 text-white">
+    <div class="showpiece-grid"></div>
+    <a href="index.html" class="relative z-10 flex items-center gap-2.5 w-fit">
+      <div class="w-10 h-10 rounded-xl grid place-items-center" style="background:linear-gradient(135deg,#E2B857,#B08A3E); color:#0B0F17;"><span class="font-serif text-[20px] italic font-bold">D</span></div>
+      <span class="text-[16px] font-extrabold tracking-tight">DEDAN Remote</span>
     </a>
-    <div class="ml-auto flex items-center gap-2">
-      <span class="text-[13px] text-cocoa-500 hidden sm:inline">Already have an account?</span>
-      <a href="signin.html" class="btn">Sign in</a>
+    <div class="relative z-10 max-w-md">
+      <h2 class="font-serif text-[40px] leading-[1.05] tracking-tight mb-4">Find work that fits<br/>how you work.</h2>
+      <p class="text-[15px] text-slate-300 leading-relaxed mb-8">Join high-performing engineers using autonomous intelligence to navigate the global remote market with zero noise.</p>
+      <ul class="flex flex-col gap-3 text-[14px] text-slate-300">
+        <li class="flex items-center gap-3"><span class="material-symbols-rounded" style="font-size:20px; color:#E2B857;">verified</span>Deterministic, inspectable fit scoring</li>
+        <li class="flex items-center gap-3"><span class="material-symbols-rounded" style="font-size:20px; color:#E2B857;">lock</span>Privacy-first — nothing public-indexed</li>
+        <li class="flex items-center gap-3"><span class="material-symbols-rounded" style="font-size:20px; color:#E2B857;">forum</span>AI mock interviews per role</li>
+      </ul>
     </div>
-  </div>
-</header>
+    <div class="relative z-10 text-[12px] text-slate-500">No credit card required.</div>
+  </aside>
 
-<main class="grid-12 py-10 md:py-16 flex items-center justify-center">
-  <div class="w-full max-w-[440px]">
-    <div class="bg-white rounded-2xl hairline shadow-lift p-7 md:p-8">
-      <div class="flex items-center gap-2 mb-1">
-        <span class="material-symbols-rounded text-champagne-400" style="font-size:22px;">person_add</span>
-        <h1 class="text-[26px] font-extrabold tracking-tight text-espresso-300">Create your account</h1>
-      </div>
-      <p class="text-[13.5px] text-cocoa-500 mb-6">Start tracking remote work matched to your skills and cadence.</p>
+  <main class="flex flex-col">
+    <div class="flex items-center justify-between p-5 lg:p-8">
+      <a href="index.html" class="lg:hidden flex items-center gap-2">
+        <div class="w-8 h-8 rounded-lg grid place-items-center" style="background:linear-gradient(135deg,#E2B857,#B08A3E); color:#0B0F17;"><span class="font-serif text-[16px] italic font-bold">D</span></div>
+        <span class="text-[14px] font-extrabold tracking-tight tk-text">DEDAN Remote</span>
+      </a>
+      <span class="hidden lg:block"></span>
+      <span class="text-[13px] tk-muted">Already have an account? <a href="signin.html" class="font-semibold" style="color:var(--accent);">Sign in</a></span>
+    </div>
 
-      <form id="signup-form" novalidate>
-        <label class="block text-[12.5px] font-semibold text-espresso-300 mb-1.5" for="name">Display name <span class="font-normal text-cocoa-400">(optional)</span></label>
-        <input id="name" name="name" type="text" autocomplete="name" class="field mb-4" placeholder="Ada Lovelace"/>
+    <div class="flex-1 flex items-center justify-center p-5 lg:p-8">
+      <div class="w-full max-w-[400px]">
+        <h1 class="text-[28px] font-extrabold tracking-tight tk-text mb-1">Create your account</h1>
+        <p class="text-[13.5px] tk-muted mb-7">Start tracking remote work matched to your skills and cadence.</p>
 
-        <label class="block text-[12.5px] font-semibold text-espresso-300 mb-1.5" for="email">Email</label>
-        <input id="email" name="email" type="email" autocomplete="email" class="field mb-4" placeholder="you@example.com" required/>
-
-        <label class="block text-[12.5px] font-semibold text-espresso-300 mb-1.5" for="password">Password</label>
-        <input id="password" name="password" type="password" autocomplete="new-password" class="field mb-1" placeholder="At least 8 characters" required/>
-        <p class="text-[11.5px] text-cocoa-400 mb-4">Use 8 or more characters.</p>
-
-        <div id="form-error" class="hidden mb-3 text-[12.5px] font-semibold text-danger flex items-center gap-1.5">
-          <span class="material-symbols-rounded" style="font-size:16px;">error</span><span id="form-error-text"></span>
+        <div class="grid grid-cols-2 gap-3 mb-6">
+          <button class="btn btn-secondary oauth" type="button" data-provider="github">
+            <svg width="17" height="17" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.07-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A7.995 7.995 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+            GitHub
+          </button>
+          <button class="btn btn-secondary oauth" type="button" data-provider="google">
+            <svg width="17" height="17" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+            Google
+          </button>
         </div>
 
-        <button type="submit" id="submit-btn" class="btn btn-primary w-full h-11 mt-2">Create account</button>
-      </form>
+        <div class="flex items-center gap-3 mb-6"><div class="flex-1 h-px" style="background:var(--border);"></div><span class="text-[11px] uppercase tracking-wider font-semibold tk-faint">or</span><div class="flex-1 h-px" style="background:var(--border);"></div></div>
 
-      <p class="text-center text-[12px] text-cocoa-400 mt-5">
-        By creating an account you agree to the <a href="legal.html#terms" class="text-champagne-500 font-semibold hover:underline">Terms</a> and
-        <a href="legal.html#privacy" class="text-champagne-500 font-semibold hover:underline">Privacy Policy</a>.
-      </p>
+        <form id="signup-form" novalidate>
+          <div class="fl mb-4">
+            <input id="name" type="text" autocomplete="name" placeholder=" "/>
+            <label for="name">Display name (optional)</label>
+          </div>
+          <div class="fl mb-4">
+            <input id="email" type="email" autocomplete="email" placeholder=" " required/>
+            <label for="email">Email address</label>
+          </div>
+          <div class="fl mb-2">
+            <input id="password" type="password" autocomplete="new-password" placeholder=" " required/>
+            <label for="password">Password</label>
+          </div>
+          <div class="meter mb-1"><span id="meter-bar"></span></div>
+          <div id="meter-label" class="text-[11.5px] tk-faint mb-2">Use 8+ characters with a number and symbol.</div>
+          <div id="form-error" class="err mb-2"></div>
+
+          <button type="submit" id="submit-btn" class="btn btn-primary w-full !py-3 !text-[15px] mt-2"><span class="label">Create account</span></button>
+        </form>
+
+        <p class="text-center text-[12px] tk-faint mt-6">By creating an account you agree to the <a href="legal.html#terms" class="underline">Terms</a> and <a href="legal.html#privacy" class="underline">Privacy Policy</a>.</p>
+      </div>
     </div>
-  </div>
-</main>
+  </main>
+</div>
 
-<div id="toast" class="toast" role="status" aria-live="polite"><span id="toast-text">Account created.</span></div>
+<div id="toast" class="toast" role="status" aria-live="polite"><span id="toast-text"></span></div>
 
 <script src="shared.js"></script>
 <script>
 (function () {
   if (API.isSignedIn()) { location.replace('dashboard.html'); return; }
+  const $ = (id) => document.getElementById(id);
+  let toastT;
+  function toast(msg){ const t=$('toast'), x=$('toast-text'); if(x)x.textContent=msg; t.classList.add('show'); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('show'),2400); }
 
-  const form = document.getElementById('signup-form');
-  const errBox = document.getElementById('form-error');
-  const errText = document.getElementById('form-error-text');
-  const btn = document.getElementById('submit-btn');
-  function showError(msg) { errText.textContent = msg; errBox.classList.remove('hidden'); }
-  function clearError() { errBox.classList.add('hidden'); }
+  const form = $('signup-form'), err = $('form-error'), btn = $('submit-btn');
+  function setErr(msg){ err.textContent = msg || ''; }
+  function loading(on){ btn.disabled = on; btn.innerHTML = on ? '<span class="spin"></span><span>Creating…</span>' : '<span class="label">Create account</span>'; }
+
+  // Password strength meter
+  const bar = $('meter-bar'), label = $('meter-label');
+  function strength(pw){
+    let s = 0;
+    if (pw.length >= 8) s++;
+    if (pw.length >= 12) s++;
+    if (/[A-Z]/.test(pw) && /[a-z]/.test(pw)) s++;
+    if (/\d/.test(pw)) s++;
+    if (/[^A-Za-z0-9]/.test(pw)) s++;
+    return Math.min(s, 4); // 0..4
+  }
+  const META = [
+    { w:'0%',  c:'var(--bg-sunken)', t:'Use 8+ characters with a number and symbol.' },
+    { w:'25%', c:'var(--danger)',    t:'Weak — add length and variety.' },
+    { w:'50%', c:'var(--warning)',   t:'Fair — add a symbol or more length.' },
+    { w:'75%', c:'var(--info)',      t:'Good — almost there.' },
+    { w:'100%',c:'var(--success)',   t:'Strong password.' },
+  ];
+  $('password').addEventListener('input', e => {
+    const s = strength(e.target.value);
+    const m = META[s];
+    bar.style.width = m.w; bar.style.background = m.c; label.textContent = m.t; label.style.color = 'var(--text-muted)';
+  });
 
   form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    clearError();
-    const email = document.getElementById('email').value.trim();
-    const password = document.getElementById('password').value;
-    const name = document.getElementById('name').value.trim();
-    if (!email || !password) { showError('Enter an email and password.'); return; }
-    if (password.length < 8) { showError('Password must be at least 8 characters.'); return; }
-    btn.disabled = true; btn.textContent = 'Creating…';
+    e.preventDefault(); setErr('');
+    const email = $('email').value.trim(), password = $('password').value, name = $('name').value.trim();
+    $('email').setAttribute('aria-invalid', !email);
+    if (!email) { setErr('Enter an email address.'); $('email').focus(); return; }
+    if (password.length < 8) { setErr('Password must be at least 8 characters.'); $('password').focus(); return; }
+    loading(true);
     try {
       await API.register(email, password, name);
       toast('Account created — welcome!');
-      setTimeout(() => { location.replace('dashboard.html'); }, 500);
-    } catch (err) {
-      showError(err.message || 'Could not create the account.');
-      btn.disabled = false; btn.textContent = 'Create account';
+      setTimeout(() => location.replace('dashboard.html'), 500);
+    } catch (e2) {
+      setErr(e2.message || 'Could not create the account.');
+      loading(false);
     }
   });
+
+  document.querySelectorAll('.oauth').forEach(b => b.addEventListener('click', () => {
+    toast(b.getAttribute('data-provider') === 'github' ? 'GitHub SSO coming soon.' : 'Google SSO coming soon.');
+  }));
 })();
 </script>
 <script src="nav.js"></script>

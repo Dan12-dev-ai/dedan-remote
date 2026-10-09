@@ -53,36 +53,12 @@ tailwind.config = { darkMode:'class', theme:{ extend:{
   .toast.show { opacity:1; transform:translate(-50%,0); pointer-events:auto; }
   @media (prefers-reduced-motion: reduce) { *,*::before,*::after{ animation-duration:.01ms !important; transition-duration:.01ms !important; } }
 </style>
+<script src="theme.js"></script>
+<link rel="stylesheet" href="theme.css"/>
 </head>
-<body class="min-h-screen bg-ivory text-ink antialiased">
+<body class="min-h-screen antialiased" style="background:var(--bg); color:var(--text);" data-app-header data-active="dashboard">
 
-<header class="sticky top-0 z-40 bg-[#FBF7F0]/80 backdrop-blur-xl border-b border-cocoa/10">
-  <div class="grid-12 h-16 flex items-center gap-4">
-    <a href="index.html" class="flex items-center gap-2.5 shrink-0 focus-ring rounded-lg" aria-label="DEDAN Remote · Home">
-      <div class="relative w-9 h-9 rounded-xl bg-gradient-to-br from-espresso-300 to-espresso-500 text-ivory shadow-card grid place-items-center overflow-hidden">
-        <span class="font-serif text-[18px] italic font-semibold tracking-tight relative -top-0.5">D</span>
-      </div>
-      <span class="text-[14.5px] font-extrabold tracking-tight text-espresso-300 hidden sm:inline">DEDAN Remote</span>
-    </a>
-    <nav class="hidden lg:flex items-center gap-1 ml-4" aria-label="Primary">
-      <a href="dashboard.html" class="nav-link is-active"><span class="material-symbols-rounded" style="font-size:17px;">dashboard</span>Dashboard</a>
-      <a href="opportunities.html" class="nav-link"><span class="material-symbols-rounded" style="font-size:17px;">explore</span>Explore</a>
-      <a href="saved.html" class="nav-link"><span class="material-symbols-rounded" style="font-size:17px;">bookmarks</span>Saved</a>
-      <a href="applications.html" class="nav-link"><span class="material-symbols-rounded" style="font-size:17px;">briefcase</span>Applications</a>
-      <a href="interview.html" class="nav-link"><span class="material-symbols-rounded" style="font-size:17px;">forum</span>Interviews</a>
-    </nav>
-    <div class="ml-auto flex items-center gap-2">
-      <a href="profile.html" class="flex items-center gap-2 pl-1 pr-2.5 h-10 rounded-xl hover:bg-cream transition-colors focus-ring">
-        <div id="avatar" class="w-8 h-8 rounded-full bg-gradient-to-br from-champagne-300 to-gold grid place-items-center text-espresso-300 text-[12px] font-extrabold shadow-card ring-1 ring-champagne-400/40">··</div>
-        <span id="user-name" class="hidden sm:block text-[12.5px] font-bold text-espresso-300">Account</span>
-        <span class="material-symbols-rounded text-cocoa-400" style="font-size:17px;">expand_more</span>
-      </a>
-      <button id="logout-btn" class="btn" type="button" title="Sign out">
-        <span class="material-symbols-rounded" style="font-size:17px;">logout</span><span class="hidden sm:inline">Sign out</span>
-      </button>
-    </div>
-  </div>
-</header>
+<div data-subnav="Dashboard:dashboard.html,Explore:opportunities.html,Saved:saved.html,Applications:applications.html,Interviews:interview.html" class="hidden"></div>
 
 <main class="grid-12 py-7">
   <div class="mb-6">
@@ -142,6 +118,7 @@ tailwind.config = { darkMode:'class', theme:{ extend:{
 <div id="toast" class="toast" role="status" aria-live="polite"><span id="toast-text">Done.</span></div>
 
 <script src="shared.js"></script>
+<script src="chrome.js"></script>
 <script src="app.js"></script>
 <script>
 (function () {
@@ -153,7 +130,7 @@ tailwind.config = { darkMode:'class', theme:{ extend:{
 
   const $ = (id) => document.getElementById(id);
 
-  document.getElementById('logout-btn').addEventListener('click', async () => {
+  const _oldLogout = document.getElementById('logout-btn'); if (_oldLogout) _oldLogout.addEventListener('click', async () => {
     await API.logout();
     toast('Signed out.');
     setTimeout(() => location.replace('index.html'), 500);
@@ -192,8 +169,8 @@ tailwind.config = { darkMode:'class', theme:{ extend:{
     try { user = await API.me(); } catch (e) { /* handled below */ }
     if (!user) { location.replace('signin.html'); return; }
 
-    $('user-name').textContent = user.display_name || user.email || 'Account';
-    $('avatar').textContent = initials(user.display_name || user.email);
+    $('chrome-name') && ($('chrome-name').textContent = user.display_name || user.email || 'Account');
+    document.getElementById('chrome-avatar') && (document.getElementById('chrome-avatar').textContent = initials(user.display_name || user.email));
     $('greet-name').textContent = user.display_name ? ', ' + user.display_name.split(' ')[0] : '';
 
     // Each widget loads independently so one failure never blanks the page.

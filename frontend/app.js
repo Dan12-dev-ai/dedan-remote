@@ -39,6 +39,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
   buildMarquee();
 
+  // Landing-page theme toggle (dark mode available site-wide via theme.js).
+  const lt = document.getElementById('landing-theme');
+  const ltIcon = document.getElementById('landing-theme-icon');
+  const syncLandingTheme = () => {
+    if (ltIcon && window.DEDAN_THEME) ltIcon.textContent = window.DEDAN_THEME.isDark() ? 'light_mode' : 'dark_mode';
+  };
+  if (lt) {
+    syncLandingTheme();
+    document.addEventListener('themechange', syncLandingTheme);
+    lt.addEventListener('click', () => window.DEDAN_THEME && window.DEDAN_THEME.toggle());
+    document.documentElement.classList.add('theme-ready');
+  }
+
   // Smooth anchor scroll
   document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', (e) => {

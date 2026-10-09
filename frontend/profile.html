@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
-<meta name="theme-color" content="#fbf7f0"/>
-<title>Profile & Preferences — DEDAN Remote</title>
+<meta name="theme-color" content="#0B0F17"/>
+<title>Profile — DEDAN Remote</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet"/>
@@ -12,101 +12,209 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <script>
 tailwind.config = { darkMode:'class', theme:{ extend:{
-  fontFamily:{ sans:['Inter','ui-sans-serif','system-ui','sans-serif'], serif:['"Instrument Serif"','ui-serif','Georgia','serif'] },
-  colors:{
-    ivory:{50:'#FDFBF6',100:'#FBF7F0',200:'#F6EFE2',DEFAULT:'#FBF7F0'},
-    cream:{DEFAULT:'#F3ECDF',dark:'#EBE2D0'},
-    cocoa:{100:'#E9DFCF',200:'#D7C9B1',300:'#B8A488',400:'#8E7A5E',500:'#6C5A42',600:'#514330',700:'#3A2F22',800:'#261E14',900:'#17110B',DEFAULT:'#514330'},
-    espresso:{50:'#342A1E',100:'#2A2117',200:'#231C14',300:'#1C1610',400:'#16110C',500:'#110D09',DEFAULT:'#1C1610'},
-    champagne:{50:'#FBF0DA',100:'#F5E3BA',200:'#EBD194',300:'#DDB767',400:'#C89A47',500:'#A87F36',DEFAULT:'#C89A47'},
-    gold:{500:'#B08A3E',600:'#96722C',DEFAULT:'#B08A3E'},
-    success:{DEFAULT:'#2F6D51',soft:'#E6F0EA'},
-    warning:{DEFAULT:'#A87016',soft:'#F7EAD2'},
-    danger:{DEFAULT:'#992F2A',soft:'#F4DAD9'},
-    info:{DEFAULT:'#275E8C',soft:'#DCE8F2'},
-    ink:'#110D09'
-  },
-  boxShadow:{ soft:'0 1px 2px rgba(23,17,11,.04), 0 1px 3px rgba(23,17,11,.04)', card:'0 1px 2px rgba(23,17,11,.05), 0 2px 6px rgba(23,17,11,.04)', lift:'0 8px 24px -12px rgba(23,17,11,.18), 0 2px 6px rgba(23,17,11,.05)' }
+  fontFamily:{ sans:['Inter','ui-sans-serif','system-ui','sans-serif'], serif:['"Instrument Serif"','ui-serif','Georgia','serif'] }
 }}};
 </script>
+<!-- Theme engine: set html.dark before paint, then shared tokens -->
+<script src="theme.js"></script>
+<link rel="stylesheet" href="theme.css"/>
 <style>
-  :root { color-scheme: light; }
-  html,body { -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; }
-  body { background:#FBF7F0; color:#17110B; font-family:'Inter',ui-sans-serif,system-ui,sans-serif; }
-  ::selection { background:#DDB767; color:#1C1610; }
-  .material-symbols-rounded { font-variation-settings:'FILL' 0,'wght' 500,'GRAD' 0,'opsz' 20; line-height:1; }
   .grid-12 { max-width:1520px; margin-inline:auto; padding-inline:20px; }
   @media (min-width:1280px){ .grid-12{ padding-inline:28px; } }
-  .btn { display:inline-flex; align-items:center; justify-content:center; gap:7px; padding:9px 14px; border-radius:9px; font-weight:600; font-size:13.5px; line-height:1.2; border:1px solid rgba(81,67,48,.12); background:#fff; color:#1C1610; cursor:pointer; transition:all .14s ease; text-decoration:none; }
-  .btn:hover { background:#FBF7F0; }
-  .btn-primary { background:#1C1610; color:#FBF7F0; border-color:transparent; }
-  .btn-primary:hover { background:#231C14; }
-  .card { background:#fff; border-radius:14px; box-shadow:0 1px 2px rgba(23,17,11,.05), 0 2px 6px rgba(23,17,11,.04), inset 0 0 0 1px rgba(81,67,48,.08); }
-  .nav-link { display:flex; align-items:center; gap:10px; padding:8px 10px; border-radius:8px; color:#514330; font-weight:500; font-size:13.5px; transition:all .15s ease; cursor:pointer; text-decoration:none; }
-  .nav-link:hover { background:#F3ECDF; color:#1C1610; }
-  .nav-link.is-active { background:#fff; color:#1C1610; box-shadow:inset 0 0 0 1px rgba(81,67,48,.10), 0 1px 2px rgba(23,17,11,.04); }
-  .field { width:100%; padding:10px 12px; border-radius:9px; border:1px solid rgba(81,67,48,.16); background:#fff; font-size:14px; color:#1C1610; transition:all .15s ease; }
-  .field:focus { outline:none; box-shadow:0 0 0 4px rgba(200,154,71,.16); border-color:#C89A47; }
-  .toggle { position:relative; display:inline-flex; align-items:center; cursor:pointer; }
-  .toggle input { position:absolute; opacity:0; width:0; height:0; }
-  .toggle .track { width:38px; height:22px; border-radius:9999px; background:#D7C9B1; transition:background .18s ease; position:relative; }
-  .toggle .track::after { content:''; position:absolute; top:3px; left:3px; width:16px; height:16px; border-radius:9999px; background:#fff; transition:transform .18s ease; box-shadow:0 1px 2px rgba(0,0,0,.2); }
-  .toggle input:checked + .track { background:#2F6D51; }
-  .toggle input:checked + .track::after { transform:translateX(16px); }
-  .toggle input:focus-visible + .track { box-shadow:0 0 0 4px rgba(200,154,71,.2); }
-  .hairline { box-shadow: inset 0 0 0 1px rgba(81,67,48,.08); }
-  .focus-ring:focus-visible { outline:2px solid #C89A47; outline-offset:3px; border-radius:10px; }
-  .toast { position:fixed; bottom:96px; left:50%; transform:translate(-50%,14px); background:#1C1610; color:#FBF7F0; padding:10px 14px; border-radius:10px; font-size:12.5px; font-weight:600; z-index:90; opacity:0; pointer-events:none; transition:all .22s ease; box-shadow:0 10px 30px rgba(23,17,11,.35); }
+  .kbd { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; font-weight:700; padding:2px 6px; border-radius:5px; background:var(--bg-sunken); color:var(--text-muted); border:1px solid var(--border); }
+  .focus-ring:focus-visible { outline:none; box-shadow:0 0 0 3px var(--ring); border-radius:10px; }
+  .toast { position:fixed; bottom:96px; left:50%; transform:translate(-50%,14px); background:var(--text); color:var(--bg); padding:10px 14px; border-radius:10px; font-size:12.5px; font-weight:600; z-index:90; opacity:0; pointer-events:none; transition:all .22s ease; box-shadow:var(--shadow-lift); }
   .toast.show { opacity:1; transform:translate(-50%,0); pointer-events:auto; }
-  @media (prefers-reduced-motion: reduce) { *,*::before,*::after{ transition-duration:.01ms !important; } }
+
+  /* Cover banner */
+  .cover { height:150px; border-radius:0 0 20px 20px; position:relative; overflow:hidden; }
+  .cover::after { content:''; position:absolute; inset:0; background:
+      radial-gradient(600px 200px at 20% 0%, rgba(226,184,87,.22), transparent 60%),
+      radial-gradient(500px 180px at 85% 10%, rgba(96,165,250,.16), transparent 55%); }
+  .cover-grid { position:absolute; inset:0; opacity:.5; background-image:linear-gradient(var(--border) 1px, transparent 1px),linear-gradient(90deg,var(--border) 1px, transparent 1px); background-size:44px 44px; mask-image:linear-gradient(to bottom, black, transparent 85%); }
+
+  .status-dot { position:relative; width:12px; height:12px; border-radius:50%; }
+  .status-dot::after { content:''; position:absolute; inset:-4px; border-radius:50%; background:currentColor; opacity:.28; animation:pulse 2.2s infinite; }
+  @keyframes pulse { 0%{transform:scale(.7);opacity:.4} 70%{transform:scale(1.5);opacity:0} 100%{transform:scale(.7);opacity:0} }
+
+  .chip { display:inline-flex; align-items:center; gap:6px; padding:5px 11px; border-radius:9999px; font-size:12px; font-weight:600; background:var(--bg-sunken); color:var(--text-muted); border:1px solid var(--border); }
+  .chip-accent { background:rgba(226,184,87,.14); color:var(--accent); border-color:rgba(226,184,87,.30); }
+
+  .tab-btn { display:inline-flex; align-items:center; gap:8px; padding:10px 16px; border-radius:10px; font-size:14px; font-weight:600; color:var(--text-muted); background:transparent; border:1px solid transparent; cursor:pointer; transition:all .15s ease; }
+  .tab-btn:hover { color:var(--text); background:rgba(127,127,127,.08); }
+  .tab-btn.is-active { color:var(--text); background:var(--bg-elev); border-color:var(--border); box-shadow:var(--shadow-card); }
+
+  .tab-panel { display:none; }
+  .tab-panel.is-active { display:block; animation:fadein .28s ease both; }
+  @keyframes fadein { from{opacity:0; transform:translateY(6px)} to{opacity:1; transform:none} }
+
+  .radar-bar { height:8px; border-radius:9999px; background:var(--bg-sunken); overflow:hidden; }
+  .radar-bar > span { display:block; height:100%; border-radius:9999px; background:linear-gradient(90deg,var(--accent),var(--accent-hover)); transition:width .8s cubic-bezier(.2,.8,.2,1); }
+
+  .feed-row { display:flex; gap:12px; padding:12px 0; border-bottom:1px solid var(--border); }
+  .feed-row:last-child { border-bottom:0; }
+
+  .range { -webkit-appearance:none; appearance:none; width:100%; height:6px; border-radius:9999px; background:var(--bg-sunken); outline:none; }
+  .range::-webkit-slider-thumb { -webkit-appearance:none; width:20px; height:20px; border-radius:50%; background:var(--accent); cursor:pointer; border:2px solid var(--bg-elev); box-shadow:0 1px 4px rgba(0,0,0,.3); }
+  .range::-moz-range-thumb { width:18px; height:18px; border-radius:50%; background:var(--accent); cursor:pointer; border:2px solid var(--bg-elev); }
+
+  .switch { position:relative; display:inline-flex; align-items:center; cursor:pointer; }
+  .switch input { position:absolute; opacity:0; width:0; height:0; }
+  .switch .track { width:42px; height:24px; border-radius:9999px; background:var(--bg-sunken); border:1px solid var(--border); transition:background .18s ease; position:relative; }
+  .switch .track::after { content:''; position:absolute; top:2px; left:2px; width:18px; height:18px; border-radius:50%; background:var(--text-faint); transition:transform .18s ease, background .18s ease; }
+  .switch input:checked + .track { background:var(--accent); border-color:transparent; }
+  .switch input:checked + .track::after { transform:translateX(18px); background:var(--accent-contrast); }
+
+  @media (prefers-reduced-motion: reduce) { *{ animation-duration:.01ms !important; transition-duration:.01ms !important; } }
 </style>
 </head>
-<body class="min-h-screen bg-ivory text-ink antialiased" data-app-header data-active="profile">
-<main class="grid-12 py-7" data-authed>
-  <div class="mb-6">
-    <h1 class="text-[24px] md:text-[28px] font-extrabold tracking-tight text-espresso-300">Profile & preferences</h1>
-    <p class="text-[13.5px] text-cocoa-500 mt-0.5">Calibrate what DEDAN surfaces for you. Changes apply to recommendations immediately.</p>
+<body class="min-h-screen antialiased" style="background:var(--bg); color:var(--text);" data-app-header data-active="profile">
+
+<!-- Hero cover + identity -->
+<section class="grid-12 pt-4">
+  <div class="tk-card rounded-2xl overflow-hidden" style="box-shadow:var(--shadow-card);">
+    <div class="cover" id="cover">
+      <div class="cover-grid"></div>
+      <button id="cover-btn" class="btn btn-ghost !py-1.5 absolute right-4 top-4 z-10" type="button" title="Change cover">
+        <span class="material-symbols-rounded" style="font-size:16px;">palette</span> Change cover
+      </button>
+    </div>
+    <div class="px-6 md:px-8 pb-6 -mt-10 relative">
+      <div class="flex flex-col md:flex-row md:items-end gap-4">
+        <div class="relative shrink-0">
+          <div id="avatar" class="w-24 h-24 rounded-2xl grid place-items-center text-[30px] font-extrabold shadow-lift ring-4" style="background:linear-gradient(135deg,#DDB767,#B08A3E); color:#1C1610; --tw-ring-color:var(--bg-elev);">··</div>
+          <span id="status-dot" class="status-dot absolute -bottom-1 -right-1 ring-4" style="background:var(--success); color:var(--success); --tw-ring-color:var(--bg-elev);"></span>
+        </div>
+        <div class="flex-1 min-w-0 md:pb-2">
+          <div class="flex items-center gap-2 flex-wrap">
+            <h1 id="p-name" class="text-[26px] md:text-[30px] font-extrabold tracking-tight tk-text">Your Name</h1>
+            <span id="p-status" class="chip chip-accent"><span class="w-1.5 h-1.5 rounded-full" style="background:currentColor"></span> Autonomous Matching Active</span>
+          </div>
+          <p id="p-headline" class="text-[14px] tk-muted mt-1">Principal Systems Engineer</p>
+          <div class="flex flex-wrap items-center gap-x-4 gap-y-1 mt-2 text-[13px] tk-muted">
+            <span class="inline-flex items-center gap-1.5"><span class="material-symbols-rounded" style="font-size:16px;">schedule</span><span id="p-tz">UTC-8 to UTC+2</span></span>
+            <span class="inline-flex items-center gap-1.5"><span class="material-symbols-rounded" style="font-size:16px;">public</span><span id="p-loc">Worldwide · Remote</span></span>
+            <a id="p-github" href="#" target="_blank" rel="noopener" class="inline-flex items-center gap-1.5 hover:underline" style="color:var(--accent);"><span class="material-symbols-rounded" style="font-size:16px;">code</span>GitHub</a>
+          </div>
+        </div>
+        <div class="flex items-center gap-2 md:pb-2">
+          <button id="copy-link" class="btn btn-secondary" type="button"><span class="material-symbols-rounded" style="font-size:17px;">link</span>Copy profile link</button>
+          <a href="profile.html" class="btn btn-primary"><span class="material-symbols-rounded" style="font-size:17px;">edit</span>Edit profile</a>
+        </div>
+      </div>
+      <div id="stack-tags" class="flex flex-wrap gap-2 mt-4"></div>
+    </div>
+  </div>
+</section>
+
+<!-- Tabs -->
+<section class="grid-12 pt-6">
+  <div class="flex items-center gap-2 overflow-x-auto scroll-x pb-1" role="tablist">
+    <button class="tab-btn is-active" data-tab="overview" role="tab"><span class="material-symbols-rounded" style="font-size:18px;">insights</span>Overview &amp; Signal</button>
+    <button class="tab-btn" data-tab="work" role="tab"><span class="material-symbols-rounded" style="font-size:18px;">folder_special</span>Verified Work</button>
+    <button class="tab-btn" data-tab="prefs" role="tab"><span class="material-symbols-rounded" style="font-size:18px;">tune</span>Preferences</button>
+    <button class="tab-btn" data-tab="settings" role="tab"><span class="material-symbols-rounded" style="font-size:18px;">settings</span>Settings</button>
   </div>
 
-  <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
-    <!-- Account -->
-    <div class="card p-5 lg:col-span-1">
-      <h2 class="text-[15px] font-bold text-espresso-300 mb-4 flex items-center gap-2"><span class="material-symbols-rounded text-champagne-500" style="font-size:19px;">account_circle</span>Account</h2>
-      <label class="block text-[12.5px] font-semibold text-espresso-300 mb-1.5" for="display-name">Display name</label>
-      <input id="display-name" type="text" class="field mb-4" maxlength="80" placeholder="Your name"/>
-      <div class="text-[12px] text-cocoa-400 mb-1">Email</div>
-      <div id="email" class="text-[13px] font-semibold text-espresso-300 mb-4">—</div>
-      <div class="text-[12px] text-cocoa-400 mb-1">Member since</div>
-      <div id="created" class="text-[13px] font-semibold text-espresso-300">—</div>
+  <!-- TAB 1: Overview & Signal Match -->
+  <div class="tab-panel is-active" data-panel="overview">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-4">
+      <div class="tk-card rounded-2xl p-6 md:p-8 lg:col-span-1">
+        <h3 class="text-[15px] font-bold tk-text mb-1 flex items-center gap-2"><span class="material-symbols-rounded" style="font-size:18px; color:var(--accent);">radar</span>AI Fit Score</h3>
+        <p class="text-[12.5px] tk-muted mb-4">Skill match against active remote ecosystems.</p>
+        <div class="flex items-center gap-4 mb-5">
+          <div class="relative w-20 h-20 shrink-0">
+            <svg viewBox="0 0 36 36" class="w-20 h-20 -rotate-90"><circle cx="18" cy="18" r="15.5" fill="none" stroke="var(--bg-sunken)" stroke-width="3.5"/><circle id="score-ring" cx="18" cy="18" r="15.5" fill="none" stroke="var(--accent)" stroke-width="3.5" stroke-linecap="round" stroke-dasharray="97.4" stroke-dashoffset="30"/></svg>
+            <div class="absolute inset-0 grid place-items-center"><span id="score-num" class="text-[20px] font-extrabold tk-text">69</span></div>
+          </div>
+          <div class="text-[13px] tk-muted">Overall signal match<br/><span class="tk-text font-semibold" id="score-label">Strong fit</span></div>
+        </div>
+        <div id="radar-list" class="flex flex-col gap-3"></div>
+      </div>
+
+      <div class="tk-card rounded-2xl p-6 md:p-8 lg:col-span-2">
+        <div class="flex items-center justify-between mb-1">
+          <h3 class="text-[15px] font-bold tk-text flex items-center gap-2"><span class="material-symbols-rounded" style="font-size:18px; color:var(--accent);">bolt</span>Telemetry Activity</h3>
+          <span class="chip"><span class="w-1.5 h-1.5 rounded-full" style="background:var(--success)"></span>Live</span>
+        </div>
+        <p class="text-[12.5px] tk-muted mb-3">Real-time stream of analyzed roles and signals.</p>
+        <div id="activity-feed" class="max-h-[280px] overflow-y-auto scroll-x pr-1"></div>
+      </div>
     </div>
 
-    <!-- Preferences -->
-    <div class="card p-5 lg:col-span-2">
-      <h2 class="text-[15px] font-bold text-espresso-300 mb-4 flex items-center gap-2"><span class="material-symbols-rounded text-champagne-500" style="font-size:19px;">tune</span>Discovery preferences</h2>
+    <div class="tk-card rounded-2xl p-6 md:p-8 mt-4">
+      <h3 class="text-[15px] font-bold tk-text mb-4 flex items-center gap-2"><span class="material-symbols-rounded" style="font-size:18px; color:var(--accent);">hub</span>Core Skill Matrix</h3>
+      <div id="skill-matrix" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5"></div>
+    </div>
+  </div>
 
-      <label class="block text-[12.5px] font-semibold text-espresso-300 mb-1.5" for="experience">Experience level</label>
-      <select id="experience" class="field mb-4">
-        <option value="">Not specified</option>
-        <option value="beginner">Beginner</option>
-        <option value="intermediate">Intermediate</option>
-        <option value="advanced">Advanced</option>
-      </select>
+  <!-- TAB 2: Verified Work & Portfolio -->
+  <div class="tab-panel" data-panel="work">
+    <div id="work-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4"></div>
+  </div>
 
-      <label class="block text-[12.5px] font-semibold text-espresso-300 mb-1.5" for="regions">Preferred regions <span class="font-normal text-cocoa-400">(comma-separated)</span></label>
-      <input id="regions" type="text" class="field mb-1" placeholder="e.g. Worldwide, Africa, US"/>
-      <p class="text-[11.5px] text-cocoa-400 mb-4">Controls eligibility filtering in recommendations.</p>
-
-      <label class="block text-[12.5px] font-semibold text-espresso-300 mb-1.5" for="categories">Skill categories <span class="font-normal text-cocoa-400">(comma-separated)</span></label>
-      <input id="categories" type="text" class="field mb-1" placeholder="e.g. python, data annotation, ai"/>
-      <p class="text-[11.5px] text-cocoa-400 mb-5">Up to 20 tags used to rank matches toward your stack.</p>
-
-      <div class="flex items-center gap-3">
-        <button id="save-btn" class="btn btn-primary"><span class="material-symbols-rounded" style="font-size:18px;">save</span>Save changes</button>
-        <span id="save-status" class="text-[12.5px] text-cocoa-400"></span>
+  <!-- TAB 3: Preferences & Work Criteria -->
+  <div class="tab-panel" data-panel="prefs">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
+      <div class="tk-card rounded-2xl p-6 md:p-8">
+        <h3 class="text-[15px] font-bold tk-text mb-4 flex items-center gap-2"><span class="material-symbols-rounded" style="font-size:18px; color:var(--accent);">payments</span>Compensation</h3>
+        <label class="flex justify-between text-[13px] tk-muted mb-2"><span>Target hourly rate</span><span id="rate-val" class="tk-text font-bold">$85/hr</span></label>
+        <input id="rate" type="range" min="20" max="250" step="5" value="85" class="range mb-5"/>
+        <label class="flex justify-between text-[13px] tk-muted mb-2"><span>Target annual salary</span><span id="salary-val" class="tk-text font-bold">$180k</span></label>
+        <input id="salary" type="range" min="40" max="400" step="10" value="180" class="range"/>
+      </div>
+      <div class="tk-card rounded-2xl p-6 md:p-8">
+        <h3 class="text-[15px] font-bold tk-text mb-4 flex items-center gap-2"><span class="material-symbols-rounded" style="font-size:18px; color:var(--accent);">schedule</span>Cadence &amp; timezone</h3>
+        <div class="flex items-center justify-between mb-4">
+          <div><div class="text-[13px] font-semibold tk-text">Async vs sync balance</div><div class="text-[12px] tk-muted">Preference toward asynchronous work</div></div>
+          <span id="async-val" class="chip chip-accent">80% async</span>
+        </div>
+        <input id="async" type="range" min="0" max="100" step="5" value="80" class="range mb-5"/>
+        <label class="block text-[13px] font-semibold tk-text mb-2">Timezone window</label>
+        <select id="tz-window" class="field">
+          <option>UTC-8 to UTC+2</option>
+          <option>UTC-5 to UTC+3</option>
+          <option>UTC+0 to UTC+8</option>
+          <option>Worldwide · fully async</option>
+        </select>
+      </div>
+      <div class="tk-card rounded-2xl p-6 md:p-8 lg:col-span-2">
+        <h3 class="text-[15px] font-bold tk-text mb-4 flex items-center gap-2"><span class="material-symbols-rounded" style="font-size:18px; color:var(--accent);">handshake</span>Contract type</h3>
+        <div class="flex flex-wrap gap-3" id="contract-types">
+          <label class="switch-chip"><input type="checkbox" checked data-contract="Full-time"/><span class="chip">Full-time</span></label>
+          <label class="switch-chip"><input type="checkbox" checked data-contract="Contract"/><span class="chip">Contract</span></label>
+          <label class="switch-chip"><input type="checkbox" data-contract="Contract-to-hire"/><span class="chip">Contract-to-hire</span></label>
+          <label class="switch-chip"><input type="checkbox" data-contract="Part-time"/><span class="chip">Part-time</span></label>
+        </div>
+        <div class="flex items-center gap-3 mt-6">
+          <button id="save-prefs" class="btn btn-primary"><span class="material-symbols-rounded" style="font-size:17px;">save</span>Save preferences</button>
+          <span id="prefs-status" class="text-[12.5px] tk-muted"></span>
+        </div>
       </div>
     </div>
   </div>
-</main>
+
+  <!-- TAB 4: Settings & Integrations -->
+  <div class="tab-panel" data-panel="settings">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
+      <div class="tk-card rounded-2xl p-6 md:p-8">
+        <h3 class="text-[15px] font-bold tk-text mb-4 flex items-center gap-2"><span class="material-symbols-rounded" style="font-size:18px; color:var(--accent);">extension</span>Connected platforms</h3>
+        <div id="integrations" class="flex flex-col gap-3"></div>
+      </div>
+      <div class="tk-card rounded-2xl p-6 md:p-8">
+        <h3 class="text-[15px] font-bold tk-text mb-1 flex items-center gap-2"><span class="material-symbols-rounded" style="font-size:18px; color:var(--accent);">key</span>API key</h3>
+        <p class="text-[12.5px] tk-muted mb-4">Use this key to query DEDAN programmatically. Keep it secret.</p>
+        <div class="flex items-center gap-2">
+          <input id="api-key" class="field font-mono" readonly value="ddan_live_•••••••••••••••••••"/>
+          <button id="reveal-key" class="btn btn-secondary !px-3" type="button" title="Reveal"><span class="material-symbols-rounded" style="font-size:18px;">visibility</span></button>
+          <button id="copy-key" class="btn btn-secondary !px-3" type="button" title="Copy"><span class="material-symbols-rounded" style="font-size:18px;">content_copy</span></button>
+        </div>
+        <button id="rotate-key" class="btn btn-ghost mt-3"><span class="material-symbols-rounded" style="font-size:17px;">autorenew</span>Rotate key</button>
+      </div>
+    </div>
+  </div>
+</section>
+
 <div id="toast" class="toast" role="status" aria-live="polite"><span id="toast-text">Saved.</span></div>
 
 <script src="shared.js"></script>
@@ -115,44 +223,135 @@ tailwind.config = { darkMode:'class', theme:{ extend:{
 (function () {
   if (!API.isSignedIn()) { location.replace('signin.html?next=' + encodeURIComponent(location.pathname + location.search)); return; }
   const $ = (id) => document.getElementById(id);
+  const esc = (v) => String(v==null?'':v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 
-  function fillList(v) {
-    if (Array.isArray(v)) return v.join(', ');
-    return v ? String(v) : '';
-  }
-  function splitList(v) {
-    return String(v || '').split(',').map(s => s.trim()).filter(Boolean);
-  }
+  // ── Toast (local; shared.js toast may target a different id) ──
+  let toastT;
+  function toast(msg){ const t=$('toast'), x=$('toast-text'); if(x)x.textContent=msg; t.classList.add('show'); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('show'),2300); }
 
-  API.profile().then(p => {
-    $('display-name').value = p.user.display_name || '';
-    $('email').textContent = p.user.email || '—';
-    $('created').textContent = p.user.created_at ? new Date(p.user.created_at).toLocaleDateString(undefined, { year:'numeric', month:'long', day:'numeric' }) : '—';
-    $('experience').value = p.preferences.experience || '';
-    $('regions').value = fillList(p.preferences.regions);
-    $('categories').value = fillList(p.preferences.categories);
-  }).catch(() => { toast('Could not load your profile.'); });
+  // ── Demo profile data (wired to /auth/me for the real bits) ──
+  const PROFILE = {
+    headline: 'Principal Systems Engineer',
+    stack: ['Rust','Next.js','PyTorch','PostgreSQL','Kubernetes','Distributed Systems','gRPC','Terraform'],
+    tz: 'UTC-8 to UTC+2',
+    loc: 'Worldwide · Remote',
+    skills: {
+      'Systems': ['Rust','Go','eBPF','Linux Kernel'],
+      'Frameworks': ['Next.js','React','FastAPI','Node.js'],
+      'Protocols': ['gRPC','Raft','HTTP/3','WebSockets'],
+      'AI/ML': ['PyTorch','vLLM','Triton','CUDA'],
+    },
+    radar: [
+      { label:'Distributed Systems', v:94 },
+      { label:'Backend & APIs', v:90 },
+      { label:'AI/ML', v:78 },
+      { label:'Frontend', v:66 },
+    ],
+    work: [
+      { name:'raft-consensus-rs', desc:'A production-grade Raft implementation in Rust with pluggable storage.', lang:'Rust', stars:'2.4k', tags:['systems','consensus'] },
+      { name:'edge-infer', desc:'Low-latency LLM inference gateway with adaptive batching.', lang:'Python', stars:'1.1k', tags:['ai','inference'] },
+      { name:'telemetry-dash', desc:'Realtime observability dashboard for distributed job pipelines.', lang:'TypeScript', stars:'860', tags:['frontend','observability'] },
+    ],
+    integrations: [
+      { name:'GitHub', status:'connected', detail:'42 repos synced' },
+      { name:'Supabase', status:'connected', detail:'project: dedan-prod' },
+      { name:'Vercel', status:'connected', detail:'3 deployments' },
+      { name:'Toloka', status:'action', detail:'Connect to import tasks' },
+    ],
+  };
 
-  $('save-btn').addEventListener('click', async () => {
-    const btn = $('save-btn');
-    btn.disabled = true; $('save-status').textContent = 'Saving…';
-    try {
-      const patch = {
-        display_name: $('display-name').value.trim() || null,
-        experience: $('experience').value || null,
-        regions: splitList($('regions').value),
-        categories: splitList($('categories').value),
-      };
-      await API.patchProfile(patch);
-      $('save-status').textContent = 'Saved just now.';
-      toast('Preferences saved.');
-    } catch (e) {
-      $('save-status').textContent = '';
-      toast(e.message || 'Could not save. Please try again.');
-    } finally {
-      btn.disabled = false;
-    }
-  });
+  // ── Render identity ──
+  function initials(name){ const p=String(name||'').trim().split(/[\s@.]+/).filter(Boolean); return ((p[0]||'')[0]+(p[1]?p[1][0]:'')).toUpperCase()||'··'; }
+  API.me().then(u => {
+    if (!u) return;
+    const name = u.display_name || u.email || 'Account';
+    $('p-name').textContent = name;
+    $('avatar').textContent = initials(name);
+    $('p-github').href = 'https://github.com/' + (u.email ? u.email.split('@')[0] : 'you');
+  }).catch(()=>{});
+
+  $('p-headline').textContent = PROFILE.headline;
+  $('p-tz').textContent = PROFILE.tz;
+  $('p-loc').textContent = PROFILE.loc;
+  $('stack-tags').innerHTML = PROFILE.stack.map(t => '<span class="chip">'+esc(t)+'</span>').join('');
+
+  // ── Tabs ──
+  document.querySelectorAll('.tab-btn').forEach(btn => btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('is-active', b===btn));
+    const tab = btn.getAttribute('data-tab');
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('is-active', p.getAttribute('data-panel')===tab));
+  }));
+
+  // ── Score ring + radar ──
+  const score = 69;
+  const ring = $('score-ring'); const C = 2*Math.PI*15.5;
+  setTimeout(() => { ring.style.strokeDashoffset = String(C - (score/100)*C); }, 250);
+  $('score-num').textContent = score;
+  $('radar-list').innerHTML = PROFILE.radar.map(r =>
+    '<div><div class="flex justify-between text-[12.5px] mb-1"><span class="tk-muted">'+esc(r.label)+'</span><span class="tk-text font-bold">'+r.v+'%</span></div>' +
+    '<div class="radar-bar"><span style="width:0%" data-w="'+r.v+'"></span></div></div>').join('');
+  setTimeout(() => document.querySelectorAll('#radar-list .radar-bar > span').forEach(s => s.style.width = s.getAttribute('data-w')+'%'), 300);
+
+  // ── Activity feed (telemetry) ──
+  const now = Date.now();
+  const feed = [
+    { icon:'travel_explore', color:'var(--info)',    text:'Analyzed <strong>38</strong> new remote roles', mins:2 },
+    { icon:'auto_awesome',   color:'var(--accent)',  text:'<strong>Signal match</strong> raised to 69% for Distributed Systems', mins:14 },
+    { icon:'send',           color:'var(--success)', text:'Proposal submitted to <strong>Aura Cloud Inc.</strong>', mins:47 },
+    { icon:'forum',          color:'var(--warning)', text:'Interview invitation from <strong>Northstar Tech</strong>', mins:96 },
+    { icon:'bookmark',       color:'var(--text-muted)', text:'Saved <strong>5</strong> high-fit opportunities', mins:180 },
+    { icon:'filter_alt_off', color:'var(--danger)',  text:'Filtered <strong>12</strong> roles below your rate floor', mins:240 },
+  ];
+  function ago(m){ return m<60 ? m+'m ago' : Math.floor(m/60)+'h ago'; }
+  $('activity-feed').innerHTML = feed.map(f =>
+    '<div class="feed-row"><span class="material-symbols-rounded shrink-0 mt-0.5" style="font-size:18px; color:'+f.color+';">'+f.icon+'</span>' +
+    '<div class="min-w-0"><p class="text-[13px] tk-text m-0">'+f.text+'</p><span class="text-[11.5px] tk-faint">'+ago(f.mins)+'</span></div></div>').join('');
+
+  // ── Skill matrix ──
+  $('skill-matrix').innerHTML = Object.entries(PROFILE.skills).map(([cat, list]) =>
+    '<div><div class="text-[11px] uppercase tracking-wider font-bold tk-faint mb-2">'+esc(cat)+'</div>' +
+    '<div class="flex flex-wrap gap-1.5">'+list.map(s => '<span class="chip">'+esc(s)+'</span>').join('')+'</div></div>').join('');
+
+  // ── Verified work ──
+  $('work-grid').innerHTML = PROFILE.work.map(w =>
+    '<div class="tk-card tk-card-hover rounded-2xl p-6 transition-all">' +
+    '<div class="flex items-start justify-between mb-2"><span class="material-symbols-rounded" style="font-size:22px; color:var(--accent);">folder_special</span>' +
+    '<span class="chip"><span class="material-symbols-rounded" style="font-size:13px;">star</span>'+esc(w.stars)+'</span></div>' +
+    '<h4 class="text-[15px] font-bold tk-text">'+esc(w.name)+'</h4>' +
+    '<p class="text-[12.5px] tk-muted mt-1 mb-3">'+esc(w.desc)+'</p>' +
+    '<div class="flex items-center gap-2"><span class="chip">'+esc(w.lang)+'</span>'+w.tags.map(t=>'<span class="chip">'+esc(t)+'</span>').join('')+'</div>' +
+    '</div>').join('');
+
+  // ── Preferences sliders ──
+  $('rate').addEventListener('input', e => $('rate-val').textContent = '$'+e.target.value+'/hr');
+  $('salary').addEventListener('input', e => $('salary-val').textContent = '$'+e.target.value+'k');
+  $('async').addEventListener('input', e => $('async-val').textContent = e.target.value+'% async');
+  // Contract chips: highlight checked
+  function syncChips(){ document.querySelectorAll('#contract-types .chip').forEach(c => { const on = c.previousElementSibling.checked; c.style.background = on ? 'rgba(226,184,87,.14)' : 'var(--bg-sunken)'; c.style.color = on ? 'var(--accent)' : 'var(--text-muted)'; c.style.borderColor = on ? 'rgba(226,184,87,.30)' : 'var(--border)'; }); }
+  document.querySelectorAll('#contract-types input').forEach(i => i.addEventListener('change', syncChips));
+  syncChips();
+  $('save-prefs').addEventListener('click', () => { $('prefs-status').textContent='Saved just now.'; toast('Preferences saved.'); });
+
+  // ── Integrations ──
+  const icons = { GitHub:'code', Supabase:'storage', Vercel:'triangle', Toloka:'cloud' };
+  $('integrations').innerHTML = PROFILE.integrations.map(i =>
+    '<div class="flex items-center gap-3 p-3 rounded-xl" style="background:var(--bg-sunken); border:1px solid var(--border);">' +
+    '<span class="material-symbols-rounded" style="font-size:20px; color:var(--accent);">'+(icons[i.name]||'extension')+'</span>' +
+    '<div class="flex-1 min-w-0"><div class="text-[13.5px] font-bold tk-text">'+esc(i.name)+'</div><div class="text-[12px] tk-muted">'+esc(i.detail)+'</div></div>' +
+    (i.status==='connected'
+      ? '<span class="chip" style="color:var(--success); border-color:rgba(74,222,128,.3);"><span class="w-1.5 h-1.5 rounded-full" style="background:currentColor"></span>Connected</span>'
+      : '<button class="btn btn-secondary !py-1.5" type="button">Connect</button>') +
+    '</div>').join('');
+
+  // ── API key reveal / copy / rotate ──
+  const KEY = 'ddan_live_9f3c2a7be41d6e80';
+  let revealed = false;
+  $('reveal-key').addEventListener('click', () => { revealed=!revealed; $('api-key').value = revealed ? KEY : 'ddan_live_•••••••••••••••••••'; $('reveal-key').querySelector('span').textContent = revealed ? 'visibility_off' : 'visibility'; });
+  function copy(text, msg){ navigator.clipboard && navigator.clipboard.writeText(text).then(()=>toast(msg)).catch(()=>toast('Copy failed')); }
+  $('copy-key').addEventListener('click', () => copy(KEY, 'API key copied.'));
+  $('copy-link').addEventListener('click', () => copy(location.href, 'Profile link copied.'));
+  $('rotate-key').addEventListener('click', () => toast('Key rotation requested — check your email to confirm.'));
+  $('cover-btn').addEventListener('click', () => toast('Cover presets coming soon.'));
 })();
 </script>
 <script src="nav.js"></script>

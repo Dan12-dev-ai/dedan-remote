@@ -1,0 +1,145 @@
+/* ============================================================
+   DEDAN Remote — shared theme tokens (light + dark)
+   Load on every page AFTER theme.js (which sets html.dark before
+   paint) and BEFORE page styles so page rules can use the vars.
+
+   Dark palette (spec):
+     bg obsidian #0B0F17 · surfaces #131B2E · borders white/10
+     accent gold #E2B857 · text #F8FAFC · muted #94A3B8
+   ============================================================ */
+
+:root {
+  --bg:        #FBF7F0;   /* page background (ivory)              */
+  --bg-elev:   #FFFFFF;   /* cards / raised surfaces              */
+  --bg-sunken: #F3ECDF;   /* insets, chips, subtle fills          */
+  --text:      #17110B;   /* primary text                         */
+  --text-muted:#6C5A42;   /* secondary text                       */
+  --text-faint:#8E7A5E;   /* tertiary / placeholder               */
+  --border:    rgba(81,67,48,.12);
+  --border-strong: rgba(81,67,48,.20);
+  --accent:    #B08A3E;   /* gold — primary action / highlight    */
+  --accent-hover:#96722C;
+  --accent-contrast:#FFFFFF;
+  --ring:      rgba(200,154,71,.35);
+  --shadow-card: 0 1px 2px rgba(23,17,11,.05), 0 2px 6px rgba(23,17,11,.04);
+  --shadow-lift: 0 8px 24px -12px rgba(23,17,11,.18), 0 2px 6px rgba(23,17,11,.05);
+  --header-bg: rgba(251,247,240,.82);
+  --success:#2F6D51; --warning:#A87016; --danger:#992F2A; --info:#275E8C;
+}
+
+html.dark {
+  --bg:        #0B0F17;   /* obsidian                              */
+  --bg-elev:   #131B2E;   /* elevated surface                      */
+  --bg-sunken: #182238;   /* insets                                */
+  --text:      #F8FAFC;   /* high-contrast white                   */
+  --text-muted:#94A3B8;   /* muted slate                           */
+  --text-faint:#64748B;
+  --border:    rgba(255,255,255,.10);
+  --border-strong: rgba(255,255,255,.18);
+  --accent:    #E2B857;   /* warm gold                             */
+  --accent-hover:#F5C042;
+  --accent-contrast:#0B0F17;
+  --ring:      rgba(226,184,87,.40);
+  --shadow-card: 0 1px 2px rgba(0,0,0,.40), 0 2px 6px rgba(0,0,0,.30);
+  --shadow-lift: 0 12px 32px -14px rgba(0,0,0,.70), 0 2px 6px rgba(0,0,0,.40);
+  --header-bg: rgba(11,15,23,.80);
+  --success:#4ADE80; --warning:#FBBF24; --danger:#F87171; --info:#60A5FA;
+}
+
+/* Smooth theme cross-fade without animating on first paint. */
+html.theme-ready, html.theme-ready body, html.theme-ready * {
+  transition: background-color .28s ease, border-color .28s ease, color .18s ease;
+}
+
+/* Base surfaces driven by the tokens so every page follows the theme. */
+body {
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* Utility classes bound to tokens (work in both themes). */
+.tk-card { background: var(--bg-elev); border:1px solid var(--border); box-shadow: var(--shadow-card); }
+.tk-card-hover:hover { box-shadow: var(--shadow-lift); transform: translateY(-2px); }
+.tk-text { color: var(--text); }
+.tk-muted { color: var(--text-muted); }
+.tk-faint { color: var(--text-faint); }
+.tk-border { border-color: var(--border); }
+.tk-sunken { background: var(--bg-sunken); }
+
+/* ── Button system (Module 5) ─────────────────────────────── */
+.btn {
+  display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  padding:10px 16px; border-radius:10px; font-weight:600; font-size:14px; line-height:1.2;
+  border:1px solid var(--border); background:var(--bg-elev); color:var(--text);
+  cursor:pointer; transition: transform .12s ease, background-color .15s ease, box-shadow .15s ease, border-color .15s ease;
+  text-decoration:none; white-space:nowrap;
+}
+.btn:hover { background:var(--bg-sunken); }
+.btn:active { transform: scale(.98); }
+.btn:disabled { opacity:.55; cursor:not-allowed; transform:none; }
+.btn:focus-visible { outline:none; box-shadow:0 0 0 3px var(--ring); }
+
+/* Primary — solid accent (gold in dark, deep in light) with contrast text. */
+.btn-primary {
+  background: var(--accent); color: var(--accent-contrast); border-color: transparent;
+  box-shadow: 0 1px 2px rgba(0,0,0,.18);
+}
+.btn-primary:hover { background: var(--accent-hover); }
+
+/* Secondary — glass / subtle border. */
+.btn-secondary { background: rgba(127,127,127,.06); border-color: var(--border); }
+.btn-secondary:hover { background: rgba(127,127,127,.12); }
+
+/* Ghost — transparent with hover highlight. */
+.btn-ghost { background: transparent; border-color: transparent; }
+.btn-ghost:hover { background: rgba(127,127,127,.10); }
+
+/* Spinner for loading buttons. */
+.btn .spin { width:15px; height:15px; border-radius:50%; border:2px solid currentColor; border-top-color:transparent; animation: btnspin .7s linear infinite; }
+@keyframes btnspin { to { transform: rotate(360deg); } }
+
+/* ── Inputs (Module 4) ────────────────────────────────────── */
+.field {
+  width:100%; padding:12px 14px; border-radius:10px; font-size:14px;
+  background:var(--bg-elev); color:var(--text); border:1px solid var(--border-strong);
+  transition:border-color .15s ease, box-shadow .15s ease;
+}
+.field::placeholder { color: var(--text-faint); }
+.field:focus { outline:none; border-color:var(--accent); box-shadow:0 0 0 3px var(--ring); }
+.field[aria-invalid="true"] { border-color: var(--danger); box-shadow:0 0 0 3px rgba(248,113,113,.25); }
+
+/* ── Icons: never show raw ligature names (Module 5) ──────── */
+.material-symbols-rounded, .material-symbols-outlined {
+  font-family:'Material Symbols Rounded','Material Symbols Outlined';
+  font-weight:normal; font-style:normal; line-height:1; letter-spacing:normal;
+  text-transform:none; display:inline-block; white-space:nowrap; word-wrap:normal;
+  direction:ltr; -webkit-font-smoothing:antialiased;
+  font-variation-settings:'FILL' 0,'wght' 500,'GRAD' 0,'opsz' 20;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.theme-ready * { transition:none !important; }
+}
+
+/* ── Landing page dark overrides ─────────────────────────────
+   The marketing page uses Tailwind semantic classes (bg-surface,
+   text-on-surface, bg-surface-container-lowest, …) generated by the
+   CDN. Re-map those classes under html.dark so the landing recolours
+   with the shared dark palette. Kept here (not in the page) so the
+   toggle is a single source of truth. */
+html.dark body.bg-surface { background:#0B0F17 !important; }
+html.dark main.bg-surface { background:#0B0F17 !important; }
+html.dark .bg-surface { background:#0B0F17 !important; }
+html.dark .bg-surface-container-lowest { background:#131B2E !important; }
+html.dark .bg-surface-container-low { background:#182238 !important; }
+html.dark .bg-surface-container { background:#131B2E !important; }
+html.dark .bg-surface-container-high { background:#182238 !important; }
+html.dark .text-on-surface { color:#F8FAFC !important; }
+html.dark .text-on-surface-variant { color:#94A3B8 !important; }
+html.dark .text-secondary { color:#E2B857 !important; }
+html.dark .bg-primary-container { background:#E2B857 !important; }
+html.dark .text-on-primary { color:#0B0F17 !important; }
+html.dark .border-neutral-200\/80 { border-color:rgba(255,255,255,.10) !important; }
+html.dark .border-neutral-200\/60 { border-color:rgba(255,255,255,.10) !important; }
+html.dark header { background:rgba(11,15,23,.82) !important; box-shadow:0 1px 8px rgba(0,0,0,.4) !important; }
+html.dark .bg-surface-container-low\/60 { background:rgba(19,27,46,.6) !important; }
