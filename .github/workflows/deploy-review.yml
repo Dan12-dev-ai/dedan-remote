@@ -1,0 +1,128 @@
+name: Deploy Public Review Instance
+
+# Spins up the DEDAN Remote API + static frontend on a GitHub Actions runner
+# and exposes it to the public internet through a Cloudflare quick tunnel, so a
+# reviewer can open it from anywhere without installing anything.
+#
+# IMPORTANT: this is a REVIEW/DEMO instance. It runs for up to ~5.5 hours (the
+# GitHub-hosted runner job limit) and is seeded with local demo data, not the
+# live scraper. It is NOT a production deployment — production goes through
+# DEPLOYMENT.md (Docker + Caddy on a real server).
+on:
+  workflow_dispatch:
+    inputs:
+      lifetime_minutes:
+        description: "How long to keep the review URL alive (max 330)"
+        required: true
+        default: "330"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: review-instance
+  cancel-in-progress: true
+
+jobs:
+  review:
+    name: Public review instance
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Seed demo database
+        run: |
+          # Build a small, self-contained opportunity set so the review UI has
+          # real rows to render (no live scraping on a review instance).
+          cp .env.example .env
+          python main.py --setup
+          python scripts/seed_demo.py || echo "seed step skipped/failed — continuing with empty DB"
+
+      - name: Start API + frontend server
+        run: |
+          # review_server.py serves the static frontend/ pages and mounts the
+          # FastAPI app at the same origin, so one URL covers the whole product.
+          nohup python -m uvicorn review_server:app --host 0.0.0.0 --port 8000 \
+            > /tmp/review-server.log 2>&1 &
+          # Wait for readiness before announcing the URL.
+          for i in $(seq 1 30); do
+            if curl -sf http://127.0.0.1:8000/api/health >/dev/null; then
+              echo "server ready"
+              break
+            fi
+            sleep 2
+          done
+          curl -s http://127.0.0.1:8000/api/health || { cat /tmp/review-server.log; exit 1; }
+
+      - name: Expose via Cloudflare quick tunnel
+        id: tunnel
+        run: |
+          # Download cloudflared, start a quick (no-account) tunnel, and scrape
+          # the assigned trycloudflare.com URL out of its log.
+          curl -sSL -o cloudflared \
+            https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64
+          chmod +x cloudflared
+          ./cloudflared tunnel --url http://127.0.0.1:8000 --no-autoupdate \
+            > /tmp/tunnel.log 2>&1 &
+          TUNNEL_PID=$!
+          URL=""
+          for i in $(seq 1 30); do
+            URL=$(grep -oE 'https://[a-z0-9-]+\.trycloudflare\.com' /tmp/tunnel.log | head -1)
+            [ -n "$URL" ] && break
+            sleep 2
+          done
+          if [ -z "$URL" ]; then
+            echo "failed to obtain tunnel URL"; cat /tmp/tunnel.log; exit 1
+          fi
+          echo "REVIEW_URL=$URL" >> "$GITHUB_ENV"
+          echo "review-url=$URL" >> "$GITHUB_OUTPUT"
+          echo "Review URL: $URL"
+
+      - name: Verify public URL is live
+        run: |
+          for i in $(seq 1 30); do
+            code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 15 "$REVIEW_URL/api/health" || true)
+            echo "attempt $i: health=$code"
+            [ "$code" = "200" ] && exit 0
+            sleep 5
+          done
+          echo "public URL never became healthy"; exit 1
+
+      - name: Print review links
+        run: |
+          echo "==============================================="
+          echo " DEDAN Remote — public review instance is LIVE"
+          echo "==============================================="
+          echo " Landing : $REVIEW_URL/"
+          echo " Explore : $REVIEW_URL/opportunities.html"
+          echo " API docs: $REVIEW_URL/api/docs"
+          echo "==============================================="
+          echo "This instance will stay up until the runner job ends"
+          echo "(about ${{ inputs.lifetime_minutes }} minutes)."
+
+      - name: Keep the instance alive for the review window
+        run: |
+          SECONDS_LIVE=$(( ${{ inputs.lifetime_minutes }} * 60 ))
+          echo "Holding the review instance open for ${SECONDS_LIVE}s..."
+          end=$((SECONDS + SECONDS_LIVE))
+          while [ $SECONDS -lt $end ]; do
+            # Keep the tunnel and server processes alive and healthy.
+            if ! curl -sf http://127.0.0.1:8000/api/health >/dev/null; then
+              echo "server went away; stopping"; break
+            fi
+            sleep 30
+          done
+          echo "Review window elapsed; shutting down."
