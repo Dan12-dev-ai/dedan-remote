@@ -75,37 +75,40 @@ document.addEventListener('DOMContentLoaded', () => {
 // a self-contained inline SVG so the ticker never depends on an external image
 // host (and never shows a broken-image box if one is unreachable).
 const MARQUEE_LOGOS = [
-  // Full-color brand marks for the "Trusted Remote Ecosystem" strip. Each is a
-  // self-contained inline SVG (Simple Icons paths where the brand has one) so
-  // the ticker never depends on an external image host and always renders in
-  // the brand's original color.
-  { name: 'Fiverr', svg: '<svg viewBox="0 0 24 24" role="img" aria-label="Fiverr"><path fill="#1DBF73" d="M23.996 7.286h-.005V6.106a.294.294 0 0 0-.293-.294h-3.61a.294.294 0 0 0-.294.294v1.18h-2.293a.294.294 0 0 0-.293.294v.625c0 .162.13.294.293.294h2.293v2.963c0 2.635-1.79 4.283-4.489 4.283-1.465 0-2.702-.43-3.617-1.302a.293.293 0 0 1-.034-.41l.76-.99a.293.293 0 0 1 .402-.064c.607.463 1.31.727 2.146.727.974 0 1.751-.336 1.751-1.633V8.499h-4.243a.294.294 0 0 1-.294-.294v-.293c0-2.272-1.485-3.965-4.06-4.153a.293.293 0 0 0-.31.293v5.44c0 .162.13.294.293.294h1.883v6.055c0 .162.13.294.294.294h6.13a.294.294 0 0 0 .293-.294v-6.055h2.176c1.245 0 2.256-1.011 2.256-2.256v-.605a.294.294 0 0 0-.293-.293zM6.316 6.445H4.716a.294.294 0 0 0-.294.294v10.118c0 .162.13.294.294.294h1.6c.162 0 .294-.132.294-.294V6.739a.294.294 0 0 0-.294-.294z"/></svg>' },
-  { name: 'Upwork', svg: '<svg viewBox="0 0 24 24" role="img" aria-label="Upwork"><path fill="#14A800" d="M18.561 13.158c-1.102 0-2.135-.467-3.074-1.227l.228-1.076.008-.042c.207-1.143.849-3.06 2.839-3.06 1.492 0 2.703 1.212 2.703 2.703-.001 1.489-1.212 2.702-2.704 2.702zm0-8.14c-2.539 0-4.51 1.649-5.31 4.757-1.222-1.834-2.148-4.036-2.687-5.892H7.828v7.112c-.002 1.406-1.141 2.546-2.547 2.546-1.406 0-2.545-1.14-2.547-2.546V3.883H.917v7.112c0 2.486 2.019 4.505 4.505 4.505 2.487 0 4.505-2.019 4.505-4.505v-1.763h1.159c.161 1.288.75 2.884 1.646 4.091l-1.383 6.329h2.669l1.016-4.646c1.152.732 2.445 1.182 3.786 1.182 2.87 0 5.199-2.328 5.199-5.198 0-2.87-2.329-5.198-5.199-5.198z"/></svg>' },
-  { name: 'Toptal', svg: '<svg viewBox="0 0 24 24" role="img" aria-label="Toptal"><path fill="#3863A0" d="M20.998 2.72l-5.6 2.3L18 6.56l3-1.44zm-1.5 4.7L9.34 12.5l-.5.2-3.7 1.5 4.6 1.9 9.9-4.1-1-4.6zm-4.3 5.3l-6.1 2.5-2.9-1.2 6.1-2.5 2.9 1.2zm-8.1 3.4L2.5 15.9l3.5-1.4 3.1 1.3-1.7 1.3zM2 17.4l6.7 2.8 1.4-1.1-6.7-2.8L2 17.4zm-.5-1.3L8.5 13.3l1.4 1.2-6.7 2.8-.7-2.2zm15.3-9.9l-.2.1L9.6 10.1l.6.2 7.6-3.1-.5-1.7z"/></svg>' },
-  { name: 'Scale AI', svg: '<svg viewBox="0 0 24 24" role="img" aria-label="Scale AI"><path fill="#000000" d="M9.275 2.494a.752.752 0 0 1 .534.22l3.771 3.771a.752.752 0 0 1 0 1.064l-3.77 3.772a.752.752 0 0 1-1.065 0L4.974 7.548a.752.752 0 0 1 0-1.064l3.771-3.771a.752.752 0 0 1 .53-.22zm0 8.42a.752.752 0 0 1 .534.22l3.771 3.771a.752.752 0 0 1 0 1.064l-3.77 3.772a.752.752 0 0 1-1.065 0l-3.771-3.771a.752.752 0 0 1 0-1.064l3.77-3.772a.752.752 0 0 1 .532-.22zm6.5-6.5a.752.752 0 0 1 .533.22l3.772 3.771a.752.752 0 0 1 0 1.064l-3.772 3.771a.752.752 0 0 1-1.064 0l-3.771-3.771a.752.752 0 0 1 0-1.064l3.77-3.771a.752.752 0 0 1 .532-.22z"/><path fill="#0F62FE" d="M15.775 15.914a.752.752 0 0 1 .533.22l3.772 3.772a.752.752 0 0 1 0 1.064l-3.772 3.771a.752.752 0 0 1-1.064 0l-3.771-3.771a.752.752 0 0 1 0-1.064l3.77-3.772a.752.752 0 0 1 .532-.22z"/></svg>' },
-  { name: 'Outlier', svg: '<svg viewBox="0 0 24 24" role="img" aria-label="Outlier"><path fill="#5B5BD6" d="M12 2l9.5 5.5v9L12 22l-9.5-5.5v-9L12 2zm0 2.3L4.8 8.6v6.8L12 19.7l7.2-4.3V8.6L12 4.3zm0 3.2l4.6 2.7v5.4L12 18.3l-4.6-2.7v-5.4L12 7.5z"/></svg>' },
-  { name: 'Turing', svg: '<svg viewBox="0 0 24 24" role="img" aria-label="Turing"><path fill="#0A2540" d="M12 2l9 4.5v9L12 20l-9-4.5v-9L12 2zm0 2.18L5 7.5v7l7 3.32 7-3.32v-7L12 4.18zM9.5 9.2a2.8 2.8 0 1 0 0 5.6 2.8 2.8 0 0 0 0-5.6zm0 1.5a1.3 1.3 0 1 1 0 2.6 1.3 1.3 0 0 1 0-2.6z"/></svg>' },
-  { name: 'Appen', svg: '<svg viewBox="0 0 24 24" role="img" aria-label="Appen"><path fill="#6C3FA8" d="M3 4h3.2l4.3 8.6L14.8 4H18l-6 12v4h-1.6v-4L3 4z"/><circle cx="19.5" cy="7" r="2.6" fill="#00C2CB"/></svg>' },
-  { name: 'Toloka', svg: '<svg viewBox="0 0 24 24" role="img" aria-label="Toloka"><path fill="#E03C31" d="M12 2l8 4.5v9L12 20l-8-4.5v-9L12 2zm0 2.2L5.2 8.2v7.6L12 19.8l6.8-4v-7.6L12 4.2z"/><path fill="#111111" d="M10.6 8.2h1.7v7.6h-1.7z"/></svg>' },
-  { name: 'DataAnnotation', svg: '<svg viewBox="0 0 24 24" role="img" aria-label="DataAnnotation"><rect x="2" y="3" width="20" height="18" rx="4" fill="#101828"/><text x="12" y="16.5" text-anchor="middle" font-family="Manrope,Inter,sans-serif" font-size="9" font-weight="800" fill="#FFFFFF">DA</text></svg>' },
+  // Each entry pairs a self-contained full-color brand SVG with its official
+  // brand color. `color` drives the SVG fill context AND the brand-name label,
+  // so the logo and wordmark always render in the platform's native hue.
+  // Self-contained SVGs mean the ticker never depends on an external image host.
+  { name: 'Upwork',            color: '#14A800', svg: '<svg viewBox="0 0 24 24" role="img" aria-label="Upwork"><path fill="#14A800" d="M18.561 13.158c-1.102 0-2.135-.467-3.074-1.227l.228-1.076.008-.042c.207-1.143.849-3.06 2.839-3.06 1.492 0 2.703 1.212 2.703 2.703-.001 1.489-1.212 2.702-2.704 2.702zm0-8.14c-2.539 0-4.51 1.649-5.31 4.757-1.222-1.834-2.148-4.036-2.687-5.892H7.828v7.112c-.002 1.406-1.141 2.546-2.547 2.546-1.406 0-2.545-1.14-2.547-2.546V3.883H.917v7.112c0 2.486 2.019 4.505 4.505 4.505 2.487 0 4.505-2.019 4.505-4.505v-1.763h1.159c.161 1.288.75 2.884 1.646 4.091l-1.383 6.329h2.669l1.016-4.646c1.152.732 2.445 1.182 3.786 1.182 2.87 0 5.199-2.328 5.199-5.198 0-2.87-2.329-5.198-5.199-5.198z"/></svg>' },
+  { name: 'Toptal',            color: '#3863A0', svg: '<svg viewBox="0 0 24 24" role="img" aria-label="Toptal"><path fill="#3863A0" d="M20.998 2.72l-5.6 2.3L18 6.56l3-1.44zm-1.5 4.7L9.34 12.5l-.5.2-3.7 1.5 4.6 1.9 9.9-4.1-1-4.6zm-4.3 5.3l-6.1 2.5-2.9-1.2 6.1-2.5 2.9 1.2zm-8.1 3.4L2.5 15.9l3.5-1.4 3.1 1.3-1.7 1.3zM2 17.4l6.7 2.8 1.4-1.1-6.7-2.8L2 17.4zm-.5-1.3L8.5 13.3l1.4 1.2-6.7 2.8-.7-2.2zm15.3-9.9l-.2.1L9.6 10.1l.6.2 7.6-3.1-.5-1.7z"/></svg>' },
+  { name: 'Fiverr',            color: '#00B22D', svg: '<svg viewBox="0 0 24 24" role="img" aria-label="Fiverr"><path fill="#00B22D" d="M23.996 7.286h-.005V6.106a.294.294 0 0 0-.293-.294h-3.61a.294.294 0 0 0-.294.294v1.18h-2.293a.294.294 0 0 0-.293.294v.625c0 .162.13.294.293.294h2.293v2.963c0 2.635-1.79 4.283-4.489 4.283-1.465 0-2.702-.43-3.617-1.302a.293.293 0 0 1-.034-.41l.76-.99a.293.293 0 0 1 .402-.064c.607.463 1.31.727 2.146.727.974 0 1.751-.336 1.751-1.633V8.499h-4.243a.294.294 0 0 1-.294-.294v-.293c0-2.272-1.485-3.965-4.06-4.153a.293.293 0 0 0-.31.293v5.44c0 .162.13.294.293.294h1.883v6.055c0 .162.13.294.294.294h6.13a.294.294 0 0 0 .293-.294v-6.055h2.176c1.245 0 2.256-1.011 2.256-2.256v-.605a.294.294 0 0 0-.293-.293zM6.316 6.445H4.716a.294.294 0 0 0-.294.294v10.118c0 .162.13.294.294.294h1.6c.162 0 .294-.132.294-.294V6.739a.294.294 0 0 0-.294-.294z"/></svg>' },
+  { name: 'DataAnnotation',    color: '#1E293B', svg: '<svg viewBox="0 0 24 24" role="img" aria-label="DataAnnotation"><rect x="2" y="3" width="20" height="18" rx="4" fill="#1E293B"/><text x="12" y="16.5" text-anchor="middle" font-family="Manrope,Inter,sans-serif" font-size="9" font-weight="800" fill="#FFFFFF">DA</text></svg>' },
+  { name: 'Scale AI',          color: '#000000', svg: '<svg viewBox="0 0 24 24" role="img" aria-label="Scale AI"><path fill="#000000" d="M9.275 2.494a.752.752 0 0 1 .534.22l3.771 3.771a.752.752 0 0 1 0 1.064l-3.77 3.772a.752.752 0 0 1-1.065 0L4.974 7.548a.752.752 0 0 1 0-1.064l3.771-3.771a.752.752 0 0 1 .53-.22zm0 8.42a.752.752 0 0 1 .534.22l3.771 3.771a.752.752 0 0 1 0 1.064l-3.77 3.772a.752.752 0 0 1-1.065 0l-3.771-3.771a.752.752 0 0 1 0-1.064l3.77-3.772a.752.752 0 0 1 .532-.22zm6.5-6.5a.752.752 0 0 1 .533.22l3.772 3.771a.752.752 0 0 1 0 1.064l-3.772 3.771a.752.752 0 0 1-1.064 0l-3.771-3.771a.752.752 0 0 1 0-1.064l3.77-3.771a.752.752 0 0 1 .532-.22z"/><path fill="#10B981" d="M15.775 15.914a.752.752 0 0 1 .533.22l3.772 3.772a.752.752 0 0 1 0 1.064l-3.772 3.771a.752.752 0 0 1-1.064 0l-3.771-3.771a.752.752 0 0 1 0-1.064l3.77-3.772a.752.752 0 0 1 .532-.22z"/></svg>' },
+  { name: 'Outlier',           color: '#6366F1', svg: '<svg viewBox="0 0 24 24" role="img" aria-label="Outlier"><path fill="#6366F1" d="M12 2l9.5 5.5v9L12 22l-9.5-5.5v-9L12 2zm0 2.3L4.8 8.6v6.8L12 19.7l7.2-4.3V8.6L12 4.3zm0 3.2l4.6 2.7v5.4L12 18.3l-4.6-2.7v-5.4L12 7.5z"/></svg>' },
+  { name: 'Turing',            color: '#00B4D8', svg: '<svg viewBox="0 0 24 24" role="img" aria-label="Turing"><path fill="#00B4D8" d="M12 2l9 4.5v9L12 20l-9-4.5v-9L12 2zm0 2.18L5 7.5v7l7 3.32 7-3.32v-7L12 4.18zM9.5 9.2a2.8 2.8 0 1 0 0 5.6 2.8 2.8 0 0 0 0-5.6zm0 1.5a1.3 1.3 0 1 1 0 2.6 1.3 1.3 0 0 1 0-2.6z"/></svg>' },
+  { name: 'Appen',             color: '#00A3E0', svg: '<svg viewBox="0 0 24 24" role="img" aria-label="Appen"><path fill="#00A3E0" d="M3 4h3.2l4.3 8.6L14.8 4H18l-6 12v4h-1.6v-4L3 4z"/><circle cx="19.5" cy="7" r="2.6" fill="#7B4B9E"/></svg>' },
+  { name: 'TELUS International', color: '#4B286D', svg: '<svg viewBox="0 0 40 32" role="img" aria-label="TELUS International"><rect x="0" y="2" width="38" height="28" rx="5" fill="#4B286D"/><text x="20" y="23" text-anchor="middle" font-family="Manrope,Inter,sans-serif" font-size="18" font-weight="800" fill="#FFFFFF">T</text></svg>' },
+  { name: 'Toloka',            color: '#FF3333', svg: '<svg viewBox="0 0 24 24" role="img" aria-label="Toloka"><path fill="#FF3333" d="M12 2l8 4.5v9L12 20l-8-4.5v-9L12 2zm0 2.2L5.2 8.2v7.6L12 19.8l6.8-4v-7.6L12 4.2z"/><path fill="#111111" d="M10.6 8.2h1.7v7.6h-1.7z"/></svg>' },
 ];
 
 // Build the marquee: two identical halves so the -50% keyframe loop is seamless.
-// Logos render in full original brand color at full contrast — no greyscale,
-// no opacity dimming — standardised to h-8 md:h-10 with generous gaps.
+// Each item is an inline flex pair (SVG logo + brand name) in the platform's
+// official brand color, vertically centered, with consistent gaps.
 function buildMarquee() {
   const track = document.getElementById('marquee-track');
   if (!track) return;
   const makeHalf = () => {
     const half = document.createElement('div');
-    half.className = 'flex items-center gap-12 md:gap-16 lg:gap-20 pr-12 md:pr-16 lg:pr-20 shrink-0';
+    half.className = 'flex items-center gap-12 md:gap-16 pr-12 md:pr-16 shrink-0';
     MARQUEE_LOGOS.forEach(logo => {
       const item = document.createElement('div');
-      // Uniform height, original colors, full opacity.
-      item.className = 'shrink-0 h-8 md:h-10 flex items-center';
+      // Inline pair: logo + brand name, both in the official brand color.
+      item.className = 'shrink-0 flex items-center gap-3';
       item.title = logo.name;
-      item.innerHTML = logo.svg;
-      const svg = item.firstElementChild;
+      item.innerHTML =
+        '<span class="h-8 md:h-10 flex items-center" aria-hidden="true">' + logo.svg + '</span>' +
+        '<span class="font-semibold text-sm md:text-base whitespace-nowrap" style="color:' + logo.color + ';">' + logo.name + '</span>';
+      const svg = item.querySelector('svg');
       if (svg) { svg.setAttribute('height', '100%'); svg.removeAttribute('width'); svg.style.height = '100%'; svg.style.width = 'auto'; }
       half.appendChild(item);
     });
