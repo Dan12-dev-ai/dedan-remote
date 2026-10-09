@@ -1,0 +1,901 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+<meta name="theme-color" content="#fbf7f0"/>
+<title>Explore — DEDAN Remote</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+<script>
+tailwind.config = {
+  darkMode: 'class',
+  theme: {
+    extend: {
+      fontFamily: {
+        sans: ['Inter','ui-sans-serif','system-ui','-apple-system','Segoe UI','Roboto','sans-serif'],
+        serif: ['"Instrument Serif"','ui-serif','Georgia','serif']
+      },
+      colors: {
+        ivory:  { 50:'#FDFBF6', 100:'#FBF7F0', 200:'#F6EFE2', DEFAULT:'#FBF7F0' },
+        cream:  { DEFAULT:'#F3ECDF', dark:'#EBE2D0' },
+        cocoa:  { 100:'#E9DFCF', 200:'#D7C9B1', 300:'#B8A488', 400:'#8E7A5E', 500:'#6C5A42', 600:'#514330', 700:'#3A2F22', 800:'#261E14', 900:'#17110B', DEFAULT:'#514330' },
+        espresso:{ 50:'#342A1E', 100:'#2A2117', 200:'#231C14', 300:'#1C1610', 400:'#16110C', 500:'#110D09', DEFAULT:'#1C1610' },
+        champagne: { 50:'#FBF0DA', 100:'#F5E3BA', 200:'#EBD194', 300:'#DDB767', 400:'#C89A47', 500:'#A87F36', DEFAULT:'#C89A47' },
+        gold:    { 500:'#B08A3E', 600:'#96722C', DEFAULT:'#B08A3E' },
+        success: { DEFAULT:'#2F6D51', soft:'#E6F0EA' },
+        warning: { DEFAULT:'#A87016', soft:'#F7EAD2' },
+        danger:  { DEFAULT:'#992F2A', soft:'#F4DAD9' },
+        info:    { DEFAULT:'#275E8C', soft:'#DCE8F2' },
+        ink:     '#110D09'
+      },
+      boxShadow: {
+        soft: '0 1px 2px rgba(23,17,11,.04), 0 1px 3px rgba(23,17,11,.04)',
+        card: '0 1px 2px rgba(23,17,11,.05), 0 2px 6px rgba(23,17,11,.04)',
+        lift: '0 8px 24px -12px rgba(23,17,11,.18), 0 2px 6px rgba(23,17,11,.05)',
+        ring: 'inset 0 0 0 1px rgba(200,154,71,.35)'
+      },
+      backgroundImage: {
+        'grain': "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.1  0 0 0 0 0.07  0 0 0 0 0.04  0 0 0 0.06 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>\")",
+        'mesh':  "radial-gradient(1200px 500px at 80% -10%, rgba(200,154,71,0.10), transparent 60%), radial-gradient(900px 420px at -10% 10%, rgba(110,80,40,0.08), transparent 55%)"
+      },
+      letterSpacing: { tight: '-0.02em', tighter: '-0.03em' }
+    }
+  }
+};
+</script>
+<style>
+  :root { color-scheme: light; }
+  html,body { -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; text-rendering:optimizeLegibility; }
+  body { background:#FBF7F0; color:#17110B; font-family:'Inter',ui-sans-serif,system-ui,sans-serif; }
+  ::selection { background:#DDB767; color:#1C1610; }
+  .material-symbols-rounded { font-variation-settings:'FILL' 0,'wght' 500,'GRAD' 0,'opsz' 20; line-height:1; }
+  .ic-fill { font-variation-settings:'FILL' 1,'wght' 500,'GRAD' 0,'opsz' 20; }
+  .hairline { box-shadow: inset 0 0 0 1px rgba(81,67,48,.08); }
+  .hairline-strong { box-shadow: inset 0 0 0 1px rgba(81,67,48,.14); }
+  .hairline-gold { box-shadow: inset 0 0 0 1px rgba(200,154,71,.35); }
+  .font-display { font-family:'Instrument Serif',Georgia,serif; letter-spacing:-0.01em; }
+  .grid-12 { max-width:1520px; margin-inline:auto; padding-inline:20px; }
+  @media (min-width:1280px){ .grid-12{ padding-inline:28px; } }
+  .sidebar-link { display:flex; align-items:center; gap:10px; padding:8px 10px; border-radius:8px; color:#514330; font-weight:500; font-size:13.5px; line-height:1; transition:all .15s ease; cursor:pointer; text-decoration:none; border:1px solid transparent; }
+  .sidebar-link:hover { background:#F3ECDF; color:#1C1610; }
+  .sidebar-link.is-active { background:#fff; color:#1C1610; box-shadow:inset 0 0 0 1px rgba(81,67,48,.10), 0 1px 2px rgba(23,17,11,.04); }
+  .chip { display:inline-flex; align-items:center; gap:6px; padding:3px 8px; border-radius:9999px; font-size:11.5px; font-weight:600; line-height:1.3; white-space:nowrap; }
+  .pill { display:inline-flex; align-items:center; gap:6px; padding:4px 9px; border-radius:8px; font-size:12px; font-weight:600; line-height:1.25; }
+  .btn { display:inline-flex; align-items:center; justify-content:center; gap:7px; padding:8px 12px; border-radius:9px; font-weight:600; font-size:13px; line-height:1.2; border:1px solid rgba(81,67,48,.12); background:#fff; color:#1C1610; cursor:pointer; transition:all .14s ease; }
+  .btn:hover { background:#FBF7F0; }
+  .btn:active { transform:translateY(1px); }
+  .btn-primary { background:#1C1610; color:#FBF7F0; border-color:transparent; box-shadow:0 1px 0 rgba(255,255,255,.06) inset,0 1px 2px rgba(23,17,11,.18); }
+  .btn-primary:hover { background:#231C14; color:#fff; box-shadow:0 8px 18px -10px rgba(23,17,11,.45); }
+  .btn-primary:active { background:#110D09; }
+  .btn-gold { background:linear-gradient(180deg,#DDB767 0%,#C89A47 100%); color:#1C1610; border-color:rgba(150,114,44,.35); box-shadow:0 1px 0 rgba(255,255,255,.3) inset,0 1px 2px rgba(150,114,44,.22); }
+  .btn-gold:hover { filter:brightness(1.04); }
+  .icon-btn { display:inline-flex; align-items:center; justify-content:center; width:34px; height:34px; border-radius:9px; background:transparent; color:#514330; border:1px solid transparent; cursor:pointer; transition:all .14s ease; }
+  .icon-btn:hover { background:#F3ECDF; color:#1C1610; }
+  .icon-btn.is-saved { color:#A87F36; }
+  .search-wrap { position:relative; }
+  .search-wrap:focus-within .search-inner { box-shadow:0 0 0 4px rgba(200,154,71,.14), inset 0 0 0 1px rgba(200,154,71,.45); }
+  .search-inner { transition:all .18s ease; }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+  .job-card { position:relative; background:#fff; border-radius:14px; box-shadow:0 1px 2px rgba(23,17,11,.05), 0 2px 6px rgba(23,17,11,.04), inset 0 0 0 1px rgba(81,67,48,.08); transition:transform .22s cubic-bezier(.2,.7,.2,1), box-shadow .22s ease, background-color .22s ease; }
+  .job-card:hover { transform:translateY(-1px); box-shadow:0 10px 28px -14px rgba(23,17,11,.24), 0 2px 6px rgba(23,17,11,.04), inset 0 0 0 1px rgba(200,154,71,.35); background:#FFFCF7; }
+  .job-card.is-selected { box-shadow:0 0 0 2px rgba(200,154,71,.55), 0 10px 28px -14px rgba(23,17,11,.22), 0 1px 2px rgba(23,17,11,.04); background:#FFFCF6; }
+  .job-card::after { content:''; position:absolute; inset:0; border-radius:14px; pointer-events:none; background:radial-gradient(500px 80px at 20% 0%, rgba(200,154,71,.07), transparent 60%); opacity:0; transition:opacity .3s ease; }
+  .job-card:hover::after, .job-card.is-selected::after { opacity:1; }
+  .kpi { display:flex; align-items:center; gap:8px; padding:7px 10px; border-radius:9px; background:#fff; box-shadow:inset 0 0 0 1px rgba(81,67,48,.08); }
+  .dot { display:inline-block; width:7px; height:7px; border-radius:9999px; }
+  .live-dot { position:relative; }
+  .live-dot::before { content:''; position:absolute; inset:-4px; border-radius:9999px; background:currentColor; opacity:.25; animation:pulse 2s infinite; }
+  @keyframes pulse { 0%{transform:scale(.8);opacity:.4} 70%{transform:scale(1.4);opacity:0} 100%{transform:scale(.8);opacity:0} }
+  .skel { background:linear-gradient(90deg,#F3ECDF 0%, #FBF7F0 50%, #F3ECDF 100%); background-size:200% 100%; animation:shimmer 1.5s infinite; border-radius:8px; }
+  @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+  .pop-in { animation:pop .28s cubic-bezier(.2,.8,.2,1) both; }
+  @keyframes pop { 0%{ opacity:0; transform:translateY(6px) scale(.985);} 100%{opacity:1;transform:translateY(0) scale(1);} }
+  .score-ring { --p: 94; --sz: 58px; --th: 5px; width:var(--sz); height:var(--sz); border-radius:9999px; background: conic-gradient(#2F6D51 calc(var(--p) * 1%), #E9DFCF 0); display:grid; place-items:center; position:relative; }
+  .score-ring::after { content:''; position:absolute; inset:var(--th); border-radius:9999px; background:#fff; }
+  .score-ring > span { position:relative; z-index:1; font-size:14px; font-weight:800; letter-spacing:-.01em; color:#1C1610; }
+  .drawer-backdrop { position:fixed; inset:0; background:rgba(23,17,11,.42); backdrop-filter:blur(2px); z-index:60; opacity:0; pointer-events:none; transition:opacity .2s ease; }
+  .drawer-backdrop.open { opacity:1; pointer-events:auto; }
+  .drawer { position:fixed; top:0; right:0; bottom:0; width:min(100%, 460px); background:#FBF7F0; z-index:70; transform:translateX(100%); transition:transform .28s cubic-bezier(.2,.8,.2,1); display:flex; flex-direction:column; box-shadow:-20px 0 50px rgba(23,17,11,.18); }
+  .drawer.open { transform:translateX(0); }
+  .toast { position:fixed; bottom:96px; left:50%; transform:translate(-50%, 14px); background:#1C1610; color:#FBF7F0; padding:10px 14px; border-radius:10px; font-size:12.5px; font-weight:600; z-index:90; opacity:0; pointer-events:none; transition:all .22s ease; display:flex; align-items:center; gap:8px; box-shadow:0 10px 30px rgba(23,17,11,.35), inset 0 0 0 1px rgba(255,255,255,.06); }
+  .toast.show { opacity:1; transform:translate(-50%, 0); pointer-events:auto; }
+  .hr-dot::before { content:'·'; margin-inline:6px; color:#B8A488; }
+  @media (prefers-reduced-motion: reduce) { *,*::before,*::after{ animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; } }
+  .focus-ring:focus-visible { outline:2px solid #C89A47; outline-offset:3px; border-radius:10px; }
+  .bottom-nav { display:none; }
+  @media (max-width: 1023px) { .bottom-nav { display:flex; } }
+  .kbd { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:10.5px; font-weight:700; color:#514330; background:#FBF7F0; padding:2px 6px; border-radius:5px; box-shadow:inset 0 0 0 1px rgba(81,67,48,.14), 0 1px 0 rgba(23,17,11,.06); }
+  .scroll-x { scrollbar-width:none; } .scroll-x::-webkit-scrollbar { display:none; }
+</style>
+</head>
+<body class="min-h-screen bg-ivory bg-mesh text-ink antialiased">
+<!-- ============================================================
+     TOP NAV
+============================================================ -->
+<header class="sticky top-0 z-40 bg-[#FBF7F0]/80 backdrop-blur-xl border-b border-cocoa/10">
+  <div class="grid-12 h-16 flex items-center gap-4">
+    <!-- Brand + Nav -->
+    <div class="flex items-center gap-5 min-w-0">
+      <a href="index.html" class="flex items-center gap-2.5 shrink-0 focus-ring rounded-lg p-0.5 pr-1 -ml-0.5" aria-label="DEDAN Remote · Home">
+        <div class="relative w-9 h-9 rounded-xl bg-gradient-to-br from-espresso-300 to-espresso-500 text-ivory shadow-card grid place-items-center overflow-hidden">
+          <span class="font-serif text-[18px] italic font-semibold tracking-tight relative -top-0.5">D</span>
+          <span class="absolute -bottom-1 -right-1 w-2.5 h-2.5 rounded-full bg-champagne-300 ring-2 ring-[#FBF7F0]"></span>
+        </div>
+        <div class="flex flex-col leading-tight">
+          <span class="text-[14.5px] font-extrabold tracking-tight text-espresso-300">DEDAN Remote</span>
+          <span class="text-[10px] uppercase tracking-[0.14em] font-semibold text-cocoa-400 -mt-0.5">Opportunity Intelligence</span>
+        </div>
+      </a>
+      <nav class="hidden lg:flex items-center gap-1 pl-3" aria-label="Primary">
+        <a href="index.html" class="sidebar-link"><span class="material-symbols-rounded" style="font-size:17px;">home</span>Home</a>
+        <a href="opportunities.html" class="sidebar-link is-active"><span class="material-symbols-rounded ic-fill" style="font-size:17px;">explore</span>Explore</a>
+        <a href="#saved" class="sidebar-link"><span class="material-symbols-rounded" style="font-size:17px;">bookmarks</span>Saved <span class="ml-auto text-[10.5px] font-semibold text-cocoa-400">14</span></a>
+        <a href="#apps" class="sidebar-link"><span class="material-symbols-rounded" style="font-size:17px;">briefcase</span>Applications <span class="ml-auto text-[10.5px] font-semibold text-cocoa-400">7</span></a>
+        <a href="#interviews" class="sidebar-link"><span class="material-symbols-rounded" style="font-size:17px;">forum</span>Interviews</a>
+      </nav>
+    </div>
+
+    <!-- Global search -->
+    <div class="hidden xl:block flex-1 mx-6">
+      <div class="search-wrap max-w-xl mx-auto">
+        <label for="nav-q" class="sr-only">Search DEDAN Remote</label>
+        <div class="search-inner flex items-center gap-2 h-10 px-2.5 rounded-xl bg-white hairline">
+          <span class="material-symbols-rounded text-cocoa-400" style="font-size:19px;">search</span>
+          <input id="nav-q" type="text" placeholder="Search roles, companies, stacks…" class="flex-1 bg-transparent text-[13.5px] text-espresso-400 placeholder:text-cocoa-300 focus:outline-none"/>
+          <span class="kbd">⌘K</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="flex items-center gap-1 ml-auto shrink-0">
+      <button class="icon-btn tooltip hidden sm:grid focus-ring" type="button" aria-label="Create saved search" title="New saved search">
+        <span class="material-symbols-rounded" style="font-size:20px;">add_alert</span>
+      </button>
+      <button class="icon-btn tooltip focus-ring relative" type="button" aria-label="3 notifications" title="Notifications">
+        <span class="material-symbols-rounded" style="font-size:20px;">notifications</span>
+        <span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-danger ring-2 ring-ivory"></span>
+      </button>
+      <div class="w-px h-6 bg-cocoa/10 mx-1.5"></div>
+      <button class="flex items-center gap-2 pl-1 pr-2.5 h-10 rounded-xl hover:bg-cream transition-colors focus-ring" type="button" aria-label="Open profile menu">
+        <div class="w-8 h-8 rounded-full bg-gradient-to-br from-champagne-300 to-gold grid place-items-center text-espresso-300 text-[12px] font-extrabold shadow-card ring-1 ring-champagne-400/40">KM</div>
+        <div class="hidden sm:flex flex-col items-start leading-tight">
+          <span class="text-[12.5px] font-bold text-espresso-300">Kali M.</span>
+          <span class="text-[10.5px] uppercase tracking-wider font-semibold text-cocoa-400">L6 · Senior BE</span>
+        </div>
+        <span class="material-symbols-rounded text-cocoa-400" style="font-size:17px;">expand_more</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- ============================================================
+     SYSTEM BANNER (source failure)
+============================================================ -->
+<div id="system-banner" class="hidden grid-12 pt-3">
+  <div class="flex items-center justify-between gap-3 px-4 py-2.5 rounded-xl bg-warning-soft hairline-strong border border-champagne-200/70">
+    <div class="flex items-center gap-3 min-w-0">
+      <span class="material-symbols-rounded text-warning" style="font-size:19px;">cloud_off</span>
+      <p class="m-0 text-[13px] font-semibold text-warning truncate">
+        Some sources are temporarily unavailable.
+        <span class="hidden md:inline font-medium text-[#7a5010] hr-dot">Glassdoor ingest degraded · Your existing results are still available.</span>
+      </p>
+    </div>
+    <div class="flex items-center gap-2 shrink-0">
+      <a href="#" class="chip bg-white text-warning hover:bg-warning-soft hairline-strong no-underline">
+        <span class="material-symbols-rounded" style="font-size:14px;">info</span>Details
+      </a>
+    </div>
+  </div>
+</div>
+
+<main class="grid-12 py-5 md:py-6 pb-28 lg:pb-10">
+
+<!-- ============================================================
+     PAGE HEADER + SEARCH
+============================================================ -->
+<section class="mb-5 md:mb-6">
+  <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-5">
+    <div class="flex items-end gap-3">
+      <div>
+        <div class="flex items-center gap-2 mb-1.5">
+          <span class="chip bg-cream text-cocoa-600 hairline-strong">
+            <span class="dot bg-success live-dot success"></span>
+            Live discovery
+          </span>
+          <span class="text-[11.5px] uppercase tracking-[0.16em] font-bold text-cocoa-400">Explore</span>
+        </div>
+        <h1 class="m-0 font-display text-[40px] md:text-[46px] leading-[0.98] text-espresso-400 tracking-tight">
+          Which opportunities are <span class="italic text-gold">worth your attention?</span>
+        </h1>
+        <p class="m-0 mt-2 text-[14.5px] text-cocoa-500 max-w-2xl leading-relaxed">
+          Discover remote work matched to your skills, timezone cadence, and engineering principles. DEDAN ranks by signal, not recruiter budget.
+        </p>
+      </div>
+    </div>
+    <div class="hidden sm:flex items-center gap-2 shrink-0">
+      <button class="btn focus-ring" type="button">
+        <span class="material-symbols-rounded" style="font-size:17px;">tune</span>More filters
+      </button>
+      <button class="btn btn-gold focus-ring" type="button">
+        <span class="material-symbols-rounded" style="font-size:17px;">auto_awesome</span>
+        Calibrate with AI
+      </button>
+    </div>
+  </div>
+
+  <!-- Large Search -->
+  <div class="search-wrap">
+    <label for="explore-q" class="sr-only">Search jobs, companies, skills, or technologies</label>
+    <div class="search-inner relative flex items-center gap-3 pl-4 pr-2.5 py-3 rounded-2xl bg-white hairline-strong shadow-soft">
+      <span class="material-symbols-rounded text-champagne-400" style="font-size:24px;">workspace_preferences</span>
+      <div class="flex-1 min-w-0">
+        <input id="explore-q" type="text"
+          value="Find remote backend roles using Python and FastAPI that accept applicants from Africa."
+          placeholder="Search roles, companies, stacks, or natural constraints… (e.g. Staff Go roles in EU)"
+          class="w-full bg-transparent text-[15px] font-medium text-espresso-400 placeholder:text-cocoa-300 focus:outline-none"/>
+      </div>
+      <div class="hidden md:flex items-center gap-1.5">
+        <button id="voice-btn" class="icon-btn focus-ring" type="button" aria-label="Voice search" title="Voice search">
+          <span class="material-symbols-rounded text-cocoa-500" style="font-size:19px;">mic</span>
+        </button>
+        <button id="ai-run" class="btn btn-primary !h-9 !px-3.5 focus-ring" type="button">
+          <span class="material-symbols-rounded text-champagne-200" style="font-size:17px;">auto_awesome</span>
+          <span class="text-champagne-50">Parse</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Parsed filter chips -->
+    <div id="parsed" class="mt-3 flex flex-wrap items-center gap-1.5">
+      <span class="inline-flex items-center gap-1.5 text-[11px] uppercase tracking-wider font-bold text-cocoa-400 pr-1">
+        <span class="material-symbols-rounded text-gold" style="font-size:15px;">psychology</span>
+        AI parsed
+      </span>
+      <button class="pill bg-white hairline-strong text-espresso-300 hover:bg-cream transition-colors" type="button" data-filter>
+        <span class="text-cocoa-400 font-semibold">Role</span>
+        <span class="text-cocoa/60">›</span>Backend Engineer
+        <span class="material-symbols-rounded text-cocoa-300 hover:text-danger transition-colors" style="font-size:15px;">close</span>
+      </button>
+      <button class="pill bg-white hairline-strong text-espresso-300 hover:bg-cream transition-colors" type="button" data-filter>
+        <span class="text-cocoa-400 font-semibold">Skill</span>
+        <span class="text-cocoa/60">›</span>Python
+        <span class="material-symbols-rounded text-cocoa-300 hover:text-danger transition-colors" style="font-size:15px;">close</span>
+      </button>
+      <button class="pill bg-white hairline-strong text-espresso-300 hover:bg-cream transition-colors" type="button" data-filter>
+        <span class="text-cocoa-400 font-semibold">Skill</span>
+        <span class="text-cocoa/60">›</span>FastAPI
+        <span class="material-symbols-rounded text-cocoa-300 hover:text-danger transition-colors" style="font-size:15px;">close</span>
+      </button>
+      <button class="pill bg-white hairline-strong text-espresso-300 hover:bg-cream transition-colors" type="button" data-filter>
+        <span class="text-cocoa-400 font-semibold">Location</span>
+        <span class="text-cocoa/60">›</span>Africa Eligible
+        <span class="material-symbols-rounded text-cocoa-300 hover:text-danger transition-colors" style="font-size:15px;">close</span>
+      </button>
+      <button class="pill bg-white hairline-strong text-espresso-300 hover:bg-cream transition-colors" type="button" data-filter>
+        <span class="text-cocoa-400 font-semibold">Work</span>
+        <span class="text-cocoa/60">›</span>Remote
+        <span class="material-symbols-rounded text-cocoa-300 hover:text-danger transition-colors" style="font-size:15px;">close</span>
+      </button>
+      <button id="save-search" class="pill bg-success-soft text-success hairline hover:brightness-95 transition-all focus-ring" type="button">
+        <span class="material-symbols-rounded" style="font-size:14px;">bookmark_add</span>Save this search
+      </button>
+    </div>
+  </div>
+
+  <!-- AI Discovery Summary -->
+  <div class="mt-4 rounded-2xl bg-gradient-to-br from-cream to-ivory p-4 md:p-[18px] hairline-strong relative overflow-hidden">
+    <div class="absolute -top-24 -right-16 w-[360px] h-[360px] rounded-full bg-champagne-50/60 blur-3xl pointer-events-none"></div>
+    <div class="relative flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div class="flex items-start gap-3 min-w-0">
+        <div class="w-11 h-11 rounded-xl bg-white hairline grid place-items-center shrink-0 shadow-card">
+          <span class="material-symbols-rounded text-gold" style="font-size:22px;">hub</span>
+        </div>
+        <div class="min-w-0">
+          <div class="flex items-center gap-2">
+            <span class="text-[12px] font-extrabold tracking-wide uppercase text-gold">DEDAN AI</span>
+            <span class="chip bg-champagne-50 text-gold hairline-gold">
+              <span class="dot bg-gold live-dot gold"></span>Engine live
+            </span>
+          </div>
+          <p class="m-0 mt-0.5 text-[15px] font-semibold text-espresso-400 leading-snug">
+            <span id="opp-count" class="tabular-nums">128</span> opportunities match your profile
+          </p>
+          <p class="m-0 text-[12.5px] text-cocoa-500 leading-relaxed">
+            Signal calibrated against your Python/backend telemetry, async preferences, and Africa payroll eligibility.
+          </p>
+        </div>
+      </div>
+      <div class="flex items-center gap-1.5 flex-wrap">
+        <div class="kpi"><span class="dot bg-success live-dot success"></span><span class="text-[12.5px] font-bold text-espresso-300 tabular-nums">92</span><span class="text-[11.5px] text-cocoa-500 font-semibold">high‑match</span></div>
+        <div class="kpi"><span class="dot bg-info"></span><span class="text-[12.5px] font-bold text-espresso-300 tabular-nums">47</span><span class="text-[11.5px] text-cocoa-500 font-semibold">fully eligible</span></div>
+        <div class="kpi"><span class="dot bg-champagne-400"></span><span class="text-[12.5px] font-bold text-espresso-300 tabular-nums">18</span><span class="text-[11.5px] text-cocoa-500 font-semibold">new today</span></div>
+        <div class="kpi"><span class="material-symbols-rounded text-cocoa-400" style="font-size:14px;">merge</span><span class="text-[12.5px] font-bold text-espresso-300 tabular-nums">142</span><span class="text-[11.5px] text-cocoa-500 font-semibold">duplicates merged</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     3-REGION LAYOUT
+============================================================ -->
+<div class="grid grid-cols-1 lg:grid-cols-[248px_minmax(0,1fr)] 2xl:grid-cols-[248px_minmax(0,1fr)_340px] gap-5 lg:gap-6 items-start">
+
+  <!-- ====== LEFT SIDEBAR ====== -->
+  <aside class="hidden lg:block lg:order-1 order-2" aria-label="Discovery sidebar">
+    <div class="sticky top-[76px] space-y-4 pr-0.5">
+      <!-- Discovery -->
+      <div class="rounded-2xl bg-cream p-2 hairline">
+        <div class="px-2 pt-2 pb-1.5 flex items-center justify-between">
+          <span class="text-[10.5px] uppercase tracking-[0.16em] font-bold text-cocoa-400">Discovery</span>
+        </div>
+        <nav class="flex flex-col gap-0.5 p-1" aria-label="Saved views">
+          <a href="#all" class="sidebar-link is-active">
+            <span class="material-symbols-rounded" style="font-size:17px;">layers</span>
+            All opportunities
+            <span class="ml-auto chip bg-espresso-300 text-ivory">128</span>
+          </a>
+          <a href="#high" class="sidebar-link">
+            <span class="material-symbols-rounded text-success" style="font-size:17px;">verified</span>
+            High‑match (≥90%)
+            <span class="ml-auto chip bg-success-soft text-success">92</span>
+          </a>
+          <a href="#saved" class="sidebar-link">
+            <span class="material-symbols-rounded" style="font-size:17px;">bookmarks</span>
+            Saved jobs
+            <span class="ml-auto chip bg-white hairline text-cocoa-600">14</span>
+          </a>
+          <a href="#apps" class="sidebar-link">
+            <span class="material-symbols-rounded" style="font-size:17px;">briefcase</span>
+            Applications
+            <span class="ml-auto chip bg-white hairline text-cocoa-600">7</span>
+          </a>
+          <a href="#direct" class="sidebar-link">
+            <span class="material-symbols-rounded text-gold" style="font-size:17px;">bolt</span>
+            Founder direct
+            <span class="ml-auto chip bg-white hairline text-cocoa-600">21</span>
+          </a>
+        </nav>
+      </div>
+
+      <!-- Saved Searches -->
+      <div class="rounded-2xl bg-cream p-2 hairline">
+        <div class="px-2 pt-2 pb-1.5 flex items-center justify-between">
+          <span class="text-[10.5px] uppercase tracking-[0.16em] font-bold text-cocoa-400">Saved searches</span>
+          <span class="chip bg-champagne-50 text-gold hairline-gold !text-[10px]">Continuous</span>
+        </div>
+        <div class="flex flex-col gap-1 p-1">
+          <button class="group text-left p-2.5 rounded-xl bg-white hairline hover:hairline-gold transition-colors" type="button">
+            <div class="flex items-center justify-between gap-2">
+              <span class="text-[13px] font-bold text-espresso-300 truncate">AI Engineer · Global</span>
+              <span class="dot bg-success live-dot success shrink-0"></span>
+            </div>
+            <div class="flex items-center justify-between mt-1.5 text-[11.5px] text-cocoa-500 font-semibold">
+              <span class="text-success">3 new today</span><span>Live</span>
+            </div>
+          </button>
+          <button class="group text-left p-2.5 rounded-xl hover:bg-white hairline hover:hairline-strong transition-colors" type="button">
+            <div class="flex items-center justify-between gap-2">
+              <span class="text-[13px] font-bold text-espresso-300 truncate">Backend · $180k+</span>
+              <span class="material-symbols-rounded text-cocoa-300" style="font-size:14px;">rss_feed</span>
+            </div>
+            <div class="flex items-center justify-between mt-1.5 text-[11.5px] text-cocoa-500 font-semibold">
+              <span>12 active</span><span>Synced 18m ago</span>
+            </div>
+          </button>
+          <button class="group text-left p-2.5 rounded-xl hover:bg-white hairline hover:hairline-strong transition-colors" type="button">
+            <div class="flex items-center justify-between gap-2">
+              <span class="text-[13px] font-bold text-espresso-300 truncate">Distributed Systems</span>
+              <span class="material-symbols-rounded text-cocoa-300" style="font-size:14px;">rss_feed</span>
+            </div>
+            <div class="flex items-center justify-between mt-1.5 text-[11.5px] text-cocoa-500 font-semibold">
+              <span>5 active</span><span>Synced 1h ago</span>
+            </div>
+          </button>
+          <button class="group text-left p-2.5 rounded-xl hover:bg-white hairline hover:hairline-strong transition-colors" type="button">
+            <div class="flex items-center justify-between gap-2">
+              <span class="text-[13px] font-bold text-espresso-300 truncate">Remote Africa</span>
+              <span class="material-symbols-rounded text-cocoa-300" style="font-size:14px;">rss_feed</span>
+            </div>
+            <div class="flex items-center justify-between mt-1.5 text-[11.5px] text-cocoa-500 font-semibold">
+              <span>8 active</span><span>Synced 2h ago</span>
+            </div>
+          </button>
+        </div>
+        <div class="p-2 pt-1">
+          <button class="btn w-full focus-ring" type="button">
+            <span class="material-symbols-rounded text-gold" style="font-size:17px;">add_circle</span>
+            Create saved search
+          </button>
+        </div>
+      </div>
+
+      <!-- Sources -->
+      <div class="rounded-2xl bg-cream p-2 hairline">
+        <div class="px-2 pt-2 pb-1.5 flex items-center justify-between">
+          <span class="text-[10.5px] uppercase tracking-[0.16em] font-bold text-cocoa-400">Sources</span>
+          <span class="text-[11px] font-bold text-cocoa-500">6 selected</span>
+        </div>
+        <div class="flex flex-col p-1" role="group" aria-label="Job sources">
+          <label class="flex items-center justify-between gap-2 px-2.5 py-2 rounded-lg hover:bg-white transition-colors cursor-pointer">
+            <span class="flex items-center gap-2">
+              <input type="checkbox" checked class="accent-gold w-4 h-4"/>
+              <span class="text-[13px] font-semibold text-espresso-300">All sources</span>
+            </span>
+            <span class="text-[11px] font-bold text-cocoa-500 tabular-nums">128</span>
+          </label>
+          <label class="flex items-center justify-between gap-2 px-2.5 py-2 rounded-lg hover:bg-white transition-colors cursor-pointer">
+            <span class="flex items-center gap-2">
+              <input type="checkbox" checked class="accent-gold w-4 h-4"/>
+              <span class="text-[13px] font-medium text-espresso-300">Micro1</span>
+            </span>
+            <span class="text-[11px] font-semibold text-cocoa-500 tabular-nums">34</span>
+          </label>
+          <label class="flex items-center justify-between gap-2 px-2.5 py-2 rounded-lg hover:bg-white transition-colors cursor-pointer">
+            <span class="flex items-center gap-2">
+              <input type="checkbox" checked class="accent-gold w-4 h-4"/>
+              <span class="text-[13px] font-medium text-espresso-300">Turing</span>
+            </span>
+            <span class="text-[11px] font-semibold text-cocoa-500 tabular-nums">28</span>
+          </label>
+          <label class="flex items-center justify-between gap-2 px-2.5 py-2 rounded-lg hover:bg-white transition-colors cursor-pointer">
+            <span class="flex items-center gap-2">
+              <input type="checkbox" checked class="accent-gold w-4 h-4"/>
+              <span class="text-[13px] font-medium text-espresso-300">Wellfound</span>
+            </span>
+            <span class="text-[11px] font-semibold text-cocoa-500 tabular-nums">31</span>
+          </label>
+          <details class="group mt-0.5">
+            <summary class="list-none flex items-center justify-between gap-2 px-2.5 py-2 rounded-lg hover:bg-white cursor-pointer text-[12.5px] font-semibold text-cocoa-500">
+              <span>Show 3 more</span>
+              <span class="material-symbols-rounded transition-transform group-open:rotate-180" style="font-size:16px;">expand_more</span>
+            </summary>
+            <div class="pt-0.5 space-y-0.5">
+              <label class="flex items-center justify-between gap-2 px-2.5 py-2 rounded-lg hover:bg-white transition-colors cursor-pointer">
+                <span class="flex items-center gap-2"><input type="checkbox" checked class="accent-gold w-4 h-4"/><span class="text-[13px] font-medium text-espresso-300">Glassdoor</span></span>
+                <span class="text-[11px] font-semibold text-cocoa-500 tabular-nums">22</span>
+              </label>
+              <label class="flex items-center justify-between gap-2 px-2.5 py-2 rounded-lg hover:bg-white transition-colors cursor-pointer">
+                <span class="flex items-center gap-2"><input type="checkbox" checked class="accent-gold w-4 h-4"/><span class="text-[13px] font-medium text-espresso-300">Remote OK</span></span>
+                <span class="text-[11px] font-semibold text-cocoa-500 tabular-nums">14</span>
+              </label>
+              <label class="flex items-center justify-between gap-2 px-2.5 py-2 rounded-lg hover:bg-white transition-colors cursor-pointer">
+                <span class="flex items-center gap-2"><input type="checkbox" checked class="accent-gold w-4 h-4"/><span class="text-[13px] font-medium text-espresso-300">We Work Remotely</span></span>
+                <span class="text-[11px] font-semibold text-cocoa-500 tabular-nums">9</span>
+              </label>
+            </div>
+          </details>
+        </div>
+      </div>
+
+      <!-- Quality note -->
+      <div class="rounded-2xl bg-gradient-to-br from-espresso-300 to-espresso-500 text-ivory p-4 shadow-lift relative overflow-hidden">
+        <div class="absolute inset-0 bg-grain opacity-40 mix-blend-overlay pointer-events-none"></div>
+        <div class="relative flex items-center gap-2 mb-2">
+          <span class="material-symbols-rounded text-champagne-200" style="font-size:18px;">verified_user</span>
+          <span class="text-[10.5px] uppercase tracking-[0.16em] font-bold text-champagne-200">Zero‑noise guarantee</span>
+        </div>
+        <p class="m-0 relative text-[12.5px] leading-relaxed text-ivory/90">
+          Listings with hidden on‑site mandates, missing compensation, or sync ambiguity are auto‑calibrated or sequestered.
+        </p>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ====== CENTER: JOB EXPLORER ====== -->
+  <section class="lg:order-2 order-1 min-w-0 flex flex-col gap-3.5" aria-label="Job explorer">
+
+    <!-- Filter bar + Sort -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-3">
+      <div id="filters-row" class="flex items-center gap-1.5 overflow-x-auto scroll-x -mx-1 px-1">
+        <button class="pill bg-white hairline-strong text-espresso-300 hover:bg-cream shrink-0" type="button" aria-haspopup="dialog">
+          Role<strong class="font-extrabold ml-1">Backend</strong>
+          <span class="material-symbols-rounded text-cocoa-300" style="font-size:15px;">expand_more</span>
+        </button>
+        <button class="pill bg-white hairline-strong text-espresso-300 hover:bg-cream shrink-0" type="button">
+          Location<strong class="font-extrabold ml-1">Worldwide</strong>
+          <span class="material-symbols-rounded text-cocoa-300" style="font-size:15px;">expand_more</span>
+        </button>
+        <button class="pill bg-white hairline-strong text-espresso-300 hover:bg-cream shrink-0" type="button">
+          Exp<strong class="font-extrabold ml-1">Senior</strong>
+          <span class="material-symbols-rounded text-cocoa-300" style="font-size:15px;">expand_more</span>
+        </button>
+        <button class="pill bg-white hairline-strong text-espresso-300 hover:bg-cream shrink-0" type="button">
+          Salary<strong class="font-extrabold ml-1">$2k+</strong>
+          <span class="material-symbols-rounded text-cocoa-300" style="font-size:15px;">expand_more</span>
+        </button>
+        <button class="pill bg-white hairline-strong text-espresso-300 hover:bg-cream shrink-0" type="button">
+          Type<strong class="font-extrabold ml-1">Full‑time</strong>
+          <span class="material-symbols-rounded text-cocoa-300" style="font-size:15px;">expand_more</span>
+        </button>
+        <button id="open-drawer" class="pill bg-cream text-espresso-300 hover:bg-white hairline-strong shrink-0 focus-ring" type="button">
+          <span class="material-symbols-rounded text-gold" style="font-size:15px;">tune</span>
+          More filters
+          <span class="chip bg-espresso-300 text-ivory !text-[10px] !px-1.5 ml-1">8</span>
+        </button>
+        <span class="w-px h-6 bg-cocoa/10 mx-1 shrink-0"></span>
+        <button id="clear-all" class="text-[12px] font-bold text-cocoa-500 hover:text-danger underline underline-offset-4 decoration-dotted shrink-0 px-1" type="button">Clear all</button>
+      </div>
+      <div class="flex items-center justify-between md:justify-end gap-2 md:gap-2">
+        <div class="flex items-center gap-1.5 bg-white h-9 px-3 rounded-xl hairline-strong shrink-0">
+          <span class="text-[10.5px] uppercase tracking-[0.14em] font-bold text-cocoa-400">Sort</span>
+          <select id="sort" class="bg-transparent text-[12.5px] font-bold text-espresso-300 focus:outline-none cursor-pointer pr-1">
+            <option selected>Best match</option>
+            <option>Newest</option>
+            <option>Highest salary</option>
+            <option>Most relevant</option>
+          </select>
+        </div>
+        <div class="hidden sm:flex items-center bg-white h-9 p-1 rounded-xl hairline-strong" role="group" aria-label="View density">
+          <button id="view-list" class="p-1.5 rounded-lg bg-cream text-espresso-300 hairline" type="button" aria-pressed="true" title="List view">
+            <span class="material-symbols-rounded" style="font-size:17px;">view_list</span>
+          </button>
+          <button id="view-compact" class="p-1.5 rounded-lg hover:bg-cream text-cocoa-400" type="button" aria-pressed="false" title="Compact view">
+            <span class="material-symbols-rounded" style="font-size:17px;">density_medium</span>
+          </button>
+          <button id="view-table" class="p-1.5 rounded-lg hover:bg-cream text-cocoa-400 hidden md:grid" type="button" aria-pressed="false" title="Table view">
+            <span class="material-symbols-rounded" style="font-size:17px;">table</span>
+          </button>
+        </div>
+        <button id="mobile-filters" class="lg:hidden btn !h-9 focus-ring" type="button">
+          <span class="material-symbols-rounded" style="font-size:17px;">filter_alt</span>Filters
+          <span class="chip bg-espresso-300 text-ivory !text-[10px] !px-1.5">12</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Result header -->
+    <div class="flex items-center justify-between text-[12.5px] text-cocoa-500 pb-2 border-b border-cocoa/10">
+      <div class="flex items-center gap-2.5">
+        <span class="flex items-center gap-1.5">
+          <span class="dot bg-success live-dot success"></span>
+          <span id="res-summary"><strong class="text-espresso-300 font-extrabold tabular-nums">128</strong> opportunities</span>
+        </span>
+        <span class="text-cocoa-300">·</span>
+        <span>Updated <strong class="text-espresso-300 font-semibold">4m</strong> ago</span>
+      </div>
+      <div class="hidden md:flex items-center gap-4">
+        <span class="flex items-center gap-1.5">
+          <span class="material-symbols-rounded text-gold" style="font-size:15px;">shield</span>
+          Quality health <strong class="text-espresso-300">100%</strong>
+        </span>
+      </div>
+    </div>
+
+    <!-- Error state -->
+    <div id="error" class="hidden job-card p-6 md:p-8 flex flex-col items-center text-center gap-3 animate-pop">
+      <div class="w-12 h-12 rounded-2xl bg-danger-soft grid place-items-center">
+        <span class="material-symbols-rounded text-danger" style="font-size:24px;">cloud_off</span>
+      </div>
+      <div>
+        <h3 class="m-0 text-[16px] font-extrabold text-espresso-400">Unable to refresh opportunities.</h3>
+        <p class="m-0 mt-1 text-[13px] text-cocoa-500">Your existing results are still available.</p>
+      </div>
+      <button class="btn btn-primary !px-4 mt-1 focus-ring" type="button">
+        <span class="material-symbols-rounded" style="font-size:17px;">refresh</span>Retry
+      </button>
+    </div>
+
+    <!-- Loading skeletons -->
+    <div id="loading" class="hidden flex flex-col gap-4" aria-busy="true" aria-label="Loading results">
+      <article class="job-card p-[18px]">
+        <div class="flex items-start gap-3">
+          <div class="skel w-11 h-11 rounded-xl"></div>
+          <div class="flex-1 space-y-2">
+            <div class="flex items-center gap-2"><div class="skel h-4 w-32 rounded"></div><div class="skel h-5 w-24 rounded-full"></div></div>
+            <div class="skel h-4 w-48 rounded"></div>
+          </div>
+          <div class="skel h-7 w-24 rounded-full"></div>
+        </div>
+        <div class="mt-4 space-y-2.5">
+          <div class="skel h-7 w-[85%] rounded"></div>
+          <div class="flex gap-3"><div class="skel h-4 w-28 rounded"></div><div class="skel h-4 w-20 rounded"></div><div class="skel h-4 w-16 rounded"></div></div>
+          <div class="skel h-6 w-56 rounded"></div>
+          <div class="flex gap-1.5"><div class="skel h-6 w-16 rounded"></div><div class="skel h-6 w-20 rounded"></div><div class="skel h-6 w-24 rounded"></div><div class="skel h-6 w-16 rounded"></div><div class="skel h-6 w-20 rounded"></div></div>
+          <div class="skel h-[84px] w-full rounded-xl"></div>
+        </div>
+      </article>
+      <article class="job-card p-[18px] opacity-90"><div class="flex items-start gap-3"><div class="skel w-11 h-11 rounded-xl"></div><div class="flex-1 space-y-2"><div class="skel h-4 w-40 rounded"></div><div class="skel h-4 w-52 rounded"></div></div><div class="skel h-7 w-20 rounded-full"></div></div></article>
+    </div>
+
+    <!-- JOB FEED (rendered dynamically by app.js) -->
+    <div id="job-feed" class="flex flex-col gap-3.5 md:gap-4" aria-live="polite"></div>
+
+    <!-- Empty state -->
+    <div id="empty" class="hidden job-card p-8 md:p-12 flex flex-col items-center text-center gap-4 animate-pop">
+      <div class="relative w-40 h-40 rounded-[28px] bg-gradient-to-br from-cream to-cream-dark hairline-strong grid place-items-center overflow-hidden">
+        <div class="absolute inset-0 bg-grain opacity-70 mix-blend-multiply pointer-events-none"></div>
+        <div class="relative w-24 h-24 rounded-[22px] bg-white hairline grid place-items-center shadow-card">
+          <span class="material-symbols-rounded text-champagne-300" style="font-size:40px;">travel_explore</span>
+        </div>
+      </div>
+      <div class="max-w-md">
+        <h3 class="m-0 font-display italic text-[28px] md:text-[32px] text-espresso-400 leading-tight">No opportunities match your current filters.</h3>
+        <p class="m-0 mt-2 text-[14px] text-cocoa-500 leading-relaxed">
+          Try widening your location, salary, or experience criteria. DEDAN is continuously scanning new sources every 12 minutes.
+        </p>
+      </div>
+      <div class="flex flex-wrap items-center justify-center gap-2">
+        <button id="clear-empty" class="btn btn-primary focus-ring" type="button">
+          <span class="material-symbols-rounded" style="font-size:16px;">filter_alt_off</span>
+          Clear filters
+        </button>
+        <button class="btn focus-ring" type="button">
+          <span class="material-symbols-rounded" style="font-size:16px;">edit</span>
+          Modify search
+        </button>
+      </div>
+    </div>
+
+    <!-- Pagination -->
+    <div class="mt-1 flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-2xl bg-white hairline-strong shadow-soft">
+      <span class="text-[13px] text-cocoa-500">
+        Showing <strong class="text-espresso-300 font-extrabold tabular-nums">1–9</strong> of <strong class="text-espresso-300 font-extrabold tabular-nums">128</strong> calibrated opportunities
+      </span>
+      <div class="flex items-center gap-2">
+        <button class="btn focus-ring" type="button">
+          <span>Load 25 more</span>
+          <span class="material-symbols-rounded" style="font-size:16px;">expand_more</span>
+        </button>
+        <div class="hidden sm:flex items-center gap-1 ml-2 p-1 rounded-xl bg-cream hairline">
+          <button class="w-8 h-8 rounded-lg bg-white text-espresso-300 hairline font-extrabold tabular-nums text-[12px]" type="button" aria-current="page">1</button>
+          <button class="w-8 h-8 rounded-lg text-cocoa-500 hover:bg-white font-semibold text-[12px]" type="button">2</button>
+          <button class="w-8 h-8 rounded-lg text-cocoa-500 hover:bg-white font-semibold text-[12px]" type="button">3</button>
+          <span class="text-cocoa-300 px-1">…</span>
+          <button class="w-8 h-8 rounded-lg text-cocoa-500 hover:bg-white font-semibold text-[12px]" type="button">6</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== RIGHT: QUICK PREVIEW PANEL ====== -->
+  <aside class="hidden 2xl:block lg:order-3" aria-label="Quick opportunity preview">
+    <div id="preview" class="sticky top-[76px] space-y-4"></div>
+  </aside>
+</div>
+</main>
+
+<!-- ============================================================
+     BOTTOM NAV (mobile)
+============================================================ -->
+<nav class="bottom-nav fixed bottom-0 left-0 right-0 z-40 bg-ivory/95 backdrop-blur-xl border-t border-cocoa/10 pb-[env(safe-area-inset-bottom)]" role="navigation" aria-label="Mobile navigation">
+  <div class="grid-12 grid grid-cols-5 gap-1 py-1.5">
+    <a href="index.html" class="flex flex-col items-center gap-0.5 py-1.5 rounded-xl text-cocoa-500 no-underline">
+      <span class="material-symbols-rounded" style="font-size:22px;">home</span>
+      <span class="text-[10px] font-bold">Home</span>
+    </a>
+    <a href="opportunities.html" class="flex flex-col items-center gap-0.5 py-1.5 rounded-xl text-espresso-300 no-underline bg-cream relative">
+      <span class="material-symbols-rounded ic-fill" style="font-size:22px;">explore</span>
+      <span class="text-[10px] font-extrabold">Explore</span>
+      <span class="absolute -top-0.5 left-1/2 -translate-x-1/2 w-8 h-0.5 rounded-full bg-gold"></span>
+    </a>
+    <button class="flex flex-col items-center gap-0.5 py-1.5 rounded-xl text-cocoa-500" type="button" id="save-search-b">
+      <span class="relative">
+        <span class="material-symbols-rounded" style="font-size:22px;">saved_search</span>
+        <span class="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-success ring-2 ring-ivory"></span>
+      </span>
+      <span class="text-[10px] font-bold">Searches</span>
+    </button>
+    <a href="#saved" class="flex flex-col items-center gap-0.5 py-1.5 rounded-xl text-cocoa-500 no-underline">
+      <span class="material-symbols-rounded" style="font-size:22px;">bookmarks</span>
+      <span class="text-[10px] font-bold">Saved</span>
+    </a>
+    <button class="flex flex-col items-center gap-0.5 py-1.5 rounded-xl text-cocoa-500" type="button">
+      <div class="w-6 h-6 rounded-full bg-gradient-to-br from-champagne-300 to-gold grid place-items-center text-espresso-300 text-[10.5px] font-extrabold ring-1 ring-champagne-400/40">KM</div>
+      <span class="text-[10px] font-bold">Me</span>
+    </button>
+  </div>
+</nav>
+
+<!-- ============================================================
+     FILTER DRAWER
+============================================================ -->
+<div id="backdrop" class="drawer-backdrop" aria-hidden="true"></div>
+<div id="drawer" class="drawer" role="dialog" aria-modal="true" aria-labelledby="drawer-title">
+  <div class="flex items-center justify-between p-5 border-b border-cocoa/10 shrink-0 bg-cream/50">
+    <div class="flex items-center gap-2">
+      <div class="w-9 h-9 rounded-xl bg-espresso-300 text-ivory grid place-items-center shadow-card">
+        <span class="material-symbols-rounded text-champagne-200" style="font-size:19px;">tune</span>
+      </div>
+      <div>
+        <h2 id="drawer-title" class="m-0 text-[17px] font-extrabold tracking-tight text-espresso-400">Advanced filters</h2>
+        <p class="m-0 text-[12px] text-cocoa-500">Precision-tune your discovery surface.</p>
+      </div>
+    </div>
+    <button id="drawer-close" class="icon-btn focus-ring" type="button" aria-label="Close filters">
+      <span class="material-symbols-rounded" style="font-size:20px;">close</span>
+    </button>
+  </div>
+
+  <div class="flex-1 overflow-y-auto px-5 py-5 space-y-6">
+    <section>
+      <h3 class="m-0 mb-2.5 text-[10.5px] uppercase tracking-[0.16em] font-bold text-cocoa-400">Experience</h3>
+      <div class="grid grid-cols-3 gap-1.5">
+        <label class="btn flex-col !py-2 !gap-0.5 !h-auto hairline !bg-white cursor-pointer"><input type="checkbox" class="hidden peer"/><span class="text-[12.5px] font-bold text-espresso-300">Entry</span><span class="text-[10px] font-semibold text-cocoa-400">0–2 yrs</span></label>
+        <label class="btn flex-col !py-2 !gap-0.5 !h-auto hairline !bg-white cursor-pointer"><input type="checkbox" class="hidden peer"/><span class="text-[12.5px] font-bold text-espresso-300">Junior</span><span class="text-[10px] font-semibold text-cocoa-400">1–3 yrs</span></label>
+        <label class="btn flex-col !py-2 !gap-0.5 !h-auto hairline !bg-white cursor-pointer"><input type="checkbox" class="hidden peer"/><span class="text-[12.5px] font-bold text-espresso-300">Mid</span><span class="text-[10px] font-semibold text-cocoa-400">3–5 yrs</span></label>
+        <label class="btn flex-col !py-2 !gap-0.5 !h-auto hairline-gold !bg-champagne-50 cursor-pointer ring-2 ring-champagne-200/60"><input type="checkbox" class="hidden peer" checked/><span class="text-[12.5px] font-extrabold text-espresso-300">Senior</span><span class="text-[10px] font-semibold text-gold">5–8 yrs</span></label>
+        <label class="btn flex-col !py-2 !gap-0.5 !h-auto hairline !bg-white cursor-pointer"><input type="checkbox" class="hidden peer"/><span class="text-[12.5px] font-bold text-espresso-300">Lead</span><span class="text-[10px] font-semibold text-cocoa-400">8+ yrs</span></label>
+        <label class="btn flex-col !py-2 !gap-0.5 !h-auto hairline !bg-white cursor-pointer"><input type="checkbox" class="hidden peer"/><span class="text-[12.5px] font-bold text-espresso-300">Staff/Pr.</span><span class="text-[10px] font-semibold text-cocoa-400">10+ yrs</span></label>
+      </div>
+    </section>
+
+    <section>
+      <div class="flex items-center justify-between mb-2.5">
+        <h3 class="m-0 text-[10.5px] uppercase tracking-[0.16em] font-bold text-cocoa-400">Compensation</h3>
+        <span class="text-[13px] font-extrabold tabular-nums text-espresso-300">$120k – $300k+</span>
+      </div>
+      <div class="p-3 rounded-xl bg-cream hairline space-y-3">
+        <div>
+          <label class="text-[12px] font-semibold text-cocoa-600 mb-1.5 block">Minimum base (USD)</label>
+          <input type="range" min="0" max="300000" step="5000" value="120000" class="w-full accent-gold"/>
+          <div class="flex justify-between text-[10.5px] font-bold text-cocoa-400 mt-0.5"><span>$0</span><span>$300k</span></div>
+        </div>
+        <div>
+          <label class="text-[12px] font-semibold text-cocoa-600 mb-1.5 block">Maximum base (USD)</label>
+          <input type="range" min="0" max="500000" step="5000" value="500000" class="w-full accent-gold"/>
+          <div class="flex justify-between text-[10.5px] font-bold text-cocoa-400 mt-0.5"><span>$0</span><span>$500k</span></div>
+        </div>
+        <select class="w-full p-2.5 rounded-xl bg-white hairline-strong text-[13px] font-semibold text-espresso-300 focus:outline-none focus:ring-2 focus:ring-champagne-300/40">
+          <option>Per year</option>
+          <option>Per month</option>
+          <option>Per hour</option>
+        </select>
+      </div>
+    </section>
+
+    <section>
+      <h3 class="m-0 mb-2.5 text-[10.5px] uppercase tracking-[0.16em] font-bold text-cocoa-400">Location &amp; time</h3>
+      <div class="space-y-1.5">
+        <label class="flex items-center gap-2.5 p-3 rounded-xl bg-champagne-50 hairline-gold cursor-pointer">
+          <input type="radio" name="loc" checked class="accent-gold w-4 h-4"/>
+          <div class="flex-1"><div class="text-[13.5px] font-extrabold text-espresso-300">Worldwide</div><div class="text-[11.5px] text-cocoa-500 font-medium">No geographic restrictions</div></div>
+          <span class="chip bg-success-soft text-success hairline">● Eligible</span>
+        </label>
+        <label class="flex items-center gap-2.5 p-3 rounded-xl bg-white hairline hover:bg-cream transition-colors cursor-pointer">
+          <input type="radio" name="loc" class="accent-gold w-4 h-4"/>
+          <div class="flex-1"><div class="text-[13.5px] font-semibold text-espresso-300">EMEA</div><div class="text-[11.5px] text-cocoa-500 font-medium">Europe, Middle East, Africa</div></div>
+        </label>
+        <label class="flex items-center gap-2.5 p-3 rounded-xl bg-white hairline hover:bg-cream transition-colors cursor-pointer">
+          <input type="radio" name="loc" class="accent-gold w-4 h-4"/>
+          <div class="flex-1"><div class="text-[13.5px] font-semibold text-espresso-300">Timezone UTC±3</div><div class="text-[11.5px] text-cocoa-500 font-medium">Overlap with core hours</div></div>
+        </label>
+      </div>
+    </section>
+
+    <section>
+      <h3 class="m-0 mb-2.5 text-[10.5px] uppercase tracking-[0.16em] font-bold text-cocoa-400">Work model</h3>
+      <div class="grid grid-cols-3 gap-1.5">
+        <label class="btn flex-col !py-2 !h-auto !gap-0.5 !bg-champagne-50 hairline-gold ring-2 ring-champagne-200/60 cursor-pointer"><input type="checkbox" class="hidden" checked/><span class="material-symbols-rounded text-gold" style="font-size:18px;">globe</span><span class="text-[12px] font-extrabold text-espresso-300">Fully remote</span></label>
+        <label class="btn flex-col !py-2 !h-auto !gap-0.5 !bg-white hairline cursor-pointer"><input type="checkbox" class="hidden"/><span class="material-symbols-rounded text-cocoa-400" style="font-size:18px;">home_work</span><span class="text-[12px] font-bold text-espresso-300">Remote‑first</span></label>
+        <label class="btn flex-col !py-2 !h-auto !gap-0.5 !bg-white hairline cursor-pointer"><input type="checkbox" class="hidden"/><span class="material-symbols-rounded text-cocoa-400" style="font-size:18px;">apartment</span><span class="text-[12px] font-bold text-espresso-300">Hybrid</span></label>
+      </div>
+    </section>
+
+    <section>
+      <h3 class="m-0 mb-2.5 text-[10.5px] uppercase tracking-[0.16em] font-bold text-cocoa-400">Date posted</h3>
+      <div class="grid grid-cols-5 gap-1.5 p-1 rounded-xl bg-cream hairline">
+        <button class="py-2 rounded-lg text-[11.5px] font-semibold text-cocoa-500 hover:bg-white" type="button">Any</button>
+        <button class="py-2 rounded-lg text-[11.5px] font-extrabold text-espresso-300 bg-white hairline" type="button">Today</button>
+        <button class="py-2 rounded-lg text-[11.5px] font-semibold text-cocoa-500 hover:bg-white" type="button">3d</button>
+        <button class="py-2 rounded-lg text-[11.5px] font-semibold text-cocoa-500 hover:bg-white" type="button">7d</button>
+        <button class="py-2 rounded-lg text-[11.5px] font-semibold text-cocoa-500 hover:bg-white" type="button">30d</button>
+      </div>
+    </section>
+
+    <section>
+      <h3 class="m-0 mb-2.5 text-[10.5px] uppercase tracking-[0.16em] font-bold text-cocoa-400">Skills</h3>
+      <div class="relative mb-2.5">
+        <span class="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none">
+          <span class="material-symbols-rounded text-cocoa-300" style="font-size:17px;">search</span>
+        </span>
+        <input type="text" placeholder="Search skills…" class="w-full pl-9 pr-3 py-2.5 text-[13px] bg-white hairline-strong rounded-xl placeholder:text-cocoa-300 focus:outline-none focus:ring-2 focus:ring-champagne-300/40"/>
+      </div>
+      <div class="flex flex-wrap gap-1.5">
+        <button class="pill bg-espresso-300 text-ivory hover:brightness-110" type="button">Python ✕</button>
+        <button class="pill bg-espresso-300 text-ivory hover:brightness-110" type="button">FastAPI ✕</button>
+        <button class="pill bg-white hairline-strong text-espresso-300 hover:bg-cream" type="button">PostgreSQL</button>
+        <button class="pill bg-white hairline-strong text-espresso-300 hover:bg-cream" type="button">AWS</button>
+        <button class="pill bg-white hairline-strong text-espresso-300 hover:bg-cream" type="button">Docker</button>
+        <button class="pill bg-white hairline-strong text-espresso-300 hover:bg-cream" type="button">Rust</button>
+        <button class="pill bg-cream text-cocoa-600 hairline hover:bg-white font-semibold" type="button">
+          <span class="material-symbols-rounded" style="font-size:13px;">add</span>Add
+        </button>
+      </div>
+    </section>
+  </div>
+
+  <div class="p-5 border-t border-cocoa/10 shrink-0 bg-white flex items-center gap-3">
+    <button id="drawer-clear" class="btn flex-1 focus-ring" type="button">Clear filters</button>
+    <button id="drawer-apply" class="btn btn-primary flex-1 focus-ring" type="button">
+      <span class="material-symbols-rounded text-champagne-200" style="font-size:16px;">check</span>
+      Apply filters
+    </button>
+  </div>
+</div>
+
+<!-- ============================================================
+     TOAST
+============================================================ -->
+<div id="toast" class="toast" role="status" aria-live="polite">
+  <span id="toast-icon" class="material-symbols-rounded text-champagne-200" style="font-size:18px;">bookmark_added</span>
+  <span id="toast-text">Saved to your pipeline.</span>
+</div>
+
+<script>
+const MOCK_JOBS = [
+  { job_id:'job_001', title:'Senior Backend / AI Engineer', company:'Acme AI', source:'Micro1', sources:['Micro1','Company Careers','Glassdoor'],
+    location:'Worldwide', remote_type:'Fully remote', employment_type:'Full‑time', experience_level:'Senior',
+    salary_min:80000, salary_max:120000, salary_currency:'USD', salary_period:'year',
+    skills:['Python','FastAPI','PostgreSQL','Docker','AWS','AI/ML','Redis'], posted_at:new Date(Date.now()-7200000).toISOString(), updated_at:new Date(Date.now()-3600000).toISOString(),
+    eligibility_status:'eligible', match_score:94, quality_score:'Excellent', is_new:true, is_featured:true,
+    dedan_recommendation:'Strong match for your Python, distributed systems, and AI backend experience.',
+    match_breakdown:{ skills:96, experience:91, eligibility:100 }, saved:false },
+  { job_id:'job_002', title:'Principal Distributed Systems Architect', company:'Aura Cloud Inc.', source:'Micro1', sources:['Micro1','Wellfound'],
+    location:'Worldwide', remote_type:'Fully remote', employment_type:'Full‑time', experience_level:'Staff/Principal',
+    salary_min:210000, salary_max:245000, salary_currency:'USD', salary_period:'year',
+    skills:['Rust','Raft Consensus','Distributed Storage','eBPF','Linux Kernel','gRPC','Tracing'], posted_at:new Date(Date.now()-14400000).toISOString(),
+    eligibility_status:'eligible', match_score:96, quality_score:'Excellent', is_new:true, is_featured:true,
+    dedan_recommendation:'Deep consensus protocol mastery directly aligns with Raft core. Team handbook confirms zero compulsory synchronous standups.',
+    match_breakdown:{ skills:98, experience:95, eligibility:100 }, saved:true },
+  { job_id:'job_003', title:'Staff Site Reliability & Infrastructure Engineer', company:'Kinetix Protocol', source:'Turing', sources:['Turing'],
+    location:'Global', remote_type:'Fully remote', employment_type:'Full‑time', experience_level:'Staff',
+    salary_min:195000, salary_max:220000, salary_currency:'USD', salary_period:'year',
+    skills:['Kubernetes','Go','Terraform','Multi‑Cluster','Observability','Prometheus'], posted_at:new Date(Date.now()-28800000).toISOString(),
+    eligibility_status:'eligible', match_score:92, quality_score:'Excellent', is_new:false, is_featured:false,
+    dedan_recommendation:'Your multi‑region failover and K8s operator background maps cleanly to their current scaling bottleneck.',
+    match_breakdown:{ skills:94, experience:90, eligibility:100 }, saved:false },
+  { job_id:'job_004', title:'Senior Backend Engineer — Realtime Engine', company:'Supabase', source:'Glassdoor', sources:['Company Careers','Glassdoor'],
+    location:'Anywhere', remote_type:'Fully remote', employment_type:'Full‑time', experience_level:'Senior (L5/L6)',
+    salary_min:180000, salary_max:215000, salary_currency:'USD', salary_period:'year',
+    skills:['Elixir','PostgreSQL','Distributed Systems','WebSockets','Docker','Phoenix'], posted_at:new Date(Date.now()-43200000).toISOString(),
+    eligibility_status:'eligible', match_score:90, quality_score:'Excellent', is_new:false, is_featured:false,
+    dedan_recommendation:'High structural alignment on PostgreSQL and distributed messaging; ultra‑low synchronous meeting overhead.',
+    match_breakdown:{ skills:88, experience:93, eligibility:100 }, saved:false },
+  { job_id:'job_005', title:'Head of Cloud Infrastructure & Security', company:'Vanguard Labs', source:'Remote OK', sources:['Remote OK'],
+    location:'EU / US East', remote_type:'Hybrid', employment_type:'Contract‑to‑Hire', experience_level:'Lead',
+    salary_min:170000, salary_max:200000, salary_currency:'EUR', salary_period:'year',
+    skills:['AWS Architecture','SOC2','Terraform','Kubernetes','Zero Trust'], posted_at:new Date(Date.now()-86400000).toISOString(),
+    eligibility_status:'review', match_score:86, quality_score:'Good', is_new:false, is_featured:false,
+    dedan_recommendation:'Strong AWS + compliance overlap, but 4h/d sync presence with London core time required — review timezone boundary.',
+    match_breakdown:{ skills:91, experience:88, eligibility:72 }, saved:false },
+  { job_id:'job_006', title:'Staff Data Platform Engineer (ClickHouse / Kafka)', company:'Prism Data Labs', source:'We Work Remotely', sources:['We Work Remotely'],
+    location:'Global', remote_type:'Fully remote', employment_type:'Full‑time', experience_level:'Senior/Staff',
+    salary_min:null, salary_max:null, salary_currency:null, salary_period:null,
+    skills:['ClickHouse','Apache Kafka','Python','Data Mesh','Airflow','dbt'], posted_at:new Date(Date.now()-172800000).toISOString(),
+    eligibility_status:'eligible', match_score:84, quality_score:'Good', is_new:false, is_featured:false,
+    dedan_recommendation:'Compensation modeled from peer rounds; zero async red flags detected in team comms artifacts.',
+    match_breakdown:{ skills:89, experience:82, eligibility:100 }, saved:false },
+  { job_id:'job_007', title:'Senior ML Engineer — LLM Inference', company:'NeuralForge', source:'Wellfound', sources:['Wellfound'],
+    location:'Worldwide', remote_type:'Fully remote', employment_type:'Full‑time', experience_level:'Senior',
+    salary_min:150000, salary_max:195000, salary_currency:'USD', salary_period:'year',
+    skills:['PyTorch','CUDA','Distributed Training','Triton','vLLM','Rust'], posted_at:new Date(Date.now()-5400000).toISOString(),
+    eligibility_status:'eligible', match_score:88, quality_score:'Excellent', is_new:true, is_featured:false,
+    dedan_recommendation:'Move closer to GPU kernel work; team includes ex‑Google Brain contributors. Equity upside is notable.',
+    match_breakdown:{ skills:85, experience:91, eligibility:100 }, saved:false },
+  { job_id:'job_008', title:'Senior Full Stack Engineer', company:'Bright Labs', source:'Turing', sources:['Turing'],
+    location:'Americas Only', remote_type:'Remote‑first', employment_type:'Full‑time', experience_level:'Mid/Senior',
+    salary_min:120000, salary_max:160000, salary_currency:'USD', salary_period:'year',
+    skills:['TypeScript','React','Node.js','PostgreSQL','AWS','Next.js'], posted_at:new Date(Date.now()-259200000).toISOString(),
+    eligibility_status:'not_eligible', match_score:62, quality_score:'Review', is_new:false, is_featured:false,
+    dedan_recommendation:'Mismatch on Americas timezone and leans frontend. Consider only if you want to broaden scope.',
+    match_breakdown:{ skills:58, experience:66, eligibility:40 }, saved:false },
+  { job_id:'job_009', title:'Founding Platform Engineer', company:'Helix Cloud', source:'Micro1', sources:['Micro1','Company Careers'],
+    location:'Worldwide', remote_type:'Fully remote', employment_type:'Full‑time', experience_level:'Senior/Staff',
+    salary_min:140000, salary_max:180000, salary_currency:'USD', salary_period:'year',
+    skills:['Go','Kubernetes','Terraform','AWS','PostgreSQL','Observability'], posted_at:new Date(Date.now()-9000000).toISOString(),
+    eligibility_status:'eligible', match_score:91, quality_score:'Good', is_new:true, is_featured:false,
+    dedan_recommendation:'Founding‑stage platform with strong equity upside; fully distributed and async‑first by charter.',
+    match_breakdown:{ skills:95, experience:87, eligibility:100 }, saved:false }
+];
+</script>
+<!-- shared.js must load first: it defines window.API / window.Session that
+     app.js calls. A classic <script> cannot see another file's const. -->
+<script src="shared.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

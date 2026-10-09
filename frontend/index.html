@@ -1,40 +1,526 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- Matches the master logo's background plate, so the browser chrome blends
-         with the brand instead of framing it in an unrelated grey. -->
-    <meta name="theme-color" content="#0d162d" />
-    <title>DEDAN Remote — Intelligent Global Opportunity Discovery</title>
-    <meta
-      name="description"
-      content="AI-powered discovery of remote work, AI training, data, software and digital opportunities from monitored sources worldwide."
-    />
-    <meta property="og:title" content="DEDAN Remote" />
-    <meta
-      property="og:description"
-      content="Discover work that finds you — intelligent global opportunity discovery."
-    />
-    <meta property="og:type" content="website" />
-    <meta property="og:image" content="/brand/dedan-remote-lockup.png" />
-    <meta property="og:image:width" content="640" />
-    <meta property="og:image:height" content="209" />
-    <meta property="og:image:alt" content="DEDAN Remote" />
-    <meta name="twitter:card" content="summary_large_image" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <!-- The mark appears in the navigation on every route, so it is fetched at
-         the highest priority rather than after the JS bundle resolves it. -->
-    <link rel="preload" as="image" href="/brand/dedan-remote-mark.png" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap"
-      rel="stylesheet"
-    />
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
-</html>
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_standard" name="shell-type"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { colors: { "surface-container-lowest": "#ffffff", "on-tertiary": "#ffffff", "surface-container-low": "#f7f3ec", "on-error-container": "#93000a", "inverse-surface": "#31302c", "on-primary-container": "#947f77", "surface-variant": "#e6e2db", "on-surface-variant": "#4f4541", "error-container": "#ffdad6", "on-tertiary-fixed": "#281900", "tertiary-container": "#281900", "secondary-container": "#fdd4c2", "on-secondary-fixed-variant": "#5c4033", "inverse-primary": "#dac2b8", "on-secondary": "#ffffff", "surface-container-high": "#ebe8e1", "tertiary-fixed-dim": "#e3c18f", "surface-bright": "#fdf9f2", "secondary-fixed": "#ffdbcc", "surface": "#fdf9f2", "error": "#ba1a1a", "secondary-fixed-dim": "#e6bead", "primary-container": "#261912", "surface-container": "#f1ede6", "on-primary": "#ffffff", "primary": "#000000", "on-tertiary-fixed-variant": "#5a431c", "tertiary": "#000000", "on-primary-fixed-variant": "#54433c", "on-error": "#ffffff", "inverse-on-surface": "#f4f0e9", "surface-dim": "#dddad3", "surface-tint": "#6d5a52", "secondary": "#76584a", "on-tertiary-container": "#9c7f53", "primary-fixed-dim": "#dac2b8", "outline": "#807570", "on-surface": "#1c1c18", "background": "#fdf9f2", "surface-container-highest": "#e6e2db", "on-secondary-container": "#795a4c", "outline-variant": "d2c3be", "on-primary-fixed": "#261912", "on-background": "#1c1c18", "primary-fixed": "#f7ddd3", "tertiary-fixed": "#ffdead", "on-secondary-fixed": "#2b160b" }, borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, spacing: { "gutter-desktop": "1.5rem", "gutter": "1rem", "margin-tablet": "1.5rem", "space-xl": "2.25rem", "margin": "1rem", "space-sm": "0.5rem", "space-xs": "0.25rem", "space-md": "1rem", "margin-desktop": "2.5rem", "space-lg": "1.5rem" }, fontFamily: { "metric-display": ["Manrope"], "label-md": ["Manrope"], "headline-lg-mobile": ["Manrope"], "display-xl": ["Manrope"], "headline-md": ["Manrope"], "headline-lg": ["Manrope"], "label-uppercase": ["Manrope"], "body-lg": ["Manrope"], "label-sm": ["Manrope"], "body-md": ["Manrope"], "display-lg": ["Manrope"], "headline-sm": ["Manrope"], "body-sm": ["Manrope"] }, fontSize: { "metric-display": ["32px", { lineHeight: "38px", letterSpacing: "-0.02em", fontWeight: "700" }], "label-md": ["13px", { lineHeight: "18px", letterSpacing: "0em", fontWeight: "500" }], "headline-lg-mobile": ["22px", { lineHeight: "30px", letterSpacing: "-0.015em", fontWeight: "600" }], "display-xl": ["48px", { lineHeight: "56px", letterSpacing: "-0.03em", fontWeight: "700" }], "headline-md": ["20px", { lineHeight: "28px", letterSpacing: "-0.015em", fontWeight: "600" }], "headline-lg": ["28px", { lineHeight: "36px", letterSpacing: "-0.02em", fontWeight: "600" }], "label-uppercase": ["11px", { lineHeight: "16px", letterSpacing: "0.08em", fontWeight: "700" }], "body-lg": ["16px", { lineHeight: "26px", letterSpacing: "-0.005em", fontWeight: "400" }], "label-sm": ["11px", { lineHeight: "16px", letterSpacing: "0.02em", fontWeight: "500" }], "body-md": ["14px", { lineHeight: "22px", letterSpacing: "0em", fontWeight: "400" }], "display-lg": ["36px", { lineHeight: "44px", letterSpacing: "-0.025em", fontWeight: "600" }], "headline-sm": ["16px", { lineHeight: "24px", letterSpacing: "-0.01em", fontWeight: "600" }], "body-sm": ["12px", { lineHeight: "18px", letterSpacing: "0.005em", fontWeight: "400" }] } } } };</script><script src="app.js"></script></head><body class="bg-surface font-body-md text-on-surface antialiased"><header class="fixed top-0 w-full z-50 bg-surface/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(36,23,17,0.04)]"><div class="h-20 max-w-7xl mx-auto px-margin-tablet lg:px-margin-desktop flex items-center justify-between"><div class="flex items-center gap-space-lg"><a class="flex items-center gap-space-sm group" data-path="overview" href="#"><div class="w-9 h-9 rounded-lg bg-primary-container flex items-center justify-center text-on-primary font-headline-sm text-headline-sm tracking-tight">D</div><span class="font-headline-sm text-headline-sm text-on-surface tracking-tight font-semibold">DEDAN Remote</span></a><nav class="hidden lg:flex items-center gap-space-lg" data-active-classes="text-on-surface font-label-md font-semibold border-b-2 border-primary-container"><a class="font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-colors py-1" data-path="product" href="#">Product</a><a class="font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-colors py-1" data-path="intelligence-engine" href="#">Intelligence Engine</a><a class="font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-colors py-1" data-path="how-it-works" href="#">How It Works</a><a class="font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-colors py-1" data-path="ecosystem" href="#">Ecosystem</a><a class="font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-colors py-1" data-path="pricing" href="#">Pricing</a></nav></div><div class="flex items-center gap-space-md"><a class="hidden sm:inline-flex items-center justify-center font-label-md text-label-md text-secondary hover:text-on-surface px-space-md py-space-sm transition-colors" data-path="sign-in" href="#">Sign In</a><a class="inline-flex items-center justify-center bg-primary-container text-on-primary hover:bg-tertiary-container hover:text-on-tertiary font-label-md text-label-md px-space-lg py-space-sm rounded-lg shadow-[0_2px_8px_rgba(36,23,17,0.12)] transition-all" data-path="explore-opportunities" href="#">Explore Opportunities</a><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center ml-space-xs"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="w-full pt-20 bg-surface min-h-[calc(100vh-80px)]"><div class="flex flex-col w-full">
+<!-- SECTION 1: HERO -->
+<section class="relative w-full pt-8 pb-16 lg:py-20 overflow-hidden">
+<!-- Subtle Ambient Glows -->
+<div class="absolute -top-32 left-1/4 w-[520px] h-[520px] bg-tertiary-fixed/30 rounded-full blur-3xl pointer-events-none -z-10"></div>
+<div class="absolute top-1/2 -right-24 w-[460px] h-[460px] bg-secondary-fixed/40 rounded-full blur-3xl pointer-events-none -z-10"></div>
+<div class="max-w-7xl mx-auto px-margin-tablet lg:px-margin-desktop">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-xl items-center">
+<!-- Left Column: Value Proposition -->
+<div class="lg:col-span-6 flex flex-col items-start gap-space-lg">
+<!-- Platform Badge -->
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-container-high/70 shadow-sm backdrop-blur-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-primary-container animate-pulse"></span>
+<span class="font-label-uppercase text-label-uppercase text-secondary tracking-widest">
+              AUTONOMOUS WORK INTELLIGENCE • PLATFORM RELEASE V4.8
+            </span>
+</div>
+<!-- Headline -->
+<div class="flex flex-col gap-2">
+<h1 class="font-display-xl text-display-xl text-on-surface tracking-tight font-bold">
+              Find work that fits <br class="hidden sm:inline"/>how you work.
+            </h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-xl">
+              DEDAN Remote continuously discovers, evaluates, and prioritizes remote opportunities that match your precise skills, timezone cadence, and engineering principles.
+            </p>
+</div>
+<!-- CTA Buttons -->
+<div class="flex flex-wrap items-center gap-space-md w-full sm:w-auto">
+<a class="inline-flex items-center justify-center gap-space-sm bg-primary-container text-on-primary hover:bg-tertiary-container hover:text-on-tertiary px-space-lg py-space-md rounded-lg shadow-md transition-all group font-headline-sm text-headline-sm" data-path="explore" href="#">
+<span>Explore opportunities</span>
+<span class="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</a>
+<a class="inline-flex items-center justify-center gap-space-xs bg-surface-container-lowest text-on-surface hover:bg-surface-container px-space-lg py-space-md rounded-lg shadow-sm transition-all font-headline-sm text-headline-sm" href="#how-it-works">
+<span class="material-symbols-outlined text-[18px] text-secondary">play_circle</span>
+<span>How it works</span>
+</a>
+</div>
+<!-- Micro-Trust Signal -->
+<div class="flex items-center gap-space-xs text-on-surface-variant pt-2">
+<span class="material-symbols-outlined text-sm text-secondary" style="font-variation-settings: 'FILL' 1;">verified</span>
+<span class="font-label-sm text-label-sm tracking-normal">
+              Verified against 42+ global remote ecosystems • Zero recruiter spam
+            </span>
+</div>
+</div>
+<!-- Right Column: Interactive Multi-Stage Telemetry Engine Pipeline -->
+<div class="lg:col-span-6 flex flex-col gap-space-md">
+<div class="bg-surface-container-lowest p-space-lg rounded-xl shadow-lg relative overflow-hidden">
+<!-- Pipeline Subheader -->
+<div class="flex items-center justify-between pb-space-sm">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+<span class="font-label-uppercase text-label-uppercase text-secondary tracking-wider">LIVE TELEMETRY PIPELINE</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Active Sync • Ingestion 1,240 ev/min</span>
+</div>
+<!-- Interconnected Nodes -->
+<div class="grid grid-cols-4 gap-2 pt-2 pb-4 relative">
+<div class="bg-surface-container-low p-2 rounded-lg flex flex-col gap-1 items-start">
+<span class="font-label-uppercase text-[10px] text-secondary">01 INGEST</span>
+<span class="font-headline-sm text-[13px] font-semibold text-on-surface truncate w-full">42 Networks</span>
+<span class="font-label-sm text-[10px] text-on-surface-variant">Streaming</span>
+</div>
+<div class="bg-surface-container-low p-2 rounded-lg flex flex-col gap-1 items-start">
+<span class="font-label-uppercase text-[10px] text-secondary">02 EVAL</span>
+<span class="font-headline-sm text-[13px] font-semibold text-on-surface truncate w-full">RFC &amp; Async</span>
+<span class="font-label-sm text-[10px] text-on-surface-variant">Deep Syntax</span>
+</div>
+<div class="bg-surface-container-low p-2 rounded-lg flex flex-col gap-1 items-start bg-secondary-fixed/40">
+<span class="font-label-uppercase text-[10px] text-on-secondary-fixed-variant">03 MATCH</span>
+<span class="font-headline-sm text-[13px] font-bold text-on-secondary-fixed truncate w-full">96% Ultra</span>
+<span class="font-label-sm text-[10px] text-on-secondary-fixed-variant">High Fit</span>
+</div>
+<div class="bg-primary-container text-on-primary p-2 rounded-lg flex flex-col gap-1 items-start">
+<span class="font-label-uppercase text-[10px] text-inverse-primary">04 DOSSIER</span>
+<span class="font-headline-sm text-[13px] font-semibold text-on-primary truncate w-full">Actionable</span>
+<span class="font-label-sm text-[10px] text-inverse-primary">Simulated Qs</span>
+</div>
+</div>
+<!-- Live High-Signal Dossier Preview Card -->
+<div class="bg-surface-container-low p-space-md rounded-lg flex flex-col gap-space-sm shadow-sm relative">
+<div class="flex items-start justify-between">
+<div>
+<div class="flex items-center gap-2">
+<span class="font-label-uppercase text-label-uppercase text-secondary font-bold">AURA CLOUD INC.</span>
+<span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-secondary-container text-on-secondary-fixed-variant">100% ASYNC</span>
+</div>
+<h2 class="font-headline-md text-headline-md font-semibold text-on-surface pt-0.5">
+                    Principal Distributed Systems Architect
+                  </h2>
+</div>
+<div class="flex flex-col items-end">
+<div class="px-2.5 py-1 rounded bg-secondary-container text-on-secondary-fixed-variant font-headline-sm text-[13px] font-bold">
+                    96% FIT
+                  </div>
+<span class="font-label-sm text-[10px] text-on-surface-variant pt-0.5">Top 0.4% Quantile</span>
+</div>
+</div>
+<!-- Compensation &amp; Specs Chips -->
+<div class="flex flex-wrap gap-2 pt-1">
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded bg-surface-container-lowest text-on-surface shadow-xs">
+                  $210,000 – $245,000 USD
+                </span>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded bg-surface-container-lowest text-on-surface shadow-xs">
+                  0.15% Equity
+                </span>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded bg-surface-container-lowest text-on-surface shadow-xs">
+                  UTC-8 to UTC+2
+                </span>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded bg-surface-container-lowest text-on-surface shadow-xs">
+                  Raft / Rust Core
+                </span>
+</div>
+<!-- AI Synthesis Reasoning Callout -->
+<div class="bg-surface-container-lowest p-space-sm rounded shadow-xs flex items-start gap-2.5 mt-1">
+<span class="material-symbols-outlined text-secondary text-sm pt-0.5">psychology</span>
+<div class="flex flex-col">
+<span class="font-label-uppercase text-[10px] text-secondary font-bold tracking-wider">AI FIT SYNTHESIS</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+                    Direct 98% overlap with Raft consensus architecture and your published telemetry papers. 100% async protocol matches your UTC-5 cadence.
+                  </p>
+</div>
+</div>
+</div>
+<!-- Mini Sparkline Telemetry Footer -->
+<div class="flex items-center justify-between pt-space-sm text-on-surface-variant">
+<span class="font-label-sm text-label-sm">Active Parser Latency: 12ms</span>
+<div class="flex items-center gap-1.5">
+<svg class="text-secondary" fill="none" height="12" viewbox="0 0 60 12" width="60">
+<path d="M1 9L12 4L22 8L34 2L46 7L59 1" stroke="currentColor" stroke-linecap="round" stroke-width="1.5"></path>
+</svg>
+<span class="font-label-sm text-label-sm font-semibold text-on-surface">348 Jobs Pruned Today</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 2: HERO CREDIBILITY METRICS -->
+<section class="w-full pb-12">
+<div class="max-w-7xl mx-auto px-margin-tablet lg:px-margin-desktop">
+<div class="grid grid-cols-2 md:grid-cols-4 gap-space-md">
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex flex-col gap-1">
+<span class="font-metric-display text-metric-display font-bold text-on-surface">14,280+</span>
+<span class="font-headline-sm text-headline-sm font-semibold text-secondary">Opportunities Monitored</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Autonomous global ingestion</span>
+</div>
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex flex-col gap-1">
+<span class="font-metric-display text-metric-display font-bold text-on-surface">42</span>
+<span class="font-headline-sm text-headline-sm font-semibold text-secondary">Curated Remote Sources</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Verified distributed teams</span>
+</div>
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex flex-col gap-1">
+<span class="font-metric-display text-metric-display font-bold text-on-surface">1.8M+</span>
+<span class="font-headline-sm text-headline-sm font-semibold text-secondary">Parameter Evaluations</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Multi-dimensional rubric daily</span>
+</div>
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex flex-col gap-1">
+<span class="font-metric-display text-metric-display font-bold text-on-surface">94.6%</span>
+<span class="font-headline-sm text-headline-sm font-semibold text-secondary">Match Accuracy</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">User satisfaction &amp; retention</span>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 3: TRUSTED JOB ECOSYSTEM TICKER -->
+<section class="w-full py-12 bg-surface-container-low/60 overflow-hidden">
+<div class="max-w-7xl mx-auto px-margin-tablet lg:px-margin-desktop flex flex-col items-center text-center gap-space-md mb-8">
+<span class="font-label-uppercase text-label-uppercase text-secondary tracking-widest">
+        TRUSTED REMOTE ECOSYSTEM
+      </span>
+<h2 class="font-display-lg text-display-lg text-on-surface font-bold max-w-2xl">
+        Aggregating verified signal across premier distributed engineering teams
+      </h2>
+</div>
+<!-- Infinite Marquee Track -->
+<div class="relative w-full overflow-hidden flex items-center">
+<div class="flex items-center gap-space-xl whitespace-nowrap animate-marquee py-2">
+<!-- Item 1 -->
+<div class="flex items-center gap-3 px-6 py-3 rounded-lg bg-surface-container-lowest shadow-xs">
+<span class="w-3 h-3 rounded-full bg-secondary"></span>
+<span class="font-headline-md text-headline-md font-bold text-on-surface">Turing</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Mesh</span>
+</div>
+<!-- Item 2 -->
+<div class="flex items-center gap-3 px-6 py-3 rounded-lg bg-surface-container-lowest shadow-xs">
+<span class="w-3 h-3 rounded-full bg-primary-container"></span>
+<span class="font-headline-md text-headline-md font-bold text-on-surface">Wellfound</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Series A-D</span>
+</div>
+<!-- Item 3 -->
+<div class="flex items-center gap-3 px-6 py-3 rounded-lg bg-surface-container-lowest shadow-xs">
+<span class="w-3 h-3 rounded-full bg-secondary"></span>
+<span class="font-headline-md text-headline-md font-bold text-on-surface">Micro1</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">AI Devs</span>
+</div>
+<!-- Item 4 -->
+<div class="flex items-center gap-3 px-6 py-3 rounded-lg bg-surface-container-lowest shadow-xs">
+<span class="w-3 h-3 rounded-full bg-primary-container"></span>
+<span class="font-headline-md text-headline-md font-bold text-on-surface">GitLab</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">All-Remote</span>
+</div>
+<!-- Item 5 -->
+<div class="flex items-center gap-3 px-6 py-3 rounded-lg bg-surface-container-lowest shadow-xs">
+<span class="w-3 h-3 rounded-full bg-secondary"></span>
+<span class="font-headline-md text-headline-md font-bold text-on-surface">Supabase</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Infra</span>
+</div>
+<!-- Item 6 -->
+<div class="flex items-center gap-3 px-6 py-3 rounded-lg bg-surface-container-lowest shadow-xs">
+<span class="w-3 h-3 rounded-full bg-primary-container"></span>
+<span class="font-headline-md text-headline-md font-bold text-on-surface">Fly.io</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">MicroVMs</span>
+</div>
+<!-- Item 7 -->
+<div class="flex items-center gap-3 px-6 py-3 rounded-lg bg-surface-container-lowest shadow-xs">
+<span class="w-3 h-3 rounded-full bg-secondary"></span>
+<span class="font-headline-md text-headline-md font-bold text-on-surface">Aura Cloud</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Enterprise</span>
+</div>
+<!-- Item 8 -->
+<div class="flex items-center gap-3 px-6 py-3 rounded-lg bg-surface-container-lowest shadow-xs">
+<span class="w-3 h-3 rounded-full bg-primary-container"></span>
+<span class="font-headline-md text-headline-md font-bold text-on-surface">37signals</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Async First</span>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 4: HOW IT WORKS (4 Editorial Steps) -->
+<section class="w-full py-20" id="how-it-works">
+<div class="max-w-7xl mx-auto px-margin-tablet lg:px-margin-desktop flex flex-col gap-space-xl">
+<!-- Section Header -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+<div class="flex flex-col gap-2 max-w-xl">
+<span class="font-label-uppercase text-label-uppercase text-secondary tracking-widest">
+            THE ARCHITECTURE OF DISCERNMENT
+          </span>
+<h2 class="font-display-lg text-display-lg text-on-surface font-bold">
+            How autonomous telemetry outperforms typical job hunting
+          </h2>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-sm">
+          A four-stage autonomous workflow built to protect high-impact engineers from noisy recruiters and misaligned offers.
+        </p>
+</div>
+<!-- 4 Bento Steps Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-space-lg">
+<!-- Step 1: Discover -->
+<div class="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm flex flex-col justify-between gap-space-md group hover:shadow-md transition-shadow">
+<div class="flex flex-col gap-space-sm">
+<span class="font-label-uppercase text-label-uppercase text-secondary">STAGE 01</span>
+<h3 class="font-headline-lg text-headline-lg font-bold text-on-surface">Discover</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">
+              Continuous autonomous scanning across global repositories, private boards, and venture portfolios without keyword clutter.
+            </p>
+</div>
+<!-- Visual: Radar Scanner graphic -->
+<div class="bg-surface-container-low p-space-md rounded-lg flex flex-col items-center justify-center gap-2 relative overflow-hidden h-40">
+<div class="w-24 h-24 rounded-full bg-surface-container-high/60 flex items-center justify-center relative">
+<div class="w-16 h-16 rounded-full bg-surface-container-highest/80 flex items-center justify-center">
+<span class="material-symbols-outlined text-secondary text-2xl animate-spin" style="animation-duration: 8s;">radar</span>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-secondary animate-ping"></span>
+<span class="font-label-sm text-label-sm text-on-surface">42 feeds scanned in parallel</span>
+</div>
+</div>
+</div>
+<!-- Step 2: Evaluate -->
+<div class="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm flex flex-col justify-between gap-space-md group hover:shadow-md transition-shadow">
+<div class="flex flex-col gap-space-sm">
+<span class="font-label-uppercase text-label-uppercase text-secondary">STAGE 02</span>
+<h3 class="font-headline-lg text-headline-lg font-bold text-on-surface">Evaluate</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">
+              Multi-dimensional parsing of real timezone overlap (UTC-5 to UTC+3), async communication norms, and engineering RFC stacks.
+            </p>
+</div>
+<!-- Visual: Deep attribute matrix -->
+<div class="bg-surface-container-low p-space-md rounded-lg flex flex-col justify-center gap-2 h-40">
+<div class="flex items-center justify-between text-on-surface">
+<span class="font-label-sm text-label-sm">Timezone Overlap</span>
+<span class="font-label-sm text-label-sm font-semibold">4.5 hrs (Target: 4+)</span>
+</div>
+<div class="w-full bg-surface-container-high rounded-full h-1.5">
+<div class="bg-secondary h-1.5 rounded-full" style="width: 88%;"></div>
+</div>
+<div class="flex items-center justify-between text-on-surface pt-1">
+<span class="font-label-sm text-label-sm">Async Ratio</span>
+<span class="font-label-sm text-label-sm font-semibold">92% Documentation</span>
+</div>
+<div class="w-full bg-surface-container-high rounded-full h-1.5">
+<div class="bg-primary-container h-1.5 rounded-full" style="width: 92%;"></div>
+</div>
+</div>
+</div>
+<!-- Step 3: Prioritize -->
+<div class="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm flex flex-col justify-between gap-space-md group hover:shadow-md transition-shadow">
+<div class="flex flex-col gap-space-sm">
+<span class="font-label-uppercase text-label-uppercase text-secondary">STAGE 03</span>
+<h3 class="font-headline-lg text-headline-lg font-bold text-on-surface">Prioritize</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">
+              Precision scoring (90%+ fit threshold) that cuts out 95% of job board noise. Only high-signal opportunities surface.
+            </p>
+</div>
+<!-- Visual: Funnel Card -->
+<div class="bg-surface-container-low p-space-md rounded-lg flex flex-col justify-center gap-2 h-40">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Scanned Jobs</span>
+<span class="font-headline-sm text-[13px] font-bold text-on-surface">348</span>
+</div>
+<div class="w-full bg-surface-container-high rounded-full h-2">
+<div class="bg-secondary-container h-2 rounded-full" style="width: 100%;"></div>
+</div>
+<div class="flex items-center justify-between pt-1">
+<span class="font-label-sm text-label-sm text-secondary font-bold">Passed Threshold</span>
+<span class="font-headline-sm text-[13px] font-bold text-secondary">14 Roles</span>
+</div>
+<div class="w-full bg-surface-container-high rounded-full h-2">
+<div class="bg-primary-container h-2 rounded-full" style="width: 14%;"></div>
+</div>
+</div>
+</div>
+<!-- Step 4: Prepare -->
+<div class="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm flex flex-col justify-between gap-space-md group hover:shadow-md transition-shadow">
+<div class="flex flex-col gap-space-sm">
+<span class="font-label-uppercase text-label-uppercase text-secondary">STAGE 04</span>
+<h3 class="font-headline-lg text-headline-lg font-bold text-on-surface">Prepare</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">
+              Instant role dossiers and custom AI simulated technical interview rooms generated from actual team RFCs.
+            </p>
+</div>
+<!-- Visual: Mock interview readiness countdown -->
+<div class="bg-surface-container-low p-space-md rounded-lg flex flex-col items-center justify-center gap-2 h-40">
+<div class="flex items-center gap-2 text-on-surface">
+<span class="material-symbols-outlined text-secondary">code_blocks</span>
+<span class="font-headline-sm text-headline-sm font-semibold">Simulated Room</span>
+</div>
+<div class="px-3 py-1 rounded-full bg-secondary-container text-on-secondary-fixed-variant font-label-uppercase text-[11px] font-bold">
+              88% INTERVIEW READINESS
+            </div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">3 Specific RFC Scenario Drills</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 5: AI MATCHING DEEP DIVE SECTION (Comparison Spotlight) -->
+<section class="w-full py-20 bg-surface-container-low">
+<div class="max-w-7xl mx-auto px-margin-tablet lg:px-margin-desktop flex flex-col gap-space-xl">
+<!-- Section Header -->
+<div class="flex flex-col items-center text-center gap-space-sm max-w-3xl mx-auto">
+<span class="font-label-uppercase text-label-uppercase text-secondary tracking-widest">
+          PRECISION SIGNAL OVER NOISE
+        </span>
+<h2 class="font-display-xl text-display-xl font-bold text-on-surface">
+          Not every job deserves your time.
+        </h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant">
+          Traditional job boards dump thousands of irrelevant listings on you. DEDAN Remote strips away the friction with rigorous verification and bespoke telemetry.
+        </p>
+</div>
+<!-- Spotlight Feature Container -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-lg items-center">
+<!-- Left: Editorial Context &amp; Metric Analysis -->
+<div class="lg:col-span-5 flex flex-col gap-space-md">
+<div class="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm flex flex-col gap-space-md">
+<div class="flex items-center gap-2 text-secondary">
+<span class="material-symbols-outlined">filter_alt_off</span>
+<span class="font-label-uppercase text-label-uppercase font-bold">NOISE PRUNED</span>
+</div>
+<h3 class="font-headline-lg text-headline-lg font-bold text-on-surface">
+              142 Listings Discarded For This User Today
+            </h3>
+<p class="font-body-md text-body-md text-on-surface-variant">
+              We proactively blocked positions hiding mandatory onsite days, lacking clear compensation bands, or enforcing synchronous 8-hour sprint monitoring.
+            </p>
+<div class="pt-2 flex flex-col gap-2">
+<div class="flex items-center gap-2 font-label-sm text-label-sm text-on-surface">
+<span class="material-symbols-outlined text-sm text-error">close</span>
+<span>Filtered 68 roles with hidden timezone mandates (US-only)</span>
+</div>
+<div class="flex items-center gap-2 font-label-sm text-label-sm text-on-surface">
+<span class="material-symbols-outlined text-sm text-error">close</span>
+<span>Filtered 49 roles with unverified salary bands</span>
+</div>
+<div class="flex items-center gap-2 font-label-sm text-label-sm text-on-surface">
+<span class="material-symbols-outlined text-sm text-error">close</span>
+<span>Filtered 25 roles with excessive synchronous standups</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Right: The High-Fidelity DEDAN Intelligence Dossier -->
+<div class="lg:col-span-7">
+<div class="bg-surface-container-lowest p-space-lg rounded-xl shadow-xl flex flex-col gap-space-md">
+<!-- Header with Organization and Tier Badges -->
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-space-sm bg-surface-container-low/50 p-space-md rounded-lg">
+<div class="flex flex-col">
+<div class="flex items-center gap-2">
+<span class="font-label-uppercase text-label-uppercase font-bold text-secondary">AURA CLOUD INC.</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">• Series B ($38M)</span>
+</div>
+<h3 class="font-display-lg text-[24px] font-bold text-on-surface">
+                  Principal Distributed Systems Architect
+                </h3>
+</div>
+<div class="flex items-center gap-2">
+<div class="px-3 py-1.5 rounded-lg bg-secondary-container text-on-secondary-fixed-variant font-headline-md text-headline-md font-bold">
+                  96% MATCH
+                </div>
+</div>
+</div>
+<!-- Quantitative Attribute Grid -->
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+<div class="bg-surface-container-low p-2 rounded flex flex-col">
+<span class="font-label-uppercase text-[10px] text-secondary">COMPENSATION</span>
+<span class="font-headline-sm text-headline-sm font-semibold text-on-surface">$210k – $245k</span>
+</div>
+<div class="bg-surface-container-low p-2 rounded flex flex-col">
+<span class="font-label-uppercase text-[10px] text-secondary">EQUITY</span>
+<span class="font-headline-sm text-headline-sm font-semibold text-on-surface">0.15% Buyback</span>
+</div>
+<div class="bg-surface-container-low p-2 rounded flex flex-col">
+<span class="font-label-uppercase text-[10px] text-secondary">LOCATION</span>
+<span class="font-headline-sm text-headline-sm font-semibold text-on-surface">Global Remote</span>
+</div>
+<div class="bg-surface-container-low p-2 rounded flex flex-col">
+<span class="font-label-uppercase text-[10px] text-secondary">CADENCE</span>
+<span class="font-headline-sm text-headline-sm font-semibold text-on-surface">100% Async</span>
+</div>
+</div>
+<!-- Dimensional Breakdown Bars -->
+<div class="flex flex-col gap-space-sm pt-2">
+<span class="font-label-uppercase text-label-uppercase text-secondary tracking-wider">DIMENSIONAL FIT TELEMETRY</span>
+<div class="flex flex-col gap-1">
+<div class="flex justify-between font-label-sm text-label-sm text-on-surface">
+<span>Architecture &amp; Distributed Systems</span>
+<span class="font-bold">98% Fit</span>
+</div>
+<div class="w-full bg-surface-container-high rounded-full h-2">
+<div class="bg-primary-container h-2 rounded-full" style="width: 98%;"></div>
+</div>
+</div>
+<div class="flex flex-col gap-1">
+<div class="flex justify-between font-label-sm text-label-sm text-on-surface">
+<span>Compensation Band &amp; Seniority Expectation</span>
+<span class="font-bold">95% Fit</span>
+</div>
+<div class="w-full bg-surface-container-high rounded-full h-2">
+<div class="bg-primary-container h-2 rounded-full" style="width: 95%;"></div>
+</div>
+</div>
+<div class="flex flex-col gap-1">
+<div class="flex justify-between font-label-sm text-label-sm text-on-surface">
+<span>Timezone Autonomy &amp; Async Cadence</span>
+<span class="font-bold">94% Fit</span>
+</div>
+<div class="w-full bg-surface-container-high rounded-full h-2">
+<div class="bg-primary-container h-2 rounded-full" style="width: 94%;"></div>
+</div>
+</div>
+</div>
+<!-- Deep Reasoning Card -->
+<div class="bg-surface-container-low p-space-md rounded-lg flex flex-col gap-1">
+<span class="font-label-uppercase text-label-uppercase text-secondary font-bold">WHY THIS MATCHES YOU</span>
+<p class="font-body-md text-body-md text-on-surface-variant">
+                "Deep consensus protocol mastery directly aligns with Aura Cloud's Raft core engine requirements. Your patent history in fault-tolerant peer clusters satisfies their tier-1 architectural rubric, and their handbook confirms zero scheduled daily meetings."
+              </p>
+</div>
+<!-- Card Actions -->
+<div class="flex items-center justify-between pt-2">
+<a class="font-label-md text-label-md text-secondary hover:text-on-surface transition-colors flex items-center gap-1 font-semibold" href="#">
+<span>View Source Dossier</span>
+<span class="material-symbols-outlined text-sm">open_in_new</span>
+</a>
+<button class="bg-primary-container text-on-primary hover:bg-tertiary-container px-space-md py-space-sm rounded-lg font-label-md text-label-md font-semibold transition-all shadow-sm">
+                Unlock Interview Simulator
+              </button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 6: FINAL CALL TO ACTION -->
+<section class="w-full py-20 bg-primary-container text-on-primary">
+<div class="max-w-7xl mx-auto px-margin-tablet lg:px-margin-desktop">
+<div class="flex flex-col items-center text-center gap-space-lg max-w-3xl mx-auto">
+<!-- Eyebrow -->
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-container-lowest/10 backdrop-blur-sm">
+<span class="font-label-uppercase text-label-uppercase text-inverse-primary tracking-widest">
+            GET STARTED IN 60 SECONDS
+          </span>
+</div>
+<!-- Headline -->
+<h2 class="font-display-xl text-display-xl font-bold tracking-tight text-on-primary">
+          Your next opportunity should find you.
+        </h2>
+<!-- Body -->
+<p class="font-body-lg text-body-lg text-inverse-primary max-w-xl">
+          Join high-performing engineers and product leaders using autonomous intelligence to navigate the global remote market with zero noise.
+        </p>
+<!-- CTAs -->
+<div class="flex flex-wrap items-center justify-center gap-space-md w-full sm:w-auto">
+<a class="inline-flex items-center justify-center gap-space-sm bg-surface text-on-surface hover:bg-surface-container-high px-space-lg py-space-md rounded-lg shadow-md transition-all font-headline-sm text-headline-sm font-semibold" data-path="explore" href="#">
+<span>Start exploring</span>
+<span class="material-symbols-outlined text-sm">arrow_forward</span>
+</a>
+<a class="inline-flex items-center justify-center gap-space-xs bg-surface-container-lowest/10 text-on-primary hover:bg-surface-container-lowest/20 px-space-lg py-space-md rounded-lg transition-all font-headline-sm text-headline-sm" href="#">
+<span>Book a walkthrough</span>
+</a>
+</div>
+<!-- Guarantee Badge -->
+<div class="pt-4 flex items-center gap-2 text-inverse-primary font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">lock</span>
+<span>No credit card required • Privacy-first • Zero resume public indexing</span>
+</div>
+</div>
+</div>
+</section>
+</div></main><footer class="w-full bg-surface-container-low pt-space-xl pb-space-lg shadow-[0_-1px_8px_rgba(36,23,17,0.02)]"><div class="max-w-7xl mx-auto px-margin-tablet lg:px-margin-desktop"><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-space-xl pb-space-xl"><div class="lg:col-span-2 flex flex-col gap-space-md"><div class="flex items-center gap-space-sm"><div class="w-8 h-8 rounded-lg bg-primary-container flex items-center justify-center text-on-primary font-headline-sm text-headline-sm">D</div><span class="font-headline-sm text-headline-sm text-on-surface font-semibold tracking-tight">DEDAN Remote</span></div><p class="font-body-md text-body-md text-on-surface-variant max-w-sm">High-density telemetry and discernment infrastructure for distributed executive architects and global talent operations.</p><div class="flex items-center gap-space-sm pt-space-xs"><span class="inline-block w-2 h-2 rounded-full bg-secondary"></span><span class="font-label-uppercase text-label-uppercase text-on-secondary-container">Telemetry active • All systems nominal</span></div></div><div class="flex flex-col gap-space-sm"><span class="font-label-uppercase text-label-uppercase text-secondary pb-space-xs">Product</span><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" data-path="explore" href="#">Explore</a><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" data-path="intelligence-dossier" href="#">Intelligence Dossier</a><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" data-path="radar-benchmarks" href="#">Radar Benchmarks</a><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" data-path="ai-mock-interview" href="#">AI Mock Interview</a><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" data-path="system-architecture" href="#">System Architecture</a></div><div class="flex flex-col gap-space-sm"><span class="font-label-uppercase text-label-uppercase text-secondary pb-space-xs">Company</span><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" data-path="about" href="#">About</a><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" data-path="manifesto" href="#">Manifesto</a><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" data-path="research" href="#">Research</a><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" data-path="careers" href="#">Careers</a></div><div class="flex flex-col gap-space-sm"><span class="font-label-uppercase text-label-uppercase text-secondary pb-space-xs">Legal</span><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" data-path="privacy-policy" href="#">Privacy Policy</a><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" data-path="terms-of-service" href="#">Terms of Service</a><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" data-path="security-disclosures" href="#">Security Disclosures</a></div></div><div class="pt-space-lg flex flex-col sm:flex-row items-center justify-between gap-space-md bg-surface-container-low"><span class="font-label-sm text-label-sm text-on-surface-variant">© 2025 DEDAN Remote Technologies Inc. Precision telemetry reserved.</span><div class="flex items-center gap-space-md"><span class="font-label-sm text-label-sm text-on-surface-variant">Zurich</span><span class="font-label-sm text-label-sm text-on-surface-variant">•</span><span class="font-label-sm text-label-sm text-on-surface-variant">San Francisco</span><span class="font-label-sm text-label-sm text-on-surface-variant">•</span><span class="font-label-sm text-label-sm text-on-surface-variant">Tokyo</span></div></div></div></footer></body></html>

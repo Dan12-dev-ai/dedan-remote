@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="web_standard" name="shell-type"/>
+<title>Interview Room — DEDAN Remote</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{width:8px;height:8px;}::-webkit-scrollbar-thumb{background:#e6e2db;border-radius:9999px;}</style>
+<script src="https://cdn.tailwindcss.com"></script>
+<script id="tailwind-config">tailwind.config={"darkMode":"class","theme":{"extend":{"colors":{"surface-tint":"#6d5a52","on-secondary-fixed-variant":"#5c4033","surface-container-highest":"#e6e2db","outline":"#807570","surface-container":"#f1ede6","on-tertiary-fixed":"#281900","on-error":"#ffffff","primary-fixed":"#f7ddd3","surface-container-lowest":"#ffffff","surface-bright":"#fdf9f2","inverse-primary":"#dac2b8","on-primary-fixed":"#261912","outline-variant":"#d2c3be","primary-container":"#261912","on-tertiary-container":"#9c7f53","surface-container-low":"#f7f3ec","surface-variant":"#e6e2db","on-surface-variant":"#4f4541","on-background":"#1c1c18","on-surface":"#1c1c18","error":"#ba1a1a","on-secondary-fixed":"#2b160b","tertiary-fixed":"#ffdead","secondary-container":"#fdd4c2","inverse-on-surface":"#f4f0e9","surface":"#fdf9f2","on-tertiary":"#ffffff","on-error-container":"#93000a","error-container":"#ffdad6","primary":"#000000","on-secondary-container":"#795a4c","inverse-surface":"#31302c","secondary":"#76584a","tertiary-container":"#281900","on-secondary":"#ffffff","on-primary-fixed-variant":"#54433c","surface-dim":"#dddad3","primary-fixed-dim":"#dac2b8","tertiary":"#000000","secondary-fixed":"#ffdbcc","on-tertiary-fixed-variant":"#5a431c","on-primary-container":"#947f77","on-primary":"#ffffff","tertiary-fixed-dim":"#e3c18f","surface-container-high":"#ebe8e1","background":"#fdf9f2","secondary-fixed-dim":"#e6bead"},"borderRadius":{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},"spacing":{"gutter":"1rem","margin-tablet":"1.5rem","space-lg":"1.5rem","gutter-desktop":"1.5rem","margin-desktop":"2.5rem","space-sm":"0.5rem","space-xs":"0.25rem","margin":"1rem","space-md":"1rem","space-xl":"2.25rem"},"fontFamily":{"display-xl":["Manrope"],"headline-lg":["Manrope"],"body-lg":["Manrope"],"headline-sm":["Manrope"],"display-lg":["Manrope"],"metric-display":["Manrope"],"body-md":["Manrope"],"body-sm":["Manrope"],"headline-md":["Manrope"],"headline-lg-mobile":["Manrope"],"label-uppercase":["Manrope"],"label-md":["Manrope"],"label-sm":["Manrope"]},"fontSize":{"display-xl":["48px",{"lineHeight":"56px","letterSpacing":"-0.03em","fontWeight":"700"}],"headline-lg":["28px",{"lineHeight":"36px","letterSpacing":"-0.02em","fontWeight":"600"}],"body-lg":["16px",{"lineHeight":"26px","letterSpacing":"-0.005em","fontWeight":"400"}],"headline-sm":["16px",{"lineHeight":"24px","letterSpacing":"-0.01em","fontWeight":"600"}],"display-lg":["36px",{"lineHeight":"44px","letterSpacing":"-0.025em","fontWeight":"600"}],"metric-display":["32px",{"lineHeight":"38px","letterSpacing":"-0.02em","fontWeight":"700"}],"body-md":["14px",{"lineHeight":"22px","letterSpacing":"0em","fontWeight":"400"}],"body-sm":["12px",{"lineHeight":"18px","letterSpacing":"0.005em","fontWeight":"400"}],"headline-md":["20px",{"lineHeight":"28px","letterSpacing":"-0.015em","fontWeight":"600"}],"headline-lg-mobile":["22px",{"lineHeight":"30px","letterSpacing":"-0.015em","fontWeight":"600"}],"label-uppercase":["11px",{"lineHeight":"16px","letterSpacing":"0.08em","fontWeight":"700"}],"label-md":["13px",{"lineHeight":"18px","letterSpacing":"0em","fontWeight":"500"}],"label-sm":["11px",{"lineHeight":"16px","letterSpacing":"0.02em","fontWeight":"500"}]}}}};</script>
+</head>
+<body class="bg-surface font-body-md text-on-surface antialiased">
+
+<!-- ============ BOOT / ERROR SHELL ============ -->
+<div id="boot" class="fixed inset-0 z-40 bg-surface flex flex-col items-center justify-center gap-4 px-6 text-center">
+  <div class="w-10 h-10 rounded-full border-2 border-surface-container-high border-t-primary animate-spin" id="boot-spinner"></div>
+  <div>
+    <h1 class="font-headline-md text-headline-md text-on-surface" id="boot-title">Preparing your interview…</h1>
+    <p class="font-body-md text-body-md text-on-surface-variant mt-1 max-w-md" id="boot-detail">Contacting the interview service.</p>
+  </div>
+  <div class="flex gap-2" id="boot-actions" hidden>
+    <a id="boot-back" class="px-4 py-2 rounded-lg bg-surface-container text-on-surface font-label-md hover:bg-surface-container-high transition-colors" href="job-detail.html">Back to job</a>
+    <button id="boot-retry" class="px-4 py-2 rounded-lg bg-primary text-on-primary font-label-md font-semibold hover:bg-secondary transition-colors" type="button">Try again</button>
+  </div>
+</div>
+
+<!-- ============ INTERVIEW ROOM ============ -->
+<div id="room" class="hidden flex flex-col min-h-screen">
+
+  <!-- Top bar: identity, role, stage, elapsed, connection -->
+  <header class="sticky top-0 z-30 bg-surface/90 backdrop-blur-xl border-b border-surface-container">
+    <div class="max-w-[1440px] mx-auto px-margin-tablet lg:px-margin-desktop h-16 flex items-center justify-between gap-4">
+      <div class="flex items-center gap-3 min-w-0">
+        <div class="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-on-primary font-headline-sm shrink-0">D</div>
+        <div class="flex flex-col min-w-0">
+          <span class="font-headline-sm text-headline-sm text-on-surface font-bold truncate" id="top-role">Interview</span>
+          <span class="font-label-sm text-label-sm text-on-surface-variant truncate" id="top-company">DEDAN Remote</span>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 sm:gap-4 shrink-0">
+        <span class="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-surface-container text-on-surface-variant font-label-sm" id="top-stage">
+          <span class="material-symbols-outlined text-[14px]">flag</span><span id="top-stage-text">Preparing</span>
+        </span>
+        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-surface-container text-on-surface font-label-sm tabular-nums">
+          <span class="material-symbols-outlined text-[14px] text-secondary">schedule</span><span id="top-elapsed">0:00</span>
+        </span>
+        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg font-label-sm" id="top-conn">
+          <span class="w-2 h-2 rounded-full bg-emerald-600" id="top-conn-dot"></span><span id="top-conn-text">Connected</span>
+        </span>
+      </div>
+    </div>
+  </header>
+
+  <main class="flex-1 max-w-[1440px] w-full mx-auto px-margin-tablet lg:px-margin-desktop py-space-lg grid grid-cols-1 lg:grid-cols-12 gap-gutter-desktop items-start">
+
+    <!-- Main interview column -->
+    <div class="lg:col-span-8 flex flex-col gap-space-lg">
+
+      <!-- Stage / progress strip -->
+      <div class="flex items-center justify-between gap-3 flex-wrap">
+        <div class="flex items-center gap-2 flex-wrap">
+          <span class="px-2.5 py-1 rounded-md bg-surface-container text-on-surface font-label-sm" id="stage-label">Introduction</span>
+          <span class="font-body-sm text-body-sm text-on-surface-variant" id="progress-text">Question 0 of 0</span>
+        </div>
+        <span class="font-label-sm text-label-sm text-on-surface-variant" id="type-label">Role rehearsal</span>
+      </div>
+      <!-- Progress bar (no scores exposed) -->
+      <div class="w-full h-1.5 rounded-full bg-surface-container overflow-hidden">
+        <div id="progress-bar" class="h-full bg-primary rounded-full transition-all" style="width:0%"></div>
+      </div>
+
+      <!-- Interviewer presence + current question -->
+      <section class="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm flex flex-col gap-space-md">
+        <div class="flex items-start gap-4">
+          <!-- Presence avatar: clearly AI, never a real human -->
+          <div class="relative shrink-0">
+            <div id="presence" class="w-16 h-16 rounded-2xl bg-primary-container text-on-primary flex items-center justify-center transition-transform">
+              <span class="material-symbols-outlined text-[30px]" id="presence-icon">smart_toy</span>
+            </div>
+            <span class="absolute -bottom-1 -right-1 px-1.5 py-0.5 rounded bg-surface text-on-surface-variant font-label-uppercase text-[9px] ring-2 ring-surface-container-lowest">AI</span>
+          </div>
+          <div class="flex flex-col gap-1 min-w-0">
+            <div class="flex items-center gap-2">
+              <h2 class="font-headline-sm text-headline-sm text-on-surface font-bold" id="interviewer-name">AI Interviewer</h2>
+              <span class="font-label-sm text-label-sm text-on-surface-variant" id="interviewer-state">Listening</span>
+            </div>
+            <p class="font-body-sm text-body-sm text-on-surface-variant" id="interviewer-meta">DEDAN synthetic interviewer · not a human</p>
+          </div>
+        </div>
+
+        <!-- Question card -->
+        <div class="mt-1 p-space-md rounded-lg bg-surface-container-low flex flex-col gap-2" id="question-card">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-[16px] text-secondary" id="question-icon">hearing</span>
+            <span class="font-label-uppercase text-label-uppercase text-secondary" id="question-label">Question</span>
+            <span class="hidden px-1.5 py-0.5 rounded bg-surface-container font-label-uppercase text-[9px] text-secondary" id="followup-badge">Follow-up</span>
+          </div>
+          <p class="font-headline-sm text-headline-sm text-on-surface leading-relaxed" id="question-text">Waiting for the interview to begin…</p>
+          <div class="flex flex-wrap gap-1.5 pt-1" id="question-focus"></div>
+        </div>
+      </section>
+
+      <!-- Live transcript (scoped to this session) -->
+      <section class="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm flex flex-col gap-space-sm">
+        <div class="flex items-center justify-between">
+          <h3 class="font-headline-sm text-headline-sm text-on-surface font-bold flex items-center gap-2">
+            <span class="material-symbols-outlined text-[18px] text-secondary">subtitles</span>Live transcript
+          </h3>
+          <span class="font-label-sm text-label-sm text-on-surface-variant" id="transcript-note">Stored for this session only</span>
+        </div>
+        <div id="transcript" class="flex flex-col gap-2.5 max-h-72 overflow-y-auto pr-1" aria-live="polite">
+          <p class="font-body-sm text-body-sm text-on-surface-variant">The conversation will appear here as it happens.</p>
+        </div>
+      </section>
+
+      <!-- Inline error / recovery banner -->
+      <div id="error-banner" class="hidden p-space-md rounded-xl bg-error-container text-on-error-container flex items-start gap-3" role="alert">
+        <span class="material-symbols-outlined text-[20px] shrink-0">error</span>
+        <div class="flex-1 flex flex-col gap-1">
+          <span class="font-label-md font-semibold" id="error-title">Connection interrupted</span>
+          <span class="font-body-sm" id="error-message">Your transcript is safe. Reconnect to continue.</span>
+        </div>
+        <button id="error-retry" class="px-3 py-1.5 rounded-lg bg-surface-container-lowest text-on-surface font-label-md hover:opacity-90 transition-opacity shrink-0" type="button">Reconnect</button>
+      </div>
+    </div>
+
+    <!-- Side rail: candidate + privacy + controls -->
+    <aside class="lg:col-span-4 flex flex-col gap-space-lg">
+
+      <!-- Candidate tile -->
+      <section class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col gap-space-sm">
+        <div class="flex items-center justify-between">
+          <span class="font-label-uppercase text-label-uppercase text-secondary">You</span>
+          <span class="font-label-sm text-label-sm text-on-surface-variant" id="you-state">Camera off · Mic ready</span>
+        </div>
+        <div class="relative w-full aspect-video rounded-lg bg-surface-container-high flex items-center justify-center overflow-hidden">
+          <video id="you-video" class="w-full h-full object-cover hidden" autoplay muted playsinline></video>
+          <div id="you-avatar" class="w-16 h-16 rounded-full bg-secondary flex items-center justify-center text-on-secondary">
+            <span class="material-symbols-outlined text-[30px]">person</span>
+          </div>
+        </div>
+        <div class="flex items-center justify-between font-label-sm text-on-surface-variant">
+          <span id="mic-level">Input idle</span>
+          <span id="capture-mode">Text + voice</span>
+        </div>
+      </section>
+
+      <!-- Privacy (real flags from the server) -->
+      <section class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col gap-space-xs">
+        <div class="flex items-center gap-2">
+          <span class="material-symbols-outlined text-[18px] text-secondary">shield</span>
+          <span class="font-headline-sm font-bold text-on-surface">Privacy</span>
+        </div>
+        <ul class="flex flex-col gap-1 font-body-sm text-body-sm text-on-surface-variant" id="privacy-list">
+          <li>• Audio is transcribed in your browser. No audio is recorded or sent.</li>
+          <li>• Transcript stored for your review, then deleted per retention policy.</li>
+        </ul>
+      </section>
+
+      <!-- Quick actions -->
+      <section class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col gap-space-sm">
+        <button id="repeat-btn" class="w-full px-3 py-2 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md flex items-center justify-center gap-2 transition-colors" type="button">
+          <span class="material-symbols-outlined text-[18px]">replay</span>Repeat the question
+        </button>
+        <button id="pause-btn" class="w-full px-3 py-2 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md flex items-center justify-center gap-2 transition-colors" type="button">
+          <span class="material-symbols-outlined text-[18px]">pause</span>Pause interview
+        </button>
+        <a id="transcript-link" class="w-full px-3 py-2 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md flex items-center justify-center gap-2 transition-colors" href="#">
+          <span class="material-symbols-outlined text-[18px]">description</span>View full transcript
+        </a>
+      </section>
+    </aside>
+  </main>
+
+  <!-- Bottom control bar -->
+  <div class="sticky bottom-0 z-30 bg-surface/95 backdrop-blur-xl border-t border-surface-container">
+    <div class="max-w-[1440px] mx-auto px-margin-tablet lg:px-margin-desktop py-space-sm flex items-center justify-between gap-3 flex-wrap">
+
+      <!-- Capture controls -->
+      <div class="flex items-center gap-2">
+        <button id="mic-btn" class="w-11 h-11 rounded-full bg-primary text-on-primary flex items-center justify-center transition-colors" title="Microphone" type="button">
+          <span class="material-symbols-outlined text-[20px]" id="mic-icon">mic</span>
+        </button>
+        <button id="cam-btn" class="w-11 h-11 rounded-full bg-surface-container text-on-surface-variant flex items-center justify-center transition-colors" title="Camera (optional)" type="button">
+          <span class="material-symbols-outlined text-[20px]" id="cam-icon">videocam_off</span>
+        </button>
+        <button id="voice-btn" class="hidden sm:inline-flex items-center gap-1.5 px-3 h-11 rounded-full bg-surface-container text-on-surface-variant hover:text-on-surface transition-colors" title="Spoken interviewer voice" type="button">
+          <span class="material-symbols-outlined text-[20px]" id="voice-icon">volume_up</span><span class="font-label-md">Voice</span>
+        </button>
+      </div>
+
+      <!-- Primary answer control -->
+      <div class="flex-1 min-w-[220px] flex items-center justify-center">
+        <button id="answer-btn" class="w-full max-w-md h-12 rounded-xl bg-primary text-on-primary font-label-md font-bold flex items-center justify-center gap-2 shadow-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed" type="button">
+          <span class="material-symbols-outlined text-[20px]" id="answer-icon">mic</span>
+          <span id="answer-text">Hold to answer</span>
+        </button>
+      </div>
+
+      <!-- Typed answer + end -->
+      <div class="flex items-center gap-2">
+        <button id="type-toggle" class="hidden sm:inline-flex items-center gap-1.5 px-3 h-11 rounded-full bg-surface-container text-on-surface-variant hover:text-on-surface transition-colors" title="Answer by typing" type="button">
+          <span class="material-symbols-outlined text-[20px]">keyboard</span><span class="font-label-md">Type</span>
+        </button>
+        <button id="end-btn" class="inline-flex items-center gap-1.5 px-4 h-11 rounded-full border border-error text-error font-label-md hover:bg-error-container transition-colors" type="button">
+          <span class="material-symbols-outlined text-[18px]">stop_circle</span><span class="hidden sm:inline">End</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ TYPED ANSWER MODAL ============ -->
+<div id="type-modal" class="hidden fixed inset-0 z-40 bg-inverse-surface/40 backdrop-blur-sm items-center justify-center p-6">
+  <div class="w-full max-w-xl bg-surface-container-lowest rounded-xl p-space-lg shadow-xl flex flex-col gap-space-md">
+    <div class="flex items-center justify-between">
+      <h3 class="font-headline-md text-headline-md text-on-surface font-bold">Type your answer</h3>
+      <button id="type-close" class="w-8 h-8 rounded-lg hover:bg-surface-container flex items-center justify-center text-on-surface-variant" type="button"><span class="material-symbols-outlined">close</span></button>
+    </div>
+    <p class="font-body-sm text-body-sm text-on-surface-variant" id="type-question"></p>
+    <textarea id="type-input" class="w-full h-40 p-3 rounded-lg bg-surface-container-low text-on-surface font-body-md resize-none focus:outline-none focus:ring-2 focus:ring-primary/30" placeholder="Write your answer here…"></textarea>
+    <div class="flex items-center justify-between gap-2">
+      <span class="font-label-sm text-on-surface-variant"><span id="type-count">0</span> characters</span>
+      <div class="flex gap-2">
+        <button id="type-cancel" class="px-4 py-2 rounded-lg bg-surface-container text-on-surface font-label-md hover:bg-surface-container-high transition-colors" type="button">Cancel</button>
+        <button id="type-submit" class="px-4 py-2 rounded-lg bg-primary text-on-primary font-label-md font-semibold hover:bg-secondary transition-colors" type="button">Submit answer</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ END CONFIRM MODAL ============ -->
+<div id="end-modal" class="hidden fixed inset-0 z-40 bg-inverse-surface/40 backdrop-blur-sm items-center justify-center p-6">
+  <div class="w-full max-w-md bg-surface-container-lowest rounded-xl p-space-lg shadow-xl flex flex-col gap-space-md">
+    <div class="flex items-center gap-2">
+      <span class="material-symbols-outlined text-error text-[22px]">help</span>
+      <h3 class="font-headline-md text-headline-md text-on-surface font-bold">End this interview?</h3>
+    </div>
+    <p class="font-body-md text-body-md text-on-surface-variant">Your transcript and answers so far will be assessed. This cannot be undone.</p>
+    <div class="flex items-center justify-end gap-2 pt-1">
+      <button id="end-cancel" class="px-4 py-2 rounded-lg bg-surface-container text-on-surface font-label-md hover:bg-surface-container-high transition-colors" type="button">Keep going</button>
+      <button id="end-confirm" class="px-4 py-2 rounded-lg bg-error text-on-error font-label-md font-semibold hover:opacity-90 transition-opacity" type="button">End &amp; see results</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  // ── Config ────────────────────────────────────────────────────────────
+  // The API base: same origin by default. No secrets live in this file.
+  var API = (location.protocol === "file:") ? "http://localhost:8000" : location.origin;
+  var params = new URLSearchParams(location.search);
+  var OPPORTUNITY = params.get("job") || params.get("opportunity") || "";
+  var SESSION = params.get("session") || "";
+
+  // Auth: bearer token from session storage (set by the app on sign-in).
+  function token() { return sessionStorage.getItem("dedan_token") || localStorage.getItem("dedan_token") || ""; }
+
+  // ── State ─────────────────────────────────────────────────────────────
+  var room = null;            // last RoomSessionOut snapshot
+  var es = null;              // EventSource
+  var ticketTimer = null;
+  var transcript = [];        // local mirror for display
+  var lastSpoken = "";        // last interviewer utterance we voiced
+  var recognition = null;     // SpeechRecognition
+  var recognizing = false;
+  var answerStart = 0;
+
+  // ── DOM helpers ───────────────────────────────────────────────────────
+  function $(id) { return document.getElementById(id); }
+  function show(id, on) { var el = $(id); if (el) el.classList.toggle("hidden", !on); }
+  function openModal(id) { var m = $(id); m.classList.remove("hidden"); m.classList.add("flex"); }
+  function closeModal(id) { var m = $(id); m.classList.add("hidden"); m.classList.remove("flex"); }
+
+  function api(path, opts) {
+    opts = opts || {};
+    opts.headers = Object.assign({ "Content-Type": "application/json" }, opts.headers || {});
+    if (token()) opts.headers["Authorization"] = "Bearer " + token();
+    return fetch(API + path, opts).then(function (res) {
+      return res.json().then(function (body) {
+        if (!res.ok) {
+          var err = new Error((body && body.error && body.error.message) || ("Request failed (" + res.status + ")"));
+          err.code = body && body.error && body.error.code;
+          err.status = res.status;
+          throw err;
+        }
+        return body;
+      });
+    });
+  }
+
+  // ── Boot ──────────────────────────────────────────────────────────────
+  function boot() {
+    // A live interview is a record about a person: the server requires sign-in.
+    if (!token()) {
+      return showUnavailable(
+        "You need to be signed in to start a live interview.",
+        true,
+        "Sign in"
+      );
+    }
+    api("/api/interview/status").then(function (st) {
+      if (!st.live) {
+        return showUnavailable(st.detail || "AI interviews are not configured on this deployment.", false);
+      }
+      if (SESSION) { return api("/api/interview/sessions/" + encodeURIComponent(SESSION)).then(render); }
+      if (!OPPORTUNITY) { return showUnavailable("No opportunity was selected. Open this interview from a job.", false); }
+      return api("/api/interview/sessions", {
+        method: "POST",
+        body: JSON.stringify({ opportunity: OPPORTUNITY, interview_type: params.get("type") || "role_rehearsal" })
+      }).then(function (created) { render(created); startStream(created.session_id); });
+    }).catch(function (err) {
+      showUnavailable(err.message, true);
+    });
+  }
+
+  function showUnavailable(message, retryable, retryLabel) {
+    $("boot-spinner").classList.add("hidden");
+    $("boot-title").textContent = "Live interview unavailable";
+    $("boot-detail").textContent = message + " A live AI interviewer requires a signed-in account and a configured model on the server.";
+    var back = $("boot-back");
+    back.href = OPPORTUNITY ? ("job-detail.html?job=" + encodeURIComponent(OPPORTUNITY)) : "job-detail.html";
+    $("boot-actions").hidden = !retryable;
+    if (retryable) {
+      $("boot-retry").textContent = retryLabel || "Try again";
+      $("boot-retry").onclick = function () { location.reload(); };
+    }
+  }
+
+  // ── Render a room snapshot ────────────────────────────────────────────
+  function render(snapshot) {
+    room = snapshot;
+    show("boot", false);
+    show("room", true);
+
+    var role = snapshot.role || {};
+    $("top-role").textContent = role.title || "Interview";
+    $("top-company").textContent = role.company || "DEDAN Remote";
+    $("interviewer-name").textContent = (snapshot.interviewer && snapshot.interviewer.name) || "AI Interviewer";
+    $("interviewer-meta").textContent =
+      "DEDAN synthetic interviewer · " + ((snapshot.interviewer && snapshot.interviewer.role) || "technical") + " · not a human";
+    $("type-label").textContent = (snapshot.interview && snapshot.interview.type_label) || snapshot.interview_type || "Role rehearsal";
+
+    // Privacy flags come straight from the server — never invented here.
+    var p = snapshot.privacy || {};
+    var pl = $("privacy-list"); pl.innerHTML = "";
+    addPrivacy(pl, "Audio recorded: " + (p.audio_recorded ? "yes" : "no — transcribed in your browser"));
+    addPrivacy(pl, "Audio transmitted: " + (p.audio_transmitted ? "yes" : "no"));
+    addPrivacy(pl, "Transcript stored: " + (p.transcript_stored ? "yes (" + (p.retention_days || "?") + " days)" : "no"));
+    addPrivacy(pl, "Third-party model: " + (p.third_party_model || "none"));
+    addPrivacy(pl, "Shared with employer: " + (p.shared_with_employer ? "yes" : "no"));
+
+    renderProgress(snapshot);
+    renderState(snapshot);
+    renderQuestion(snapshot);
+    syncTranscript(snapshot);
+  }
+
+  function addPrivacy(list, text) {
+    var li = document.createElement("li"); li.textContent = "• " + text; list.appendChild(li);
+  }
+
+  function renderProgress(s) {
+    var pr = s.progress || {};
+    var total = pr.planned_total || 0;
+    var answered = pr.answered || 0;
+    $("progress-text").textContent = "Question " + Math.min(answered + 1, Math.max(total, 1)) + " of " + Math.max(total, 1);
+    var pct = total ? Math.round((answered / total) * 100) : 0;
+    $("progress-bar").style.width = Math.min(100, pct) + "%";
+    $("top-stage-text").textContent = stageName(s.state);
+  }
+
+  function stageName(state) {
+    var map = {
+      preparing: "Preparing", ready: "Ready", ai_intro: "Introduction", ai_asking: "Question",
+      waiting_for_response: "Your turn", user_responding: "Listening to you", processing_response: "Thinking",
+      ai_follow_up: "Follow-up", next_question: "Next", paused: "Paused", completing: "Finishing",
+      completed: "Complete", completed_failed: "Complete", error: "Interrupted"
+    };
+    return map[state] || state;
+  }
+
+  function renderState(s) {
+    var presence = {
+      idle: "smart_toy", introducing: "campaign", listening: "hearing", thinking: "psychology",
+      speaking: "graphic_eq", user_speaking: "record_voice_over", processing: "hourglass_top",
+      transitioning: "sync", complete: "check_circle"
+    };
+    var istate = s.interviewer_state || "idle";
+    $("presence-icon").textContent = presence[istate] || "smart_toy";
+    $("interviewer-state").textContent = ({
+      idle: "Ready", introducing: "Introducing", listening: "Listening", thinking: "Thinking",
+      speaking: "Speaking", user_speaking: "Hearing you", processing: "Evaluating",
+      transitioning: "Moving on", complete: "Complete"
+    })[istate] || istate;
+    // Subtle motion cue for speaking / thinking states.
+    var p = $("presence");
+    p.classList.toggle("scale-105", istate === "speaking" || istate === "user_speaking");
+    p.classList.toggle("animate-pulse", istate === "thinking" || istate === "processing");
+
+    // Answer button enabled only when the candidate has the floor.
+    var floor = s.state === "waiting_for_response" || s.state === "ai_asking" || s.state === "ai_follow_up";
+    $("answer-btn").disabled = !floor;
+    $("answer-btn").classList.toggle("opacity-50", !floor);
+
+    if (s.state === "error") { showError(s.error || "The interview hit a problem. Your transcript is safe."); }
+    else { hideError(); }
+  }
+
+  function renderQuestion(s) {
+    var q = s.current;
+    if (!q) {
+      if (s.state === "completed" || s.state === "completed_failed") {
+        $("question-text").textContent = "This interview has ended.";
+      } else {
+        $("question-text").textContent = "The interviewer is preparing…";
+      }
+      $("question-focus").innerHTML = "";
+      return;
+    }
+    $("question-label").textContent = q.kind ? q.kind.replace(/_/g, " ") : "Question";
+    $("question-text").textContent = q.prompt || "";
+    $("followup-badge").classList.toggle("hidden", q.origin !== "follow_up");
+    var focus = $("question-focus"); focus.innerHTML = "";
+    (q.focus || []).forEach(function (f) {
+      var chip = document.createElement("span");
+      chip.className = "px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm";
+      chip.textContent = f; focus.appendChild(chip);
+    });
+  }
+
+  function syncTranscript(s) {
+    // The server is the source of truth; re-fetch full transcript lazily.
+    if (s.state === "completed" || s.state === "completed_failed") {
+      // handled by results redirect / link
+    }
+    appendTurn(s);
+  }
+
+  var seenQ = "", seenState = "";
+  function appendTurn(s) {
+    // Intro spoken once.
+    if (s.introduction && s.introduction !== lastSpoken && s.state === "ai_intro") {
+      pushLine("interviewer", s.introduction); lastSpoken = s.introduction; speak(s.introduction);
+    }
+    // Current question spoken once.
+    if (s.current && s.current.prompt && s.current.prompt !== seenQ &&
+        (s.state === "ai_asking" || s.state === "waiting_for_response" || s.state === "ai_follow_up")) {
+      pushLine("interviewer", s.current.prompt); seenQ = s.current.prompt; speak(s.current.prompt);
+      if (s.state === "waiting_for_response") autoListen();
+    }
+    // Completion.
+    if ((s.state === "completed" || s.state === "completed_failed") && seenState !== s.state) {
+      seenState = s.state;
+      finish(s);
+    }
+  }
+
+  function pushLine(who, text) {
+    transcript.push({ who: who, text: text });
+    var box = $("transcript");
+    if (box.dataset.empty === "1" || box.firstChild && box.firstChild.tagName === "P") box.innerHTML = "";
+    var row = document.createElement("div");
+    row.className = "flex gap-2 " + (who === "interviewer" ? "" : "justify-end");
+    var bubble = document.createElement("div");
+    bubble.className = "max-w-[85%] px-3 py-2 rounded-lg font-body-sm " +
+      (who === "interviewer" ? "bg-surface-container text-on-surface" : "bg-primary-container text-on-primary");
+    bubble.textContent = text;
+    row.appendChild(bubble); box.appendChild(row);
+    box.scrollTop = box.scrollHeight;
+    $("transcript-note").textContent = transcript.length + " turns · this session only";
+  }
+
+  // ── SSE stream (via one-use ticket) ───────────────────────────────────
+  function startStream(sessionId) {
+    stopStream();
+    setConn("connecting");
+    api("/api/interview/sessions/" + encodeURIComponent(sessionId) + "/ticket", { method: "POST" })
+      .then(function (t) {
+        es = new EventSource(API + "/api/interview/sessions/" + encodeURIComponent(sessionId) + "/events?ticket=" + encodeURIComponent(t.ticket));
+        es.addEventListener("connection.established", function (e) {
+          setConn("connected"); var d = JSON.parse(e.data); if (d.room) render(d.room);
+        });
+        ["interview.ready","question.presented","candidate.started_speaking","response.processing",
+         "followup.generated","question.completed","interview.paused","interview.completing"].forEach(function (name) {
+          es.addEventListener(name, function (e) { var d = JSON.parse(e.data); if (d.room) render(d.room); });
+        });
+        es.addEventListener("interview.completed", function (e) {
+          var d = JSON.parse(e.data); if (d.room) render(d.room); else if (room) finish(room);
+        });
+        es.addEventListener("interview.error", function (e) {
+          var d = JSON.parse(e.data); setConn("reconnecting");
+          showError((d && d.message) || "The live connection dropped. Reconnect to continue.", true);
+        });
+        es.onerror = function () { setConn("reconnecting"); };
+      })
+      .catch(function (err) { showError(err.message, true); });
+    // Refresh the ticket before its 60s TTL lapses.
+    ticketTimer = setInterval(function () {
+      if (es) { stopStream(); startStream(sessionId); }
+    }, 50000);
+  }
+  function stopStream() {
+    if (es) { try { es.close(); } catch (e) {} es = null; }
+    if (ticketTimer) { clearInterval(ticketTimer); ticketTimer = null; }
+  }
+
+  function setConn(state) {
+    var dot = $("top-conn-dot"), text = $("top-conn-text");
+    if (state === "connected") { dot.className = "w-2 h-2 rounded-full bg-emerald-600"; text.textContent = "Connected"; }
+    else if (state === "connecting") { dot.className = "w-2 h-2 rounded-full bg-amber-500"; text.textContent = "Connecting"; }
+    else { dot.className = "w-2 h-2 rounded-full bg-error"; text.textContent = "Reconnecting"; }
+  }
+
+  function showError(msg, retryable) {
+    $("error-banner").classList.remove("hidden");
+    $("error-message").textContent = msg;
+    $("error-retry").style.display = retryable ? "" : "none";
+    if (retryable && room) $("error-retry").onclick = function () { hideError(); startStream(room.session_id); };
+  }
+  function hideError() { $("error-banner").classList.add("hidden"); }
+
+  // ── Speech: browser-native (the deployment has no server STT/TTS) ─────
+  var voiceOn = true;
+  function speak(text) {
+    if (!voiceOn || !("speechSynthesis" in window) || !text) return;
+    try {
+      window.speechSynthesis.cancel();
+      var u = new SpeechSynthesisUtterance(text);
+      u.rate = 1.0; u.pitch = 1.0;
+      window.speechSynthesis.speak(u);
+    } catch (e) { /* voice is a nicety; never block the interview */ }
+  }
+
+  function ensureRecognition() {
+    var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SR) return null;
+    var r = new SR();
+    r.continuous = true; r.interimResults = true; r.lang = "en-US";
+    r.onresult = function (e) {
+      var final = "", interim = "";
+      for (var i = e.resultIndex; i < e.results.length; i++) {
+        if (e.results[i].isFinal) final += e.results[i][0].transcript + " ";
+        else interim += e.results[i][0].transcript;
+      }
+      $("answer-text").textContent = final || interim || "Listening…";
+      if (final) { r._final = (r._final || "") + final; }
+    };
+    r.onerror = function (ev) {
+      recognizing = false; setAnswerIdle();
+      if (ev.error === "not-allowed" || ev.error === "service-not-allowed") {
+        showError("Microphone access was denied. You can still answer by typing.", false);
+      } else if (ev.error !== "aborted") {
+        showError("Speech recognition hiccupped. You can answer by typing.", false);
+      }
+    };
+    r.onend = function () { recognizing = false; };
+    return r;
+  }
+
+  function setAnswerIdle() {
+    $("answer-icon").textContent = "mic";
+    $("answer-text").textContent = (room && (room.state === "waiting_for_response")) ? "Hold to answer" : "Waiting";
+  }
+
+  function startListening() {
+    if (!recognition) recognition = ensureRecognition();
+    if (!recognition) { showError("This browser has no speech recognition. Use the Type option to answer.", false); openModal("type-modal"); return; }
+    try { recognition._final = ""; recognition.start(); recognizing = true;
+      $("answer-icon").textContent = "graphic_eq"; $("answer-text").textContent = "Listening…";
+      $("mic-level").textContent = "Listening"; answerStart = Date.now();
+    } catch (e) { recognizing = true; }
+  }
+  function stopListeningAndSubmit() {
+    if (!recognizing) return;
+    var r = recognition; recognizing = false;
+    try { r.stop(); } catch (e) {}
+    var text = (r._final || "").trim();
+    var seconds = (Date.now() - answerStart) / 1000;
+    setAnswerIdle();
+    if (text) submitAnswer(text, seconds, "voice");
+    else showError("No speech was captured. Try again, or answer by typing.", false);
+  }
+
+  function autoListen() { /* optional auto-open of mic when the floor passes; kept manual to respect consent */ }
+
+  // ── Answer submission ─────────────────────────────────────────────────
+  function submitAnswer(text, seconds, mode) {
+    if (!room) return;
+    pushLine("candidate", text);
+    $("mic-level").textContent = "Sent";
+    api("/api/interview/sessions/" + encodeURIComponent(room.session_id) + "/answers", {
+      method: "POST",
+      body: JSON.stringify({ text: text, duration_seconds: seconds || 0, input_mode: mode || "text" })
+    }).then(function (s) { render(s); }).catch(function (err) {
+      showError(err.message + " Your answer is kept locally; reconnect and resubmit.", true);
+    });
+  }
+
+  // ── Completion ────────────────────────────────────────────────────────
+  function finish(s) {
+    stopStream();
+    var url = "interview-results.html?session=" + encodeURIComponent(s.session_id);
+    if (s.outcome === "completed_failed") url += "&failed=1";
+    location.href = url;
+  }
+
+  // ── Elapsed clock ─────────────────────────────────────────────────────
+  setInterval(function () {
+    if (!room) return;
+    var t = Math.floor(room.elapsed_seconds || 0) + 1;
+    room.elapsed_seconds = t;
+    var m = Math.floor(t / 60), s2 = t % 60;
+    $("top-elapsed").textContent = m + ":" + (s2 < 10 ? "0" : "") + s2;
+  }, 1000);
+
+  // ── Control bindings ──────────────────────────────────────────────────
+  $("answer-btn").addEventListener("mousedown", startListening);
+  $("answer-btn").addEventListener("mouseup", stopListeningAndSubmit);
+  $("answer-btn").addEventListener("mouseleave", function () { if (recognizing) stopListeningAndSubmit(); });
+  $("answer-btn").addEventListener("touchstart", function (e) { e.preventDefault(); startListening(); }, { passive: false });
+  $("answer-btn").addEventListener("touchend", function (e) { e.preventDefault(); stopListeningAndSubmit(); }, { passive: false });
+
+  $("mic-btn").addEventListener("click", function () {
+    var off = $("mic-icon").textContent.trim() === "mic_off";
+    $("mic-icon").textContent = off ? "mic" : "mic_off";
+    $("mic-btn").className = "w-11 h-11 rounded-full flex items-center justify-center transition-colors " +
+      (off ? "bg-primary text-on-primary" : "bg-surface-container text-on-surface-variant");
+    $("you-state").textContent = (off ? "Mic on" : "Mic muted") + " · Camera " + ($("cam-icon").textContent.trim() === "videocam" ? "on" : "off");
+  });
+
+  $("cam-btn").addEventListener("click", function () {
+    var on = $("cam-icon").textContent.trim() === "videocam";
+    if (!on) {
+      navigator.mediaDevices.getUserMedia({ video: true }).then(function (stream) {
+        $("you-video").srcObject = stream; $("you-video").classList.remove("hidden"); $("you-avatar").classList.add("hidden");
+        $("cam-icon").textContent = "videocam"; $("cam-btn").className = "w-11 h-11 rounded-full bg-primary text-on-primary flex items-center justify-center transition-colors";
+        $("you-state").textContent = "Camera on · Mic " + ($("mic-icon").textContent.trim() === "mic" ? "on" : "off");
+      }).catch(function () { showError("Camera permission was denied. You can continue with camera off.", false); });
+    } else {
+      var v = $("you-video");
+      if (v.srcObject) v.srcObject.getTracks().forEach(function (t) { t.stop(); });
+      v.srcObject = null; v.classList.add("hidden"); $("you-avatar").classList.remove("hidden");
+      $("cam-icon").textContent = "videocam_off"; $("cam-btn").className = "w-11 h-11 rounded-full bg-surface-container text-on-surface-variant flex items-center justify-center transition-colors";
+      $("you-state").textContent = "Camera off · Mic " + ($("mic-icon").textContent.trim() === "mic" ? "on" : "off");
+    }
+  });
+
+  $("voice-btn").addEventListener("click", function () {
+    voiceOn = !voiceOn;
+    $("voice-icon").textContent = voiceOn ? "volume_up" : "volume_off";
+    $("voice-btn").classList.toggle("text-on-surface", voiceOn);
+    $("voice-btn").classList.toggle("text-on-surface-variant", !voiceOn);
+    if (!voiceOn && "speechSynthesis" in window) window.speechSynthesis.cancel();
+  });
+
+  $("repeat-btn").addEventListener("click", function () {
+    if (room && room.current && room.current.prompt) speak(room.current.prompt);
+  });
+
+  $("pause-btn").addEventListener("click", function () {
+    if (!room) return;
+    var pausing = room.state !== "paused";
+    var path = pausing ? "pause" : "resume";
+    api("/api/interview/sessions/" + encodeURIComponent(room.session_id) + "/" + path, { method: "POST" })
+      .then(function (s) { render(s); }).catch(function (e) { showError(e.message, true); });
+  });
+
+  $("transcript-link").addEventListener("click", function (e) {
+    e.preventDefault();
+    if (!room) return;
+    api("/api/interview/sessions/" + encodeURIComponent(room.session_id) + "/transcript").then(function (t) {
+      var box = $("transcript"); box.innerHTML = "";
+      (t.entries || []).forEach(function (en) {
+        pushLine(en.speaker === "interviewer" ? "interviewer" : "candidate", en.text);
+      });
+    }).catch(function (err) { showError(err.message, false); });
+  });
+
+  // Typed answer
+  $("type-toggle").addEventListener("click", function () {
+    $("type-question").textContent = room && room.current ? room.current.prompt : "";
+    openModal("type-modal"); $("type-input").focus();
+  });
+  $("type-close").addEventListener("click", function () { closeModal("type-modal"); });
+  $("type-cancel").addEventListener("click", function () { closeModal("type-modal"); });
+  $("type-input").addEventListener("input", function () { $("type-count").textContent = this.value.length; });
+  $("type-submit").addEventListener("click", function () {
+    var v = $("type-input").value.trim();
+    if (!v) return;
+    closeModal("type-modal"); $("type-input").value = ""; $("type-count").textContent = "0";
+    submitAnswer(v, 0, "text");
+  });
+
+  // End interview (with confirmation)
+  $("end-btn").addEventListener("click", function () { openModal("end-modal"); });
+  $("end-cancel").addEventListener("click", function () { closeModal("end-modal"); });
+  $("end-confirm").addEventListener("click", function () {
+    closeModal("end-modal");
+    if (!room) return;
+    api("/api/interview/sessions/" + encodeURIComponent(room.session_id) + "/finish", { method: "POST" })
+      .then(function (rep) {
+        // The finish response carries the report; persist a pointer and go to results.
+        try { sessionStorage.setItem("dedan_last_report_" + room.session_id, JSON.stringify(rep)); } catch (e) {}
+        location.href = "interview-results.html?session=" + encodeURIComponent(room.session_id);
+      })
+      .catch(function (err) { showError(err.message, true); });
+  });
+
+  $("error-retry").addEventListener("click", function () { if (room) { hideError(); startStream(room.session_id); } });
+
+  // Kick off.
+  boot();
+})();
+</script>
+</body>
+</html>
