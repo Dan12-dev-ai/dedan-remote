@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+<meta name="theme-color" content="#fbf7f0"/>
+<title>About — DEDAN Remote</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = { darkMode:'class', theme:{ extend:{
+  fontFamily:{ sans:['Inter','ui-sans-serif','system-ui','sans-serif'], serif:['"Instrument Serif"','ui-serif','Georgia','serif'] },
+  colors:{
+    ivory:{50:'#FDFBF6',100:'#FBF7F0',200:'#F6EFE2',DEFAULT:'#FBF7F0'},
+    cream:{DEFAULT:'#F3ECDF',dark:'#EBE2D0'},
+    cocoa:{100:'#E9DFCF',200:'#D7C9B1',300:'#B8A488',400:'#8E7A5E',500:'#6C5A42',600:'#514330',700:'#3A2F22',800:'#261E14',900:'#17110B',DEFAULT:'#514330'},
+    espresso:{50:'#342A1E',100:'#2A2117',200:'#231C14',300:'#1C1610',400:'#16110C',500:'#110D09',DEFAULT:'#1C1610'},
+    champagne:{50:'#FBF0DA',100:'#F5E3BA',200:'#EBD194',300:'#DDB767',400:'#C89A47',500:'#A87F36',DEFAULT:'#C89A47'},
+    gold:{500:'#B08A3E',600:'#96722C',DEFAULT:'#B08A3E'},
+    success:{DEFAULT:'#2F6D51',soft:'#E6F0EA'},
+    warning:{DEFAULT:'#A87016',soft:'#F7EAD2'},
+    danger:{DEFAULT:'#992F2A',soft:'#F4DAD9'},
+    info:{DEFAULT:'#275E8C',soft:'#DCE8F2'},
+    ink:'#110D09'
+  },
+  boxShadow:{ soft:'0 1px 2px rgba(23,17,11,.04), 0 1px 3px rgba(23,17,11,.04)', card:'0 1px 2px rgba(23,17,11,.05), 0 2px 6px rgba(23,17,11,.04)' }
+}}};
+</script>
+<style>
+  :root { color-scheme: light; }
+  html,body { -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; }
+  body { background:#FBF7F0; color:#17110B; font-family:'Inter',ui-sans-serif,system-ui,sans-serif; }
+  ::selection { background:#DDB767; color:#1C1610; }
+  .material-symbols-rounded { font-variation-settings:'FILL' 0,'wght' 500,'GRAD' 0,'opsz' 20; line-height:1; }
+  .grid-12 { max-width:1520px; margin-inline:auto; padding-inline:20px; }
+  @media (min-width:1280px){ .grid-12{ padding-inline:28px; } }
+  .btn { display:inline-flex; align-items:center; justify-content:center; gap:7px; padding:9px 14px; border-radius:9px; font-weight:600; font-size:13.5px; line-height:1.2; border:1px solid rgba(81,67,48,.12); background:#fff; color:#1C1610; cursor:pointer; transition:all .14s ease; text-decoration:none; }
+  .btn:hover { background:#FBF7F0; }
+  .btn-primary { background:#1C1610; color:#FBF7F0; border-color:transparent; }
+  .btn-primary:hover { background:#231C14; }
+  .card { background:#fff; border-radius:14px; box-shadow:0 1px 2px rgba(23,17,11,.05), 0 2px 6px rgba(23,17,11,.04), inset 0 0 0 1px rgba(81,67,48,.08); }
+  .nav-link { display:flex; align-items:center; gap:10px; padding:8px 10px; border-radius:8px; color:#514330; font-weight:500; font-size:13.5px; transition:all .15s ease; cursor:pointer; text-decoration:none; }
+  .nav-link:hover { background:#F3ECDF; color:#1C1610; }
+  .nav-link.is-active { background:#fff; color:#1C1610; box-shadow:inset 0 0 0 1px rgba(81,67,48,.10), 0 1px 2px rgba(23,17,11,.04); }
+  .hairline { box-shadow: inset 0 0 0 1px rgba(81,67,48,.08); }
+  .prose-p { font-size:14.5px; line-height:1.65; color:#514330; }
+  .focus-ring:focus-visible { outline:2px solid #C89A47; outline-offset:3px; border-radius:10px; }
+</style>
+</head>
+<body class="min-h-screen bg-ivory text-ink antialiased" data-app-header data-active="about">
+<main class="grid-12 py-10">
+  <div class="max-w-[760px]">
+    <span class="text-[11px] uppercase tracking-[0.16em] font-bold text-champagne-500">About DEDAN Remote</span>
+    <h1 class="text-[30px] md:text-[36px] font-extrabold tracking-tight text-espresso-300 mt-2">Work intelligence, built for signal.</h1>
+    <p class="prose-p mt-4">DEDAN Remote continuously discovers, normalizes, and ranks publicly available remote AI-work opportunities across a curated set of platforms — then surfaces the ones that actually fit how you work: your skills, your timezone cadence, and your engineering principles.</p>
+
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 my-8">
+      <div class="card p-5"><div class="text-[26px] font-extrabold text-espresso-300">9</div><div class="text-[12.5px] text-cocoa-500 font-semibold">Monitored platforms</div></div>
+      <div class="card p-5"><div class="text-[26px] font-extrabold text-espresso-300">0–100</div><div class="text-[12.5px] text-cocoa-500 font-semibold">Deterministic fit score</div></div>
+      <div class="card p-5"><div class="text-[26px] font-extrabold text-espresso-300">Self-hosted</div><div class="text-[12.5px] text-cocoa-500 font-semibold">Auditable by design</div></div>
+    </div>
+
+    <section id="manifesto" class="mt-10">
+      <h2 class="text-[22px] font-bold text-espresso-300 mb-3">Manifesto</h2>
+      <p class="prose-p mb-3">Job boards optimize for recruiter attention, not your time. We believe remote work discovery should be deterministic and inspectable: every score is arithmetic over eight weighted dimensions, every listing carries its source, and nothing is fabricated to look busy.</p>
+      <p class="prose-p">No opaque ranking. No invented metrics. If a number is shown, it comes from the live catalog.</p>
+    </section>
+
+    <section id="research" class="mt-10">
+      <h2 class="text-[22px] font-bold text-espresso-300 mb-3">Research & method</h2>
+      <p class="prose-p mb-3">The ranking engine scores each opportunity across remote availability, worldwide eligibility, disclosed salary, beginner friendliness, AI-work relevance, English requirement, application simplicity, and freshness. Weights are configurable and must sum to 1.0.</p>
+      <p class="prose-p">Eligibility and skill matching use a transparent keyword taxonomy — the same rules, every time, with no learned black box in the product path.</p>
+    </section>
+
+    <section id="careers" class="mt-10 mb-6">
+      <h2 class="text-[22px] font-bold text-espresso-300 mb-3">Careers</h2>
+      <p class="prose-p">We're a small, distributed team. If you care about deterministic systems and clean data pipelines, we'd like to hear from you. Reach out via the contact channel listed in the repository.</p>
+    </section>
+
+    <div class="mt-8 flex flex-wrap gap-3">
+      <a href="opportunities.html" class="btn btn-primary"><span class="material-symbols-rounded" style="font-size:18px;">explore</span>Explore opportunities</a>
+      <a href="legal.html" class="btn">Read our policies</a>
+    </div>
+  </div>
+</main>
+<script src="shared.js"></script>
+<script src="chrome.js"></script>
+<script src="nav.js"></script>
+</body>
+</html>

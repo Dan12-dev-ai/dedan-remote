@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+<meta name="theme-color" content="#fbf7f0"/>
+<title>Dashboard — DEDAN Remote</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = { darkMode:'class', theme:{ extend:{
+  fontFamily:{ sans:['Inter','ui-sans-serif','system-ui','sans-serif'], serif:['"Instrument Serif"','ui-serif','Georgia','serif'] },
+  colors:{
+    ivory:{50:'#FDFBF6',100:'#FBF7F0',200:'#F6EFE2',DEFAULT:'#FBF7F0'},
+    cream:{DEFAULT:'#F3ECDF',dark:'#EBE2D0'},
+    cocoa:{100:'#E9DFCF',200:'#D7C9B1',300:'#B8A488',400:'#8E7A5E',500:'#6C5A42',600:'#514330',700:'#3A2F22',800:'#261E14',900:'#17110B',DEFAULT:'#514330'},
+    espresso:{50:'#342A1E',100:'#2A2117',200:'#231C14',300:'#1C1610',400:'#16110C',500:'#110D09',DEFAULT:'#1C1610'},
+    champagne:{50:'#FBF0DA',100:'#F5E3BA',200:'#EBD194',300:'#DDB767',400:'#C89A47',500:'#A87F36',DEFAULT:'#C89A47'},
+    gold:{500:'#B08A3E',600:'#96722C',DEFAULT:'#B08A3E'},
+    success:{DEFAULT:'#2F6D51',soft:'#E6F0EA'},
+    warning:{DEFAULT:'#A87016',soft:'#F7EAD2'},
+    danger:{DEFAULT:'#992F2A',soft:'#F4DAD9'},
+    info:{DEFAULT:'#275E8C',soft:'#DCE8F2'},
+    ink:'#110D09'
+  },
+  boxShadow:{ soft:'0 1px 2px rgba(23,17,11,.04), 0 1px 3px rgba(23,17,11,.04)', card:'0 1px 2px rgba(23,17,11,.05), 0 2px 6px rgba(23,17,11,.04)', lift:'0 8px 24px -12px rgba(23,17,11,.18), 0 2px 6px rgba(23,17,11,.05)' }
+}}};
+</script>
+<style>
+  :root { color-scheme: light; }
+  html,body { -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; }
+  body { background:#FBF7F0; color:#17110B; font-family:'Inter',ui-sans-serif,system-ui,sans-serif; }
+  ::selection { background:#DDB767; color:#1C1610; }
+  .material-symbols-rounded { font-variation-settings:'FILL' 0,'wght' 500,'GRAD' 0,'opsz' 20; line-height:1; }
+  .grid-12 { max-width:1520px; margin-inline:auto; padding-inline:20px; }
+  @media (min-width:1280px){ .grid-12{ padding-inline:28px; } }
+  .btn { display:inline-flex; align-items:center; justify-content:center; gap:7px; padding:9px 14px; border-radius:9px; font-weight:600; font-size:13.5px; line-height:1.2; border:1px solid rgba(81,67,48,.12); background:#fff; color:#1C1610; cursor:pointer; transition:all .14s ease; text-decoration:none; }
+  .btn:hover { background:#FBF7F0; }
+  .btn-primary { background:#1C1610; color:#FBF7F0; border-color:transparent; }
+  .btn-primary:hover { background:#231C14; box-shadow:0 8px 18px -10px rgba(23,17,11,.45); }
+  .card { background:#fff; border-radius:14px; box-shadow:0 1px 2px rgba(23,17,11,.05), 0 2px 6px rgba(23,17,11,.04), inset 0 0 0 1px rgba(81,67,48,.08); }
+  .nav-link { display:flex; align-items:center; gap:10px; padding:8px 10px; border-radius:8px; color:#514330; font-weight:500; font-size:13.5px; transition:all .15s ease; cursor:pointer; text-decoration:none; }
+  .nav-link:hover { background:#F3ECDF; color:#1C1610; }
+  .nav-link.is-active { background:#fff; color:#1C1610; box-shadow:inset 0 0 0 1px rgba(81,67,48,.10), 0 1px 2px rgba(23,17,11,.04); }
+  .hairline { box-shadow: inset 0 0 0 1px rgba(81,67,48,.08); }
+  .skel { background:linear-gradient(90deg,#F3ECDF 0%, #FBF7F0 50%, #F3ECDF 100%); background-size:200% 100%; animation:shimmer 1.5s infinite; border-radius:8px; }
+  @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+  .focus-ring:focus-visible { outline:2px solid #C89A47; outline-offset:3px; border-radius:10px; }
+  .toast { position:fixed; bottom:96px; left:50%; transform:translate(-50%,14px); background:#1C1610; color:#FBF7F0; padding:10px 14px; border-radius:10px; font-size:12.5px; font-weight:600; z-index:90; opacity:0; pointer-events:none; transition:all .22s ease; box-shadow:0 10px 30px rgba(23,17,11,.35); }
+  .toast.show { opacity:1; transform:translate(-50%,0); pointer-events:auto; }
+  @media (prefers-reduced-motion: reduce) { *,*::before,*::after{ animation-duration:.01ms !important; transition-duration:.01ms !important; } }
+</style>
+</head>
+<body class="min-h-screen bg-ivory text-ink antialiased">
+
+<header class="sticky top-0 z-40 bg-[#FBF7F0]/80 backdrop-blur-xl border-b border-cocoa/10">
+  <div class="grid-12 h-16 flex items-center gap-4">
+    <a href="index.html" class="flex items-center gap-2.5 shrink-0 focus-ring rounded-lg" aria-label="DEDAN Remote · Home">
+      <div class="relative w-9 h-9 rounded-xl bg-gradient-to-br from-espresso-300 to-espresso-500 text-ivory shadow-card grid place-items-center overflow-hidden">
+        <span class="font-serif text-[18px] italic font-semibold tracking-tight relative -top-0.5">D</span>
+      </div>
+      <span class="text-[14.5px] font-extrabold tracking-tight text-espresso-300 hidden sm:inline">DEDAN Remote</span>
+    </a>
+    <nav class="hidden lg:flex items-center gap-1 ml-4" aria-label="Primary">
+      <a href="dashboard.html" class="nav-link is-active"><span class="material-symbols-rounded" style="font-size:17px;">dashboard</span>Dashboard</a>
+      <a href="opportunities.html" class="nav-link"><span class="material-symbols-rounded" style="font-size:17px;">explore</span>Explore</a>
+      <a href="saved.html" class="nav-link"><span class="material-symbols-rounded" style="font-size:17px;">bookmarks</span>Saved</a>
+      <a href="applications.html" class="nav-link"><span class="material-symbols-rounded" style="font-size:17px;">briefcase</span>Applications</a>
+      <a href="interview.html" class="nav-link"><span class="material-symbols-rounded" style="font-size:17px;">forum</span>Interviews</a>
+    </nav>
+    <div class="ml-auto flex items-center gap-2">
+      <a href="profile.html" class="flex items-center gap-2 pl-1 pr-2.5 h-10 rounded-xl hover:bg-cream transition-colors focus-ring">
+        <div id="avatar" class="w-8 h-8 rounded-full bg-gradient-to-br from-champagne-300 to-gold grid place-items-center text-espresso-300 text-[12px] font-extrabold shadow-card ring-1 ring-champagne-400/40">··</div>
+        <span id="user-name" class="hidden sm:block text-[12.5px] font-bold text-espresso-300">Account</span>
+        <span class="material-symbols-rounded text-cocoa-400" style="font-size:17px;">expand_more</span>
+      </a>
+      <button id="logout-btn" class="btn" type="button" title="Sign out">
+        <span class="material-symbols-rounded" style="font-size:17px;">logout</span><span class="hidden sm:inline">Sign out</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main class="grid-12 py-7">
+  <div class="mb-6">
+    <h1 class="text-[24px] md:text-[28px] font-extrabold tracking-tight text-espresso-300">Welcome back<span id="greet-name"></span></h1>
+    <p class="text-[13.5px] text-cocoa-500 mt-0.5">Your pipeline at a glance.</p>
+  </div>
+
+  <!-- KPI row -->
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-6">
+    <div class="card p-4">
+      <div class="flex items-center gap-2 text-cocoa-500 mb-1"><span class="material-symbols-rounded text-champagne-500" style="font-size:18px;">travel_explore</span><span class="text-[11px] uppercase tracking-wider font-semibold">Opportunities</span></div>
+      <div id="kpi-jobs" class="text-[26px] font-extrabold text-espresso-300">—</div>
+      <div class="text-[11.5px] text-cocoa-400">in the live catalog</div>
+    </div>
+    <div class="card p-4">
+      <div class="flex items-center gap-2 text-cocoa-500 mb-1"><span class="material-symbols-rounded text-champagne-500" style="font-size:18px;">bookmarks</span><span class="text-[11px] uppercase tracking-wider font-semibold">Saved</span></div>
+      <div id="kpi-saved" class="text-[26px] font-extrabold text-espresso-300">—</div>
+      <div class="text-[11.5px] text-cocoa-400">in your pipeline</div>
+    </div>
+    <div class="card p-4">
+      <div class="flex items-center gap-2 text-cocoa-500 mb-1"><span class="material-symbols-rounded text-champagne-500" style="font-size:18px;">briefcase</span><span class="text-[11px] uppercase tracking-wider font-semibold">Applications</span></div>
+      <div id="kpi-apps" class="text-[26px] font-extrabold text-espresso-300">—</div>
+      <div class="text-[11.5px] text-cocoa-400">tracked</div>
+    </div>
+    <div class="card p-4">
+      <div class="flex items-center gap-2 text-cocoa-500 mb-1"><span class="material-symbols-rounded text-champagne-500" style="font-size:18px;">forum</span><span class="text-[11px] uppercase tracking-wider font-semibold">Interviews</span></div>
+      <div id="kpi-interviews" class="text-[26px] font-extrabold text-espresso-300">—</div>
+      <div class="text-[11.5px] text-cocoa-400">sessions</div>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+    <!-- Saved pipeline -->
+    <div class="lg:col-span-2 card p-5">
+      <div class="flex items-center justify-between mb-3">
+        <h2 class="text-[15px] font-bold text-espresso-300">Your saved pipeline</h2>
+        <a href="saved.html" class="text-[12.5px] font-semibold text-champagne-500 hover:underline">View all →</a>
+      </div>
+      <div id="saved-list" class="flex flex-col gap-2">
+        <div class="skel h-14"></div><div class="skel h-14"></div><div class="skel h-14"></div>
+      </div>
+    </div>
+
+    <!-- Quick actions -->
+    <div class="card p-5">
+      <h2 class="text-[15px] font-bold text-espresso-300 mb-3">Quick actions</h2>
+      <div class="flex flex-col gap-2">
+        <a href="opportunities.html" class="btn justify-start h-11"><span class="material-symbols-rounded text-champagne-500" style="font-size:18px;">explore</span>Explore opportunities</a>
+        <a href="interview.html" class="btn justify-start h-11"><span class="material-symbols-rounded text-champagne-500" style="font-size:18px;">forum</span>Start a mock interview</a>
+        <a href="profile.html" class="btn justify-start h-11"><span class="material-symbols-rounded text-champagne-500" style="font-size:18px;">tune</span>Calibrate preferences</a>
+        <a href="applications.html" class="btn justify-start h-11"><span class="material-symbols-rounded text-champagne-500" style="font-size:18px;">briefcase</span>Track applications</a>
+      </div>
+    </div>
+  </div>
+</main>
+
+<div id="toast" class="toast" role="status" aria-live="polite"><span id="toast-text">Done.</span></div>
+
+<script src="shared.js"></script>
+<script src="app.js"></script>
+<script>
+(function () {
+  // Auth gate: no token → sign in, preserving where we wanted to go.
+  if (!API.isSignedIn()) {
+    location.replace('signin.html?next=' + encodeURIComponent(location.pathname + location.search));
+    return;
+  }
+
+  const $ = (id) => document.getElementById(id);
+
+  document.getElementById('logout-btn').addEventListener('click', async () => {
+    await API.logout();
+    toast('Signed out.');
+    setTimeout(() => location.replace('index.html'), 500);
+  });
+
+  function initials(name) {
+    if (!name) return '··';
+    const parts = String(name).trim().split(/[\s@.]+/).filter(Boolean);
+    return ((parts[0] || '')[0] + (parts[1] ? parts[1][0] : '')).toUpperCase() || '··';
+  }
+
+  function esc(v) {
+    return String(v === null || v === undefined ? '' : v)
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  function savedRow(row) {
+    const job = row.job || row;
+    const id = job.id || job.slug;
+    const a = document.createElement('a');
+    a.href = 'job-detail.html?id=' + encodeURIComponent(id);
+    a.className = 'flex items-center gap-3 p-3 rounded-xl hover:bg-cream transition-colors';
+    a.innerHTML =
+      '<div class="w-9 h-9 rounded-lg bg-cream grid place-items-center text-espresso-300 text-[12px] font-bold shrink-0">' +
+        esc((job.company || '?').slice(0, 2).toUpperCase()) + '</div>' +
+      '<div class="min-w-0 flex-1">' +
+        '<div class="text-[13.5px] font-bold text-espresso-300 truncate">' + esc(job.title || 'Untitled') + '</div>' +
+        '<div class="text-[11.5px] text-cocoa-400 truncate">' + esc(job.company || '') + (job.location_label ? ' · ' + esc(job.location_label) : '') + '</div>' +
+      '</div>' +
+      '<span class="material-symbols-rounded text-cocoa-300" style="font-size:18px;">chevron_right</span>';
+    return a;
+  }
+
+  async function boot() {
+    let user = null;
+    try { user = await API.me(); } catch (e) { /* handled below */ }
+    if (!user) { location.replace('signin.html'); return; }
+
+    $('user-name').textContent = user.display_name || user.email || 'Account';
+    $('avatar').textContent = initials(user.display_name || user.email);
+    $('greet-name').textContent = user.display_name ? ', ' + user.display_name.split(' ')[0] : '';
+
+    // Each widget loads independently so one failure never blanks the page.
+    API.stats().then(s => { $('kpi-jobs').textContent = (s && s.total_opportunities) ?? 0; }).catch(() => { $('kpi-jobs').textContent = '0'; });
+
+    API.saved().then(rows => {
+      $('kpi-saved').textContent = rows.length;
+      const host = $('saved-list');
+      host.innerHTML = '';
+      if (!rows.length) {
+        host.innerHTML = '<p class="text-[13px] text-cocoa-400 py-4 text-center">No saved roles yet. <a href="opportunities.html" class="text-champagne-500 font-semibold hover:underline">Explore opportunities</a> to start your pipeline.</p>';
+        return;
+      }
+      rows.slice(0, 5).forEach(r => host.appendChild(savedRow(r)));
+    }).catch(() => { $('kpi-saved').textContent = '0'; $('saved-list').innerHTML = '<p class="text-[13px] text-cocoa-400 py-4 text-center">Could not load saved roles.</p>'; });
+
+    API.applications().then(rows => { $('kpi-apps').textContent = rows.length; }).catch(() => { $('kpi-apps').textContent = '0'; });
+
+    API.interviews().then(rows => { $('kpi-interviews').textContent = rows.length; }).catch(() => { $('kpi-interviews').textContent = '0'; });
+  }
+
+  boot();
+})();
+</script>
+<script src="nav.js"></script>
+</body>
+</html>

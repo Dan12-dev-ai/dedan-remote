@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+<meta name="theme-color" content="#fbf7f0"/>
+<title>Sign In — DEDAN Remote</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = { darkMode:'class', theme:{ extend:{
+  fontFamily:{ sans:['Inter','ui-sans-serif','system-ui','sans-serif'], serif:['"Instrument Serif"','ui-serif','Georgia','serif'] },
+  colors:{
+    ivory:{50:'#FDFBF6',100:'#FBF7F0',200:'#F6EFE2',DEFAULT:'#FBF7F0'},
+    cream:{DEFAULT:'#F3ECDF',dark:'#EBE2D0'},
+    cocoa:{100:'#E9DFCF',200:'#D7C9B1',300:'#B8A488',400:'#8E7A5E',500:'#6C5A42',600:'#514330',700:'#3A2F22',800:'#261E14',900:'#17110B',DEFAULT:'#514330'},
+    espresso:{50:'#342A1E',100:'#2A2117',200:'#231C14',300:'#1C1610',400:'#16110C',500:'#110D09',DEFAULT:'#1C1610'},
+    champagne:{50:'#FBF0DA',100:'#F5E3BA',200:'#EBD194',300:'#DDB767',400:'#C89A47',500:'#A87F36',DEFAULT:'#C89A47'},
+    gold:{500:'#B08A3E',600:'#96722C',DEFAULT:'#B08A3E'},
+    success:{DEFAULT:'#2F6D51',soft:'#E6F0EA'},
+    warning:{DEFAULT:'#A87016',soft:'#F7EAD2'},
+    danger:{DEFAULT:'#992F2A',soft:'#F4DAD9'},
+    info:{DEFAULT:'#275E8C',soft:'#DCE8F2'},
+    ink:'#110D09'
+  },
+  boxShadow:{ soft:'0 1px 2px rgba(23,17,11,.04), 0 1px 3px rgba(23,17,11,.04)', card:'0 1px 2px rgba(23,17,11,.05), 0 2px 6px rgba(23,17,11,.04)', lift:'0 8px 24px -12px rgba(23,17,11,.18), 0 2px 6px rgba(23,17,11,.05)' }
+}}};
+</script>
+<style>
+  :root { color-scheme: light; }
+  html,body { -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; }
+  body { background:#FBF7F0; color:#17110B; font-family:'Inter',ui-sans-serif,system-ui,sans-serif; }
+  ::selection { background:#DDB767; color:#1C1610; }
+  .material-symbols-rounded { font-variation-settings:'FILL' 0,'wght' 500,'GRAD' 0,'opsz' 20; line-height:1; }
+  .grid-12 { max-width:1520px; margin-inline:auto; padding-inline:20px; }
+  @media (min-width:1280px){ .grid-12{ padding-inline:28px; } }
+  .btn { display:inline-flex; align-items:center; justify-content:center; gap:7px; padding:9px 14px; border-radius:9px; font-weight:600; font-size:13.5px; line-height:1.2; border:1px solid rgba(81,67,48,.12); background:#fff; color:#1C1610; cursor:pointer; transition:all .14s ease; }
+  .btn:hover { background:#FBF7F0; }
+  .btn-primary { background:#1C1610; color:#FBF7F0; border-color:transparent; }
+  .btn-primary:hover { background:#231C14; box-shadow:0 8px 18px -10px rgba(23,17,11,.45); }
+  .field { width:100%; padding:10px 12px; border-radius:9px; border:1px solid rgba(81,67,48,.16); background:#fff; font-size:14px; color:#1C1610; transition:all .15s ease; }
+  .field:focus { outline:none; box-shadow:0 0 0 4px rgba(200,154,71,.16); border-color:#C89A47; }
+  .hairline { box-shadow: inset 0 0 0 1px rgba(81,67,48,.08); }
+  .focus-ring:focus-visible { outline:2px solid #C89A47; outline-offset:3px; border-radius:10px; }
+  .toast { position:fixed; bottom:96px; left:50%; transform:translate(-50%,14px); background:#1C1610; color:#FBF7F0; padding:10px 14px; border-radius:10px; font-size:12.5px; font-weight:600; z-index:90; opacity:0; pointer-events:none; transition:all .22s ease; box-shadow:0 10px 30px rgba(23,17,11,.35); }
+  .toast.show { opacity:1; transform:translate(-50%,0); pointer-events:auto; }
+  @media (prefers-reduced-motion: reduce) { *,*::before,*::after{ transition-duration:.01ms !important; } }
+</style>
+</head>
+<body class="min-h-screen bg-ivory text-ink antialiased">
+
+<header class="sticky top-0 z-40 bg-[#FBF7F0]/80 backdrop-blur-xl border-b border-cocoa/10">
+  <div class="grid-12 h-16 flex items-center">
+    <a href="index.html" class="flex items-center gap-2.5 shrink-0 focus-ring rounded-lg" aria-label="DEDAN Remote · Home">
+      <div class="relative w-9 h-9 rounded-xl bg-gradient-to-br from-espresso-300 to-espresso-500 text-ivory shadow-card grid place-items-center overflow-hidden">
+        <span class="font-serif text-[18px] italic font-semibold tracking-tight relative -top-0.5">D</span>
+        <span class="absolute -bottom-1 -right-1 w-2.5 h-2.5 rounded-full bg-champagne-300 ring-2 ring-[#FBF7F0]"></span>
+      </div>
+      <div class="flex flex-col leading-tight">
+        <span class="text-[14.5px] font-extrabold tracking-tight text-espresso-300">DEDAN Remote</span>
+        <span class="text-[10px] uppercase tracking-[0.14em] font-semibold text-cocoa-400 -mt-0.5">Opportunity Intelligence</span>
+      </div>
+    </a>
+    <div class="ml-auto flex items-center gap-2">
+      <span class="text-[13px] text-cocoa-500 hidden sm:inline">New here?</span>
+      <a href="signup.html" class="btn">Create account</a>
+    </div>
+  </div>
+</header>
+
+<main class="grid-12 py-10 md:py-16 flex items-center justify-center">
+  <div class="w-full max-w-[420px]">
+    <div class="bg-white rounded-2xl hairline shadow-lift p-7 md:p-8">
+      <div class="flex items-center gap-2 mb-1">
+        <span class="material-symbols-rounded text-champagne-400" style="font-size:22px;">lock</span>
+        <h1 class="text-[26px] font-extrabold tracking-tight text-espresso-300">Sign in</h1>
+      </div>
+      <p class="text-[13.5px] text-cocoa-500 mb-6">Access your saved pipeline, applications, and interview rooms.</p>
+
+      <form id="signin-form" novalidate>
+        <label class="block text-[12.5px] font-semibold text-espresso-300 mb-1.5" for="email">Email</label>
+        <input id="email" name="email" type="email" autocomplete="email" class="field mb-4" placeholder="you@example.com" required/>
+
+        <label class="block text-[12.5px] font-semibold text-espresso-300 mb-1.5" for="password">Password</label>
+        <input id="password" name="password" type="password" autocomplete="current-password" class="field mb-2" placeholder="••••••••" required/>
+
+        <div id="form-error" class="hidden mb-3 text-[12.5px] font-semibold text-danger flex items-center gap-1.5">
+          <span class="material-symbols-rounded" style="font-size:16px;">error</span><span id="form-error-text"></span>
+        </div>
+
+        <button type="submit" id="submit-btn" class="btn btn-primary w-full h-11 mt-2">Sign in</button>
+      </form>
+
+      <div class="flex items-center gap-3 my-5">
+        <div class="flex-1 h-px bg-cocoa-200/60"></div>
+        <span class="text-[11px] uppercase tracking-wider font-semibold text-cocoa-400">or</span>
+        <div class="flex-1 h-px bg-cocoa-200/60"></div>
+      </div>
+
+      <a href="signup.html" class="btn w-full h-11">Create a new account</a>
+    </div>
+    <p class="text-center text-[12px] text-cocoa-400 mt-4">
+      By continuing you agree to the <a href="legal.html#terms" class="text-champagne-500 font-semibold hover:underline">Terms</a> and
+      <a href="legal.html#privacy" class="text-champagne-500 font-semibold hover:underline">Privacy Policy</a>.
+    </p>
+  </div>
+</main>
+
+<div id="toast" class="toast" role="status" aria-live="polite"><span id="toast-text">Signed in.</span></div>
+
+<script src="shared.js"></script>
+<script>
+(function () {
+  // Already signed in? Skip straight to the dashboard.
+  if (API.isSignedIn()) {
+    const next = new URLSearchParams(location.search).get('next');
+    location.replace(next && next.startsWith('/') ? next : 'dashboard.html');
+    return;
+  }
+
+  const form = document.getElementById('signin-form');
+  const errBox = document.getElementById('form-error');
+  const errText = document.getElementById('form-error-text');
+  const btn = document.getElementById('submit-btn');
+
+  function showError(msg) { errText.textContent = msg; errBox.classList.remove('hidden'); }
+  function clearError() { errBox.classList.add('hidden'); }
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    clearError();
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+    if (!email || !password) { showError('Enter your email and password.'); return; }
+    btn.disabled = true; btn.textContent = 'Signing in…';
+    try {
+      await API.login(email, password);
+      toast('Welcome back.');
+      const next = new URLSearchParams(location.search).get('next');
+      setTimeout(() => { location.replace(next && next.startsWith('/') ? next : 'dashboard.html'); }, 500);
+    } catch (err) {
+      // The backend returns a verbatim, safe message for bad credentials.
+      showError(err.message || 'Could not sign in. Check your details.');
+      btn.disabled = false; btn.textContent = 'Sign in';
+    }
+  });
+})();
+</script>
+<script src="nav.js"></script>
+</body>
+</html>
