@@ -689,19 +689,17 @@ function renderQuickPreview(job) {
         </div>
       </div>
       <div class="p-3.5 rounded-xl bg-gradient-to-br from-cream to-cream-dark hairline flex flex-col gap-1.5">
-        <span class="text-[10.5px] font-extrabold uppercase tracking-[0.14em] text-cocoa-400">Role</span>
         <h3 class="m-0 font-display text-[18px] leading-snug text-espresso-400 italic">${escapeHtml(job.title)}</h3>
-        <div class="mt-2 text-[15px] font-extrabold tabular-nums text-espresso-400">${formatSalaryInline(job)}</div>
+        <div class="mt-1 text-[15px] font-extrabold tabular-nums text-espresso-400">${formatSalaryInline(job)}</div>
         <div class="mt-0.5 text-[12px] text-cocoa-600 flex items-center gap-1 font-semibold">
           <span class="material-symbols-rounded" style="font-size:13px;">${job.remote ? 'public' : 'location_city'}</span>
           ${escapeHtml(job.location_label || 'Location not specified')}
         </div>
       </div>
       <div class="flex flex-col gap-2">
-        <span class="text-[10.5px] font-extrabold uppercase tracking-[0.14em] text-cocoa-400">Tags from the listing</span>
         <div class="flex flex-wrap gap-1.5">
           ${tags.length ? tags.map(s => `<span class="pill bg-espresso-300 text-ivory font-bold text-[11.5px] !py-1 !px-2">${escapeHtml(s)}</span>`).join('')
-            : `<span class="text-[12px] text-cocoa-500 font-semibold">No tags published by the source</span>`}
+            : `<span class="text-[12px] text-cocoa-500 font-semibold">No tags published</span>`}
         </div>
       </div>
       <div class="flex flex-col gap-2 pt-1 border-t border-cocoa/10">

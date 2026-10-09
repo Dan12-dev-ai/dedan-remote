@@ -113,37 +113,99 @@ tailwind.config = {
 </style>
 </head>
 <body class="min-h-screen bg-ivory bg-mesh text-ink antialiased">
-<!-- ============================================================
-     TOP NAV
-============================================================ -->
-<header class="sticky top-0 z-40 bg-[#FBF7F0]/80 backdrop-blur-xl border-b border-cocoa/10">
-  <div class="grid-12 h-16 flex items-center gap-4">
-    <!-- Brand + Nav -->
-    <div class="flex items-center gap-5 min-w-0">
-      <a href="index.html" class="flex items-center gap-2.5 shrink-0 focus-ring rounded-lg p-0.5 pr-1 -ml-0.5" aria-label="DEDAN Remote · Home">
-        <div class="relative w-9 h-9 rounded-xl bg-gradient-to-br from-espresso-300 to-espresso-500 text-ivory shadow-card grid place-items-center overflow-hidden">
-          <span class="font-serif text-[18px] italic font-semibold tracking-tight relative -top-0.5">D</span>
-          <span class="absolute -bottom-1 -right-1 w-2.5 h-2.5 rounded-full bg-champagne-300 ring-2 ring-[#FBF7F0]"></span>
-        </div>
-        <div class="flex flex-col leading-tight">
-          <span class="text-[14.5px] font-extrabold tracking-tight text-espresso-300">DEDAN Remote</span>
-          <span class="text-[10px] uppercase tracking-[0.14em] font-semibold text-cocoa-400 -mt-0.5">Opportunity Intelligence</span>
-        </div>
-      </a>
-      <nav class="hidden lg:flex items-center gap-1 pl-3" aria-label="Primary">
-        <a href="index.html" class="sidebar-link"><span class="material-symbols-rounded" style="font-size:17px;">home</span>Home</a>
-        <a href="opportunities.html" class="sidebar-link is-active"><span class="material-symbols-rounded ic-fill" style="font-size:17px;">explore</span>Explore</a>
-        <a href="#saved" class="sidebar-link"><span class="material-symbols-rounded" style="font-size:17px;">bookmarks</span>Saved <span class="ml-auto text-[10.5px] font-semibold text-cocoa-400">14</span></a>
-        <a href="#apps" class="sidebar-link"><span class="material-symbols-rounded" style="font-size:17px;">briefcase</span>Applications <span class="ml-auto text-[10.5px] font-semibold text-cocoa-400">7</span></a>
-        <a href="#interviews" class="sidebar-link"><span class="material-symbols-rounded" style="font-size:17px;">forum</span>Interviews</a>
-      </nav>
-    </div>
 
-    <!-- Global search -->
-    <div class="hidden xl:block flex-1 mx-6">
-      <div class="search-wrap max-w-xl mx-auto">
+<!-- ============================================================
+     LEFT APP SIDEBAR (persistent navigation)
+     Collapsible: w-64 expanded / w-16 collapsed. Toggle persists
+     in localStorage. Contains all primary app navigation so the
+     top header stays a clean 3-part split.
+============================================================ -->
+<aside id="app-sidebar" class="fixed left-0 top-0 bottom-0 z-40 w-64 flex flex-col bg-[#FBF7F0] border-r border-cocoa/10 transition-[width] duration-200 ease-out" aria-label="Primary navigation">
+  <!-- Top: collapse toggle + brand -->
+  <div class="h-16 flex items-center gap-2 px-4 shrink-0 border-b border-cocoa/10">
+    <button id="sidebar-toggle" class="icon-btn focus-ring shrink-0" type="button" aria-label="Collapse sidebar" title="Collapse sidebar">
+      <span class="material-symbols-rounded" style="font-size:20px;">menu_open</span>
+    </button>
+    <a href="index.html" class="sidebar-brand flex items-center gap-2.5 min-w-0 focus-ring rounded-lg" aria-label="DEDAN Remote · Home">
+      <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-espresso-300 to-espresso-500 text-ivory shadow-card grid place-items-center shrink-0">
+        <span class="font-serif text-[18px] italic font-semibold tracking-tight relative -top-0.5">D</span>
+      </div>
+      <span class="sidebar-label text-[14.5px] font-extrabold tracking-tight text-espresso-300 truncate">DEDAN Remote</span>
+    </a>
+  </div>
+
+  <!-- Navigation menu -->
+  <nav class="flex-1 overflow-y-auto scroll-x px-3 py-4 flex flex-col gap-1" aria-label="Application navigation">
+    <a href="index.html" data-nav="home" class="side-item focus-ring">
+      <span class="material-symbols-rounded shrink-0" style="font-size:20px;">home</span>
+      <span class="sidebar-label truncate">Home</span>
+    </a>
+    <a href="opportunities.html" data-nav="explore" class="side-item is-active focus-ring">
+      <span class="material-symbols-rounded ic-fill shrink-0" style="font-size:20px;">explore</span>
+      <span class="sidebar-label truncate">Explore</span>
+    </a>
+    <a href="saved.html" data-nav="saved" class="side-item focus-ring">
+      <span class="material-symbols-rounded shrink-0" style="font-size:20px;">bookmarks</span>
+      <span class="sidebar-label truncate">Saved Jobs</span>
+      <span class="sidebar-label ml-auto chip bg-white hairline text-cocoa-600">14</span>
+    </a>
+    <a href="applications.html" data-nav="applications" class="side-item focus-ring">
+      <span class="material-symbols-rounded shrink-0" style="font-size:20px;">work</span>
+      <span class="sidebar-label truncate">Applications</span>
+      <span class="sidebar-label ml-auto chip bg-white hairline text-cocoa-600">7</span>
+    </a>
+    <a href="profile.html#prefs" data-nav="preferences" class="side-item focus-ring">
+      <span class="material-symbols-rounded shrink-0" style="font-size:20px;">tune</span>
+      <span class="sidebar-label truncate">Preferences</span>
+    </a>
+    <a href="profile.html#settings" data-nav="settings" class="side-item focus-ring">
+      <span class="material-symbols-rounded shrink-0" style="font-size:20px;">settings</span>
+      <span class="sidebar-label truncate">Settings</span>
+    </a>
+
+    <div class="my-3 h-px bg-cocoa/10"></div>
+    <span class="sidebar-label px-3 text-[10.5px] uppercase tracking-[0.16em] font-bold text-cocoa-400">Discovery</span>
+    <a href="#all" class="side-item focus-ring">
+      <span class="material-symbols-rounded shrink-0" style="font-size:20px;">layers</span>
+      <span class="sidebar-label truncate">All opportunities</span>
+    </a>
+    <a href="#saved" class="side-item focus-ring">
+      <span class="material-symbols-rounded text-success shrink-0" style="font-size:20px;">verified</span>
+      <span class="sidebar-label truncate">High‑match</span>
+    </a>
+    <a href="#direct" class="side-item focus-ring">
+      <span class="material-symbols-rounded text-gold shrink-0" style="font-size:20px;">bolt</span>
+      <span class="sidebar-label truncate">Founder direct</span>
+    </a>
+  </nav>
+
+  <!-- Bottom: user -->
+  <div class="p-3 border-t border-cocoa/10 shrink-0">
+    <a href="profile.html" class="side-item focus-ring">
+      <div class="w-8 h-8 rounded-full bg-gradient-to-br from-champagne-300 to-gold grid place-items-center text-espresso-300 text-[12px] font-extrabold shrink-0 ring-1 ring-champagne-400/40">KM</div>
+      <span class="sidebar-label truncate text-[13px] font-bold text-espresso-300">Kali M.</span>
+    </a>
+  </div>
+</aside>
+
+<!-- ============================================================
+     TOP HEADER — clean 3-part split (Logo · Search · Profile)
+============================================================ -->
+<header class="sticky top-0 z-30 bg-[#FBF7F0]/80 backdrop-blur-xl border-b border-cocoa/10 lg:pl-64">
+  <div class="h-16 w-full flex items-center gap-4 pl-4 md:pl-6 lg:pl-8 pr-4 md:pr-6 lg:pr-8">
+    <!-- Mobile brand (sidebar hidden on small screens) -->
+    <a href="index.html" class="flex lg:hidden items-center gap-2.5 shrink-0 focus-ring rounded-lg" aria-label="DEDAN Remote · Home">
+      <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-espresso-300 to-espresso-500 text-ivory shadow-card grid place-items-center">
+        <span class="font-serif text-[18px] italic font-semibold tracking-tight relative -top-0.5">D</span>
+      </div>
+      <span class="text-[14.5px] font-extrabold tracking-tight text-espresso-300">DEDAN Remote</span>
+    </a>
+
+    <!-- Center: global search -->
+    <div class="hidden md:block flex-1 max-w-xl mx-auto">
+      <div class="search-wrap">
         <label for="nav-q" class="sr-only">Search DEDAN Remote</label>
-        <div class="search-inner flex items-center gap-2 h-10 px-2.5 rounded-xl bg-white hairline">
+        <div class="search-inner flex items-center gap-2 h-10 px-3 rounded-xl bg-white hairline">
           <span class="material-symbols-rounded text-cocoa-400" style="font-size:19px;">search</span>
           <input id="nav-q" type="text" placeholder="Search roles, companies, stacks…" class="flex-1 bg-transparent text-[13.5px] text-espresso-400 placeholder:text-cocoa-300 focus:outline-none"/>
           <span class="kbd">⌘K</span>
@@ -151,54 +213,72 @@ tailwind.config = {
       </div>
     </div>
 
-    <!-- Actions -->
+    <!-- Right: actions -->
     <div class="flex items-center gap-1 ml-auto shrink-0">
-      <button class="icon-btn tooltip hidden sm:grid focus-ring" type="button" aria-label="Create saved search" title="New saved search">
-        <span class="material-symbols-rounded" style="font-size:20px;">add_alert</span>
+      <button class="icon-btn focus-ring md:hidden" type="button" aria-label="Search" id="mobile-search-btn">
+        <span class="material-symbols-rounded" style="font-size:20px;">search</span>
       </button>
-      <button class="icon-btn tooltip focus-ring relative" type="button" aria-label="3 notifications" title="Notifications">
+      <button class="icon-btn focus-ring relative" type="button" aria-label="3 notifications" title="Notifications">
         <span class="material-symbols-rounded" style="font-size:20px;">notifications</span>
-        <span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-danger ring-2 ring-ivory"></span>
+        <span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-danger ring-2 ring-[#FBF7F0]"></span>
       </button>
       <div class="w-px h-6 bg-cocoa/10 mx-1.5"></div>
-      <button class="flex items-center gap-2 pl-1 pr-2.5 h-10 rounded-xl hover:bg-cream transition-colors focus-ring" type="button" aria-label="Open profile menu">
+      <a href="profile.html" class="flex items-center gap-2 pl-1 pr-2.5 h-10 rounded-xl hover:bg-cream transition-colors focus-ring" aria-label="Open profile">
         <div class="w-8 h-8 rounded-full bg-gradient-to-br from-champagne-300 to-gold grid place-items-center text-espresso-300 text-[12px] font-extrabold shadow-card ring-1 ring-champagne-400/40">KM</div>
         <div class="hidden sm:flex flex-col items-start leading-tight">
           <span class="text-[12.5px] font-bold text-espresso-300">Kali M.</span>
           <span class="text-[10.5px] uppercase tracking-wider font-semibold text-cocoa-400">L6 · Senior BE</span>
         </div>
-        <span class="material-symbols-rounded text-cocoa-400" style="font-size:17px;">expand_more</span>
-      </button>
+      </a>
     </div>
   </div>
 </header>
 
-<!-- ============================================================
-     SYSTEM BANNER (source failure)
-============================================================ -->
-<div id="system-banner" class="hidden grid-12 pt-3">
-  <div class="flex items-center justify-between gap-3 px-4 py-2.5 rounded-xl bg-warning-soft hairline-strong border border-champagne-200/70">
-    <div class="flex items-center gap-3 min-w-0">
-      <span class="material-symbols-rounded text-warning" style="font-size:19px;">cloud_off</span>
-      <p class="m-0 text-[13px] font-semibold text-warning truncate">
-        Some sources are temporarily unavailable.
-        <span class="hidden md:inline font-medium text-[#7a5010] hr-dot">Glassdoor ingest degraded · Your existing results are still available.</span>
-      </p>
-    </div>
-    <div class="flex items-center gap-2 shrink-0">
-      <a href="#" class="chip bg-white text-warning hover:bg-warning-soft hairline-strong no-underline">
-        <span class="material-symbols-rounded" style="font-size:14px;">info</span>Details
-      </a>
+<style>
+  /* Sidebar nav items */
+  .side-item { display:flex; align-items:center; gap:12px; padding:9px 12px; border-radius:10px; color:#514330; font-weight:600; font-size:13.5px; line-height:1; text-decoration:none; cursor:pointer; transition:background .15s ease, color .15s ease; white-space:nowrap; }
+  .side-item:hover { background:#F3ECDF; color:#1C1610; }
+  .side-item.is-active { background:#fff; color:#1C1610; box-shadow:inset 0 0 0 1px rgba(81,67,48,.10), 0 1px 2px rgba(23,17,11,.04); }
+  .side-item .material-symbols-rounded { color:#8E7A5E; }
+  .side-item.is-active .material-symbols-rounded { color:#A87F36; }
+  /* Collapsed state */
+  #app-sidebar.is-collapsed { width:64px; }
+  #app-sidebar.is-collapsed .sidebar-label { display:none; }
+  #app-sidebar.is-collapsed .sidebar-brand span:last-child { display:none; }
+  #app-sidebar.is-collapsed .side-item { justify-content:center; padding:9px 0; }
+  #app-sidebar.is-collapsed nav { padding-left:8px; padding-right:8px; }
+  /* When collapsed, header + main still respect the 64px rail */
+  body.sidebar-collapsed header { padding-left:64px; }
+  @media (max-width:1023px){ header { padding-left:0 !important; } body.sidebar-collapsed header { padding-left:0; } }
+</style>
+
+<!-- System banner (source failure) -->
+<div id="system-banner" class="hidden pt-3" style="padding-left:0;">
+  <div class="lg:ml-64 grid-12" style="padding-left:0;">
+    <div class="flex items-center justify-between gap-3 px-4 py-2.5 rounded-xl bg-warning-soft hairline-strong border border-champagne-200/70">
+      <div class="flex items-center gap-3 min-w-0">
+        <span class="material-symbols-rounded text-warning" style="font-size:19px;">cloud_off</span>
+        <p class="m-0 text-[13px] font-semibold text-warning truncate">
+          Some sources are temporarily unavailable.
+          <span class="hidden md:inline font-medium text-[#7a5010] hr-dot">Glassdoor ingest degraded · Your existing results are still available.</span>
+        </p>
+      </div>
+      <div class="flex items-center gap-2 shrink-0">
+        <a href="#" class="chip bg-white text-warning hover:bg-warning-soft hairline-strong no-underline">
+          <span class="material-symbols-rounded" style="font-size:14px;">info</span>Details
+        </a>
+      </div>
     </div>
   </div>
 </div>
 
-<main class="grid-12 py-5 md:py-6 pb-28 lg:pb-10">
+<main class="py-5 md:py-6 pb-28 lg:pb-10 lg:pl-64" style="transition:padding .2s ease;">
+  <div class="main-inner">
 
 <!-- ============================================================
      PAGE HEADER + SEARCH
 ============================================================ -->
-<section class="mb-5 md:mb-6">
+<section class="mb-5 md:mb-6 px-4 md:px-6 lg:px-8">
   <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-5">
     <div class="flex items-end gap-3">
       <div>
@@ -235,7 +315,7 @@ tailwind.config = {
       <span class="material-symbols-rounded text-champagne-400" style="font-size:24px;">workspace_preferences</span>
       <div class="flex-1 min-w-0">
         <input id="explore-q" type="text"
-          value="Find remote backend roles using Python and FastAPI that accept applicants from Africa."
+          value=""
           placeholder="Search roles, companies, stacks, or natural constraints… (e.g. Staff Go roles in EU)"
           class="w-full bg-transparent text-[15px] font-medium text-espresso-400 placeholder:text-cocoa-300 focus:outline-none"/>
       </div>
@@ -323,168 +403,10 @@ tailwind.config = {
 <!-- ============================================================
      3-REGION LAYOUT
 ============================================================ -->
-<div class="grid grid-cols-1 lg:grid-cols-[248px_minmax(0,1fr)] 2xl:grid-cols-[248px_minmax(0,1fr)_340px] gap-5 lg:gap-6 items-start">
+<div class="grid grid-cols-1 2xl:grid-cols-[minmax(0,1fr)_340px] gap-5 lg:gap-6 items-start">
+  <!-- Inner discovery sidebar removed: primary navigation now lives in the
+       persistent left app sidebar; saved-view filters live in the filter bar. -->
 
-  <!-- ====== LEFT SIDEBAR ====== -->
-  <aside class="hidden lg:block lg:order-1 order-2" aria-label="Discovery sidebar">
-    <div class="sticky top-[76px] space-y-4 pr-0.5">
-      <!-- Discovery -->
-      <div class="rounded-2xl bg-cream p-2 hairline">
-        <div class="px-2 pt-2 pb-1.5 flex items-center justify-between">
-          <span class="text-[10.5px] uppercase tracking-[0.16em] font-bold text-cocoa-400">Discovery</span>
-        </div>
-        <nav class="flex flex-col gap-0.5 p-1" aria-label="Saved views">
-          <a href="#all" class="sidebar-link is-active">
-            <span class="material-symbols-rounded" style="font-size:17px;">layers</span>
-            All opportunities
-            <span class="ml-auto chip bg-espresso-300 text-ivory">128</span>
-          </a>
-          <a href="#high" class="sidebar-link">
-            <span class="material-symbols-rounded text-success" style="font-size:17px;">verified</span>
-            High‑match (≥90%)
-            <span class="ml-auto chip bg-success-soft text-success">92</span>
-          </a>
-          <a href="#saved" class="sidebar-link">
-            <span class="material-symbols-rounded" style="font-size:17px;">bookmarks</span>
-            Saved jobs
-            <span class="ml-auto chip bg-white hairline text-cocoa-600">14</span>
-          </a>
-          <a href="#apps" class="sidebar-link">
-            <span class="material-symbols-rounded" style="font-size:17px;">briefcase</span>
-            Applications
-            <span class="ml-auto chip bg-white hairline text-cocoa-600">7</span>
-          </a>
-          <a href="#direct" class="sidebar-link">
-            <span class="material-symbols-rounded text-gold" style="font-size:17px;">bolt</span>
-            Founder direct
-            <span class="ml-auto chip bg-white hairline text-cocoa-600">21</span>
-          </a>
-        </nav>
-      </div>
-
-      <!-- Saved Searches -->
-      <div class="rounded-2xl bg-cream p-2 hairline">
-        <div class="px-2 pt-2 pb-1.5 flex items-center justify-between">
-          <span class="text-[10.5px] uppercase tracking-[0.16em] font-bold text-cocoa-400">Saved searches</span>
-          <span class="chip bg-champagne-50 text-gold hairline-gold !text-[10px]">Continuous</span>
-        </div>
-        <div class="flex flex-col gap-1 p-1">
-          <button class="group text-left p-2.5 rounded-xl bg-white hairline hover:hairline-gold transition-colors" type="button">
-            <div class="flex items-center justify-between gap-2">
-              <span class="text-[13px] font-bold text-espresso-300 truncate">AI Engineer · Global</span>
-              <span class="dot bg-success live-dot success shrink-0"></span>
-            </div>
-            <div class="flex items-center justify-between mt-1.5 text-[11.5px] text-cocoa-500 font-semibold">
-              <span class="text-success">3 new today</span><span>Live</span>
-            </div>
-          </button>
-          <button class="group text-left p-2.5 rounded-xl hover:bg-white hairline hover:hairline-strong transition-colors" type="button">
-            <div class="flex items-center justify-between gap-2">
-              <span class="text-[13px] font-bold text-espresso-300 truncate">Backend · $180k+</span>
-              <span class="material-symbols-rounded text-cocoa-300" style="font-size:14px;">rss_feed</span>
-            </div>
-            <div class="flex items-center justify-between mt-1.5 text-[11.5px] text-cocoa-500 font-semibold">
-              <span>12 active</span><span>Synced 18m ago</span>
-            </div>
-          </button>
-          <button class="group text-left p-2.5 rounded-xl hover:bg-white hairline hover:hairline-strong transition-colors" type="button">
-            <div class="flex items-center justify-between gap-2">
-              <span class="text-[13px] font-bold text-espresso-300 truncate">Distributed Systems</span>
-              <span class="material-symbols-rounded text-cocoa-300" style="font-size:14px;">rss_feed</span>
-            </div>
-            <div class="flex items-center justify-between mt-1.5 text-[11.5px] text-cocoa-500 font-semibold">
-              <span>5 active</span><span>Synced 1h ago</span>
-            </div>
-          </button>
-          <button class="group text-left p-2.5 rounded-xl hover:bg-white hairline hover:hairline-strong transition-colors" type="button">
-            <div class="flex items-center justify-between gap-2">
-              <span class="text-[13px] font-bold text-espresso-300 truncate">Remote Africa</span>
-              <span class="material-symbols-rounded text-cocoa-300" style="font-size:14px;">rss_feed</span>
-            </div>
-            <div class="flex items-center justify-between mt-1.5 text-[11.5px] text-cocoa-500 font-semibold">
-              <span>8 active</span><span>Synced 2h ago</span>
-            </div>
-          </button>
-        </div>
-        <div class="p-2 pt-1">
-          <button class="btn w-full focus-ring" type="button">
-            <span class="material-symbols-rounded text-gold" style="font-size:17px;">add_circle</span>
-            Create saved search
-          </button>
-        </div>
-      </div>
-
-      <!-- Sources -->
-      <div class="rounded-2xl bg-cream p-2 hairline">
-        <div class="px-2 pt-2 pb-1.5 flex items-center justify-between">
-          <span class="text-[10.5px] uppercase tracking-[0.16em] font-bold text-cocoa-400">Sources</span>
-          <span class="text-[11px] font-bold text-cocoa-500">6 selected</span>
-        </div>
-        <div class="flex flex-col p-1" role="group" aria-label="Job sources">
-          <label class="flex items-center justify-between gap-2 px-2.5 py-2 rounded-lg hover:bg-white transition-colors cursor-pointer">
-            <span class="flex items-center gap-2">
-              <input type="checkbox" checked class="accent-gold w-4 h-4"/>
-              <span class="text-[13px] font-semibold text-espresso-300">All sources</span>
-            </span>
-            <span class="text-[11px] font-bold text-cocoa-500 tabular-nums">128</span>
-          </label>
-          <label class="flex items-center justify-between gap-2 px-2.5 py-2 rounded-lg hover:bg-white transition-colors cursor-pointer">
-            <span class="flex items-center gap-2">
-              <input type="checkbox" checked class="accent-gold w-4 h-4"/>
-              <span class="text-[13px] font-medium text-espresso-300">Micro1</span>
-            </span>
-            <span class="text-[11px] font-semibold text-cocoa-500 tabular-nums">34</span>
-          </label>
-          <label class="flex items-center justify-between gap-2 px-2.5 py-2 rounded-lg hover:bg-white transition-colors cursor-pointer">
-            <span class="flex items-center gap-2">
-              <input type="checkbox" checked class="accent-gold w-4 h-4"/>
-              <span class="text-[13px] font-medium text-espresso-300">Turing</span>
-            </span>
-            <span class="text-[11px] font-semibold text-cocoa-500 tabular-nums">28</span>
-          </label>
-          <label class="flex items-center justify-between gap-2 px-2.5 py-2 rounded-lg hover:bg-white transition-colors cursor-pointer">
-            <span class="flex items-center gap-2">
-              <input type="checkbox" checked class="accent-gold w-4 h-4"/>
-              <span class="text-[13px] font-medium text-espresso-300">Wellfound</span>
-            </span>
-            <span class="text-[11px] font-semibold text-cocoa-500 tabular-nums">31</span>
-          </label>
-          <details class="group mt-0.5">
-            <summary class="list-none flex items-center justify-between gap-2 px-2.5 py-2 rounded-lg hover:bg-white cursor-pointer text-[12.5px] font-semibold text-cocoa-500">
-              <span>Show 3 more</span>
-              <span class="material-symbols-rounded transition-transform group-open:rotate-180" style="font-size:16px;">expand_more</span>
-            </summary>
-            <div class="pt-0.5 space-y-0.5">
-              <label class="flex items-center justify-between gap-2 px-2.5 py-2 rounded-lg hover:bg-white transition-colors cursor-pointer">
-                <span class="flex items-center gap-2"><input type="checkbox" checked class="accent-gold w-4 h-4"/><span class="text-[13px] font-medium text-espresso-300">Glassdoor</span></span>
-                <span class="text-[11px] font-semibold text-cocoa-500 tabular-nums">22</span>
-              </label>
-              <label class="flex items-center justify-between gap-2 px-2.5 py-2 rounded-lg hover:bg-white transition-colors cursor-pointer">
-                <span class="flex items-center gap-2"><input type="checkbox" checked class="accent-gold w-4 h-4"/><span class="text-[13px] font-medium text-espresso-300">Remote OK</span></span>
-                <span class="text-[11px] font-semibold text-cocoa-500 tabular-nums">14</span>
-              </label>
-              <label class="flex items-center justify-between gap-2 px-2.5 py-2 rounded-lg hover:bg-white transition-colors cursor-pointer">
-                <span class="flex items-center gap-2"><input type="checkbox" checked class="accent-gold w-4 h-4"/><span class="text-[13px] font-medium text-espresso-300">We Work Remotely</span></span>
-                <span class="text-[11px] font-semibold text-cocoa-500 tabular-nums">9</span>
-              </label>
-            </div>
-          </details>
-        </div>
-      </div>
-
-      <!-- Quality note -->
-      <div class="rounded-2xl bg-gradient-to-br from-espresso-300 to-espresso-500 text-ivory p-4 shadow-lift relative overflow-hidden">
-        <div class="absolute inset-0 bg-grain opacity-40 mix-blend-overlay pointer-events-none"></div>
-        <div class="relative flex items-center gap-2 mb-2">
-          <span class="material-symbols-rounded text-champagne-200" style="font-size:18px;">verified_user</span>
-          <span class="text-[10.5px] uppercase tracking-[0.16em] font-bold text-champagne-200">Zero‑noise guarantee</span>
-        </div>
-        <p class="m-0 relative text-[12.5px] leading-relaxed text-ivory/90">
-          Listings with hidden on‑site mandates, missing compensation, or sync ambiguity are auto‑calibrated or sequestered.
-        </p>
-      </div>
-    </div>
-  </aside>
 
   <!-- ====== CENTER: JOB EXPLORER ====== -->
   <section class="lg:order-2 order-1 min-w-0 flex flex-col gap-3.5" aria-label="Job explorer">
@@ -657,6 +579,7 @@ tailwind.config = {
     <div id="preview" class="sticky top-[76px] space-y-4"></div>
   </aside>
 </div>
+  </div><!-- /.main-inner -->
 </main>
 
 <!-- ============================================================
@@ -896,6 +819,47 @@ const MOCK_JOBS = [
 <!-- shared.js must load first: it defines window.API / window.Session that
      app.js calls. A classic <script> cannot see another file's const. -->
 <script src="shared.js"></script>
+<script>
+// Left app-sidebar collapse/expand. Persists in localStorage so the workspace
+// remembers the user's preferred width. Collapsed = 64px rail.
+(function () {
+  var KEY = 'dedan_sidebar_collapsed';
+  var sidebar = document.getElementById('app-sidebar');
+  var toggle = document.getElementById('sidebar-toggle');
+  if (!sidebar || !toggle) return;
+
+  function apply(collapsed) {
+    sidebar.classList.toggle('is-collapsed', collapsed);
+    document.body.classList.toggle('sidebar-collapsed', collapsed);
+    // Keep the header rail in sync with the sidebar width.
+    var header = document.querySelector('header');
+    if (header) {
+      if (window.matchMedia('(min-width:1024px)').matches) {
+        header.style.paddingLeft = collapsed ? '64px' : '256px';
+      } else {
+        header.style.paddingLeft = '';
+      }
+    }
+    var icon = toggle.querySelector('.material-symbols-rounded');
+    if (icon) icon.textContent = collapsed ? 'menu' : 'menu_open';
+    toggle.setAttribute('aria-label', collapsed ? 'Expand sidebar' : 'Collapse sidebar');
+    toggle.title = collapsed ? 'Expand sidebar' : 'Collapse sidebar';
+  }
+
+  var collapsed = false;
+  try { collapsed = localStorage.getItem(KEY) === '1'; } catch (e) {}
+  apply(collapsed);
+
+  toggle.addEventListener('click', function () {
+    collapsed = !collapsed;
+    try { localStorage.setItem(KEY, collapsed ? '1' : '0'); } catch (e) {}
+    apply(collapsed);
+  });
+
+  // Re-sync on viewport crossing the desktop breakpoint.
+  window.addEventListener('resize', function () { apply(collapsed); });
+})();
+</script>
 <script src="app.js"></script><script src="nav.js"></script>
 </body>
 </html>
